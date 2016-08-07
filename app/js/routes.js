@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * Route configuration for the RDash module.
+ * Route configuration for the Blurbiz module.
  */
-angular.module('RDash').config(['$stateProvider', '$urlRouterProvider',
+angular.module('Blurbiz').config(['$stateProvider', '$urlRouterProvider',
     function($stateProvider, $urlRouterProvider) {
 
         // For unmatched routes

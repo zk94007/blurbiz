@@ -1,1 +1,1 @@
-angular.module('RDash', ['ui.bootstrap', 'ui.router', 'ngCookies']);
+angular.module('Blurbiz', ['ui.bootstrap', 'ui.router', 'ngCookies']);

@@ -2,7 +2,7 @@
  * Master Controller
  */
 
-angular.module('RDash')
+angular.module('Blurbiz')
     .controller('MasterCtrl', ['$scope', '$cookieStore', MasterCtrl]);
 
 function MasterCtrl($scope, $cookieStore) {

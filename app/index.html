@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" ng-app="RDash">
+<html lang="en" ng-app="Blurbiz">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,6 +10,7 @@
   <link rel="stylesheet" type="text/css" href="components/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="components/font-awesome/css/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="components/rdash-ui/dist/css/rdash.min.css">
+  <link rel="stylesheet" type="text/css" href="css/main.css">
   <!-- endbuild -->
   <!-- SCRIPTS -->
   <!-- build:js lib/js/main.min.js -->
@@ -30,23 +31,22 @@
   <script type="text/javascript" src="js/directives/widget.js"></script>
 </head>
 <body ng-controller="MasterCtrl">
-  <div id="page-wrapper" ng-class="{'open': toggle}" ng-cloak>
+  <div id="wrapper" ng-class="{'open': toggle, 'toggled-2': !toggle}" ng-cloak>
 
     <!-- Sidebar -->
     <div id="sidebar-wrapper">
       <ul class="sidebar">
         <li class="sidebar-main">
           <a ng-click="toggleSidebar()">
-            Dashboard
             <span class="menu-icon glyphicon glyphicon-transfer"></span>
+            Blurbiz
           </a>
         </li>
-        <li class="sidebar-title"><span>NAVIGATION</span></li>
         <li class="sidebar-list">
-          <a href="#">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
+          <a href="#"><span class="menu-icon fa fa-tachometer"></span> Dashboard </a>
         </li>
         <li class="sidebar-list">
-          <a href="#/tables">Tables <span class="menu-icon fa fa-table"></span></a>
+          <a href="#/tables"> <span class="menu-icon fa fa-table"></span> Tables </a>
         </li>
       </ul>
     </div>
