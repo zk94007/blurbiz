@@ -4,7 +4,7 @@
     /**
      * Route configuration for the Blurbiz module.
      */
-    angular.module('Blurbiz', ['ui.router', 'ngCookies']).config(['$stateProvider', '$urlRouterProvider',
+    angular.module('Blurbiz').config(['$stateProvider', '$urlRouterProvider',
         function($stateProvider, $urlRouterProvider) {
 
             // For unmatched routes
