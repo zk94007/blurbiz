@@ -14,6 +14,7 @@
   <!-- endbuild -->
   <!-- SCRIPTS -->
   <!-- build:js lib/js/main.min.js -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   <script type="text/javascript" src="components/angular/angular.min.js"></script>
   <script type="text/javascript" src="components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
   <script type="text/javascript" src="components/angular-cookies/angular-cookies.min.js"></script>
@@ -22,6 +23,8 @@
   <!-- Custom Scripts -->
   <script type="text/javascript" src="js/module.js"></script>
   <script type="text/javascript" src="js/routes.js"></script>
+  <script type="text/javascript" src="js/services/user.service.js"></script>
+  <script type="text/javascript" src="js/services/flash.service.js"></script>
   <script type="text/javascript" src="js/controllers/master-ctrl.js"></script>
   <script type="text/javascript" src="js/controllers/alert-ctrl.js"></script>
   <script type="text/javascript" src="js/directives/loading.js"></script>
@@ -30,7 +33,7 @@
   <script type="text/javascript" src="js/directives/widget-footer.js"></script>
   <script type="text/javascript" src="js/directives/widget.js"></script>
 </head>
-<body ng-controller="MasterCtrl">
+<body>
   <div id="wrapper" ng-class="{'open': toggle, 'toggled-2': !toggle}" ng-cloak>
 
     <!-- Sidebar -->
@@ -43,10 +46,10 @@
           </a>
         </li>
         <li class="sidebar-list">
-          <a href="#"><span class="menu-icon fa fa-tachometer"></span> Dashboard </a>
+          <a href="#"><span class="menu-icon fa fa-tachometer"></span> Home </a>
         </li>
         <li class="sidebar-list">
-          <a href="#/tables"> <span class="menu-icon fa fa-table"></span> Tables </a>
+          <a href="#/tables"> <span class="menu-icon fa fa-table"></span> Schedule </a>
         </li>
       </ul>
     </div>
@@ -65,7 +68,7 @@
                 </a>
                 <ul class="dropdown-menu dropdown-menu-right">
                   <li class="dropdown-header">
-                    Joe Bloggs
+                    {{ user.firstName }} {{ user.lastName }}
                   </li>
                   <li class="divider"></li>
                   <li class="link">

@@ -13,6 +13,10 @@ ul.sidebar .sidebar-list .menu-icon {
     width: 35px;
 }
 
+ul.sidebar li {
+	background: green;
+}
+
  /* Toggle Styles */
  
  #wrapper {
