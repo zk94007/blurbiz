@@ -120,6 +120,17 @@ ul.sidebar li {
     margin:0;
 }
 
+hr {
+    border-color: #999;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.sorting {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
 .project-container {
     border: 2px solid #999;
     height: 280px;

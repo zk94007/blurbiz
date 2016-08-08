@@ -8,6 +8,8 @@
     function Controller($window, $scope, $rootScope,  ProjectService, FlashService) {
 
         $scope.emptyImg = 'img/empty.png';
+
+        $scope.sort_item = 'name';
         
         initController();
 

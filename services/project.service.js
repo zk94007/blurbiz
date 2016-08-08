@@ -23,10 +23,10 @@ function getAll(user_id) {
     var deferred = Q.defer();
     setTimeout(function() {
         deferred.resolve([
-            {id: 1, name: 'Blurbiz', screen_count: 15,  representative: 'img/screens/1.png'},
-            {id: 2, name: 'Blurbiz Self Service', screen_count: 12,  representative: 'img/screens/2.png'},
-            {id: 3, name: 'Iron IOT', screen_count: 19,  representative: 'img/screens/3.png'},
-            {id: 4, name: 'Test Fill', screen_count: 1,  representative: 'img/screens/4.png'}
+            {id: 1, name: 'Blurbiz', screen_count: 15,  representative: 'img/screens/1.png', created_at: '2015/03/12'},
+            {id: 2, name: 'Blurbiz Self Service', screen_count: 12,  representative: 'img/screens/2.png', created_at: '2014/05/11'},
+            {id: 3, name: 'Iron IOT', screen_count: 19,  representative: 'img/screens/3.png', create_at: '2016/01/02'},
+            {id: 4, name: 'Test Fill', screen_count: 1,  representative: 'img/screens/4.png', created_at: '2015/03/03'}
         ])
     }, 1000);
 

@@ -1,6 +1,21 @@
 <div class="projects-container">
 	<div class="row">
-		<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="project in projects">
+		<button type="button" class="btn btn-success pull-right">Create Project</button>
+	</div>
+	<hr />
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="sorting pull-right">
+				Sort: <select name="sortable" ng-model="sort_item">
+					<option value="-created_at">Newest First</option>
+					<option value="name">A-Z</option>
+					<option value="-name">Z-A</option>
+				</select>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="project in projects | orderBy: sort_item">
 			<div class="project-container text-center">
 				<a href="#">
 					<img class="representative" ng-src="{{ project.representative }}" err-src="img/empty.png">
