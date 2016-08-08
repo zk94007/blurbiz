@@ -5,11 +5,26 @@
         .module('Blurbiz.project')
         .controller('Project.IndexController', Controller);
 
-    function Controller($window, $scope, $rootScope,  ProjectService, FlashService) {
+    function Controller($window, $scope, $rootScope, $uibModal, ProjectService, FlashService) {
 
         $scope.emptyImg = 'img/empty.png';
 
         $scope.sort_item = 'name';
+
+        $scope.openModal = function() {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'createProjectModal.html'
+            });
+        };
+
+        $scope.ok = function() {
+          $scope.showModal = false;
+        };
+
+        $scope.cancel = function() {
+          $scope.showModal = false;
+        };
         
         initController();
 

@@ -54,7 +54,7 @@ ul.sidebar li {
 #content-wrapper {
     position: absolute;
     padding: 15px;
-    width: 100%;  
+    width: auto;  
     overflow-x: hidden; 
 }
 .xyz{
