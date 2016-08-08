@@ -21,10 +21,15 @@
   <script type="text/javascript" src="components/angular-ui-router/release/angular-ui-router.min.js"></script>
   <!-- endbuild -->
   <!-- Custom Scripts -->
+  
   <script type="text/javascript" src="js/module.js"></script>
   <script type="text/javascript" src="js/routes.js"></script>
+
   <script type="text/javascript" src="js/services/user.service.js"></script>
+  <script type="text/javascript" src="js/services/project.service.js"></script>
   <script type="text/javascript" src="js/services/flash.service.js"></script>
+
+  <script type="text/javascript" src="js/controllers/project/index.controller.js"></script>
   <script type="text/javascript" src="js/controllers/master-ctrl.js"></script>
   <script type="text/javascript" src="js/controllers/alert-ctrl.js"></script>
   <script type="text/javascript" src="js/directives/loading.js"></script>
@@ -94,7 +99,7 @@
                   </li>
                 </ul>
               </div>
-              <div class="item dropdown" uib-dropdown>
+              <!-- <div class="item dropdown" uib-dropdown>
                <a href="#" class="dropdown-toggle" uib-dropdown-toggle>
                   <i class="fa fa-bell-o"></i>
                 </a>
@@ -107,14 +112,11 @@
                     <a href="#">Server Down!</a>
                   </li>
                 </ul>
-              </div>
+              </div> -->
             </div>
             <div class="meta">
               <div class="page">
-                Dashboard
-              </div>
-              <div class="breadcrumb-links">
-                Home / Dashboard
+                {{ pageTitle }}
               </div>
             </div>
           </div>

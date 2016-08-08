@@ -14,15 +14,15 @@
             $stateProvider
                 .state('index', {
                     url: '/',
-                    templateUrl: 'templates/dashboard.html',
-                    // controller: 'Project.IndexController',
-                    data: { activeTab: 'All Projects' }
+                    templateUrl: 'templates/project/all.html',
+                    controller: 'Project.IndexController',
+                    data: { pageTitle: 'All Projects' }
                 })
                 .state('tables', {
                     url: '/tables',
                     templateUrl: 'templates/tables.html',
                     // controller: 'Schedule.IndexController',
-                    data: { activeTabl: 'Schedule' }
+                    data: { pageTitle: 'Schedule' }
                 });
         }
     ])

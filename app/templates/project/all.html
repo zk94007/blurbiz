@@ -1,0 +1,9 @@
+<div class="projects-container">
+	<div ng-repeat="project in projects">
+		<a href="#">
+			<img class="representative" ng-src="{{ project.representative || emptyImg }}">
+			<h3>{{ project.name }}</h3>
+			<p>{{ project.screen_count }} screens</p>
+		</a>
+	</div>
+</div>
