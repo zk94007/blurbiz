@@ -14,16 +14,14 @@
         $scope.openModal = function() {
             var modalInstance = $uibModal.open({
                 animation: true,
-                templateUrl: 'createProjectModal.html'
+                templateUrl: 'createProjectModal.html',
+                controller: 'Project.CreateModalController'
             });
-        };
 
-        $scope.ok = function() {
-          $scope.showModal = false;
-        };
-
-        $scope.cancel = function() {
-          $scope.showModal = false;
+            modalInstance.result.then(function (newProjectName) {
+                $scope.newProjectName = newProjectName;
+                console.log(newProjectName);
+            });
         };
         
         initController();
