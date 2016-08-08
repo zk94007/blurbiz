@@ -119,6 +119,29 @@ ul.sidebar li {
 .no-margin{
     margin:0;
 }
+
+.project-container {
+    border: 2px solid #999;
+    height: 280px;
+}
+
+.project-container a {
+    text-decoration: none;
+}
+
+.project-container a h4 {
+    color: #6C7683;
+}
+
+.project-container a p {
+    color: #909091;
+}
+
+.project-container img {
+    width: 100%;
+    height: 180px;
+    margin-bottom: 10px;
+}
  
 @media(min-width:768px) {
     #wrapper {
