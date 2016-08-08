@@ -130,6 +130,34 @@ function createProject(userId, projectName, callback) {
         }
 }
 
+function projectList(userId, callback) {
+        try {
+                console.log('call method projectList: userId = ' + userId);      
+		query('SELECT id, project_name FROM public.project WHERE user_id = $1;', 
+			[userId], function(err, result) {
+                        if (err) {
+                        	successFalseCb(err, callback);
+                        } else {
+				var projects = [];
+				for (var i = 0; i < result.rows.length; i++) {
+	                        	var row = result.rows[i];
+					var project = {
+						'project_id': row.id,
+						'project_name': row.project_name
+					};
+       	                        	projects.push(project);
+				}
+                                successCb(callback, {
+                                	'projects': projects
+                                });
+                        }
+               	});
+        } catch (err) {
+                console.log('error in method projectList: ' + err);
+                successFalseCb(err, callback);
+        }
+}
+
 
 function getToken(user) {
 	return jwt.sign(user, config.tokenKey);
@@ -312,7 +340,7 @@ io1.on('connection', function(socket1) {
 	//create_project
         socket1.on('create_project', function(message) {
                 console.log('received create_project message: ' + JSON.stringify(message));
-		checkIfNotEmptyMessage(socket1, message, 'authenticate_response', function() {
+		checkIfNotEmptyMessage(socket1, message, 'create_project_response', function() {
 	                var projectName = message.project_name;
         	        var token = message.token;
 			checkToken(token, function(err, result) {
@@ -333,5 +361,27 @@ io1.on('connection', function(socket1) {
 			});
 		});
         });
+	socket1.on('project_list', function(message) {
+		console.log('received project_list message: ' + JSON.stringify(message));
+                checkIfNotEmptyMessage(socket1, message, 'project_list_response', function() {
+                        var token = message.token;
+                        checkToken(token, function(err, result) {
+                                if (err) {
+                                        socket1.emit('project_list_response', {
+                                                'success': false,
+                                                'msg': 'check token error: ' + err
+                                        });
+                                        return;
+                                }
+                                var userInfo = result;
+                                console.log('Token parse result: ' + JSON.stringify(result));
+
+                                projectList(userInfo.id, function(err, result) {
+                                        console.log('send project list response: ' + JSON.stringify(result))
+                                        socket1.emit('project_list_response', result);
+                                });
+                        });
+                });
+	});
 });
 
