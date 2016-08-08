@@ -1,10 +1,10 @@
 var io = require('socket.io-client')
 var socket = io.connect('http://localhost:3040');
 
-console.log('send authenticate message: user TestUserBase');
+console.log('send authenticate message: user TestUserBase@gmail.com');
 
 socket.emit('authenticate', {
-        'login': 'TestUserBase',
+        'login': 'TestUserBase@gmail.com',
         'password': 'Test'
 });
 

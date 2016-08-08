@@ -7,16 +7,15 @@ function randomIntInc (low, high) {
 
 
 var nowDate = new Date();
-var userData = 'TestUser' + nowDate.getTime() + '_' + randomIntInc(100, 10000);
+var userData = 'TestUser' + nowDate.getTime() + '_' + randomIntInc(100, 10000) + '@gmail.com';
 
 console.log('send signup message: create user ' + userData);
 
 socket.emit('signup', {
-        'login': userData,
         'password': userData,
         'name': 'Test Name',
         'company': 'Test',
-        'email': 'test@gmail.com'
+        'email': userData
 });
 
 socket.on('signup_response', function(msg) {
@@ -27,7 +26,7 @@ socket.on('signup_response', function(msg) {
         }
 
 	if (msg.success == false) {
-		console.log('ERROR: expected answer - { success: true }, err: ' + err);
+		console.log('ERROR: expected answer - { success: true }, err: ' + msg.msg);
 	} else {
 		console.log('CORRECT');
 	}

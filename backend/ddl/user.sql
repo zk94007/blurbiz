@@ -6,24 +6,21 @@ CREATE SEQUENCE user_id_seq
   CACHE 1;
 ALTER TABLE user_id_seq
   OWNER TO postgres;
-
+  
 CREATE TABLE public."user"
 (
-   id integer NOT NULL DEFAULT nextval('user_id_seq'), 
-   login character varying(255), 
-   password character varying(255), 
-   name character varying(255), 
-   company character varying(255), 
-   email character varying(255), 
-   is_confirmed boolean DEFAULT false,
-   last_login_date timestamp without time zone, 
-   CONSTRAINT user_pkey PRIMARY KEY (id),
-  
-   CONSTRAINT user_login_key UNIQUE (login)
-) 
-WITH (
-  OIDS = FALSE
+  id integer NOT NULL DEFAULT nextval('user_id_seq'::regclass),
+  email character varying(255),
+  password character varying(255),
+  name character varying(255),
+  company character varying(255),
+  is_confirmed boolean DEFAULT false,
+  last_login_date timestamp without time zone,
+  CONSTRAINT user_pkey PRIMARY KEY (id),
+  CONSTRAINT user_email_key UNIQUE (email)
 )
-;
-ALTER TABLE public."user"
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE "user"
   OWNER TO postgres;

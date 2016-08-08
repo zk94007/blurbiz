@@ -64,21 +64,25 @@ function successCb(callback, additionalParams) {
         }
 }
 
-function createUser(login, password, name, company, email, callback) {
+function sendConfirmationEmail(email) {
+	//TODO send message to specified email
+}
+
+function createUser(email, password, name, callback) {
 	try {
-		console.log('call method createUser: login = ' + login + ', name = ' + name + ', company = ' + company +', email = ' + email);
-		isLoginExists(login, function(err, result) {
+		console.log('call method createUser: email = ' + email + ', name = ' + name);
+		isEmailExists(email, function(err, result) {
 			if (err) {
 				successFalseCb(err, callback);
 				return;
 			}
-			var isLoginEx = result;
-			if (isLoginEx) {
-				successFalseCb('Login ' + login + '  already exists', callback);
+			var isEmailEx = result;
+			if (isEmailEx) {
+				successFalseCb('Email ' + email + '  already exists', callback);
 				return;
 			}
-			query('INSERT INTO public.user(login, password, name, company, email)' +
-	                	' VALUES ($1, $2, $3, $4, $5);', [login, password, name, company, email], function(err, result) {
+			query('INSERT INTO public.user(email, password, name)' +
+	                	' VALUES ($1, $2, $3);', [email, password, name], function(err, result) {
 				if (err) {
 					successFalseCb(err, callback);
 				} else {
@@ -135,20 +139,20 @@ function checkToken(token, callback) {
         jwt.verify(token, config.tokenKey, callback);
 }
 
-function checkAuth(login, password, callback) {
+function checkAuth(email, password, callback) {
 	console.log('call method checkAuth');
 	try {
-		isLoginExists(login, function(err, result) {
+		isEmailExists(email, function(err, result) {
 			if (err) {
 				successFalseCb(err, callback);
 				return;
                         }
-			var isLoginEx = result;
-                        if (!isLoginEx) {
-				successFalseCb('Login ' + login + ' doesn\'t exist', callback);
+			var isEmailEx = result;
+                        if (!isEmailEx) {
+				successFalseCb('Email ' + email + ' doesn\'t exist', callback);
                                 return;
                         } else {
-				getUserInfo(login, function(err, user) {
+				getUserInfo(email, function(err, user) {
 					if (err) {
 						successFalseCb(err, callback);
                 	                	return;
@@ -159,7 +163,7 @@ function checkAuth(login, password, callback) {
 							'token': getToken(user)
 						});
 					} else {
-						successFalseCb('incorrect password for user ' + login, callback);
+						successFalseCb('incorrect password for user ' + email, callback);
 					}
 				});
 			}
@@ -170,10 +174,10 @@ function checkAuth(login, password, callback) {
 	}
 }
 
-function getUserInfo(login, callback) {
-	console.log('call method getUserInfo: login = ' + login);
+function getUserInfo(email, callback) {
+	console.log('call method getUserInfo: email = ' + email);
 	try {
-		query('SELECT * from public.user where login = $1', [login], function(err, result) {
+		query('SELECT * from public.user where email = $1', [email], function(err, result) {
                         if (err) {
 				successFalseCb(err, callback);
                                 return;
@@ -190,10 +194,10 @@ function getUserInfo(login, callback) {
 	}
 }
 
-function isLoginExists(login, callback) {
-	console.log('call method isLoginExists, login = ' + login);
+function isEmailExists(email, callback) {
+	console.log('call method isEmailExists, email = ' + email);
 	try {
-               	query('SELECT count(*) from public.user where login = $1', [login], function(err, result) {
+               	query('SELECT count(*) from public.user where email = $1', [email], function(err, result) {
 			if (err) {
 				successFalseCb(err, callback);
        	                        return;
@@ -202,14 +206,14 @@ function isLoginExists(login, callback) {
 			//console.log(count);
 
 			var count = result.rows[0];
-			var loginExists = count.count != 0;
-			console.log('result of method isLoginExists: ' + loginExists);
+			var emailExists = count.count != 0;
+			console.log('result of method isEmailExists: ' + emailExists);
 	                if (callback != null) {
-       	                        callback(null, loginExists);
+       	                        callback(null, emailExists);
                         }
 		});
 	} catch (err) {
-	        console.log('error in method isLoginExists: ' + err);
+	        console.log('error in method isEmailExists: ' + err);
 		successFalseCb(err, callback);
 	}
 }
@@ -261,12 +265,30 @@ io1.on('connection', function(socket1) {
 	socket1.on('signup', function(message)      {
 	        console.log('received singup message: ' + JSON.stringify(message));
 		checkIfNotEmptyMessage(socket1, message, 'signup_response', function() {
-			var login = message.login;
+			var email = message.email;
         	        var password = message.password;
 	                var name = message.name;
-                	var company = message.company;
-        	        var email = message.email;
-	                createUser(login, password, name, company, email, function(err, result) {
+        	        
+			var notFilledFields = [];
+			var notFilledMessage = 'Required fields are not filled: ';
+			if (!email) {
+				notFilledFields.push('email');
+			}
+			if (!name) {
+				notFilledFields.push('name');
+			}
+                        if (!password) {
+                                notFilledFields.push('password');
+                        }
+			if (notFilledFields.length > 0) {
+				successFalseCb(notFilledMessage + notFilledFields.toString(), function(err, result) {
+					console.log('send signup response - required fields are not filled: ' + notFilledFields.toString());
+					socket1.emit('signup_response', result);
+				});
+				return;
+			}
+
+			createUser(email, password, name, function(err, result) {
                 	        console.log('send singup result: ' + JSON.stringify(result));
         	                socket1.emit('signup_response', result);
 	                });
