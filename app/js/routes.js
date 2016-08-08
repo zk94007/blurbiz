@@ -32,7 +32,7 @@
 
         // update active tab on state change
         $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
-            $rootScope.activeTab = toState.data.activeTab;
+            $rootScope.pageTitle = toState.data.pageTitle;
         });
 
         /**
