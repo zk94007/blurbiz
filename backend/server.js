@@ -1,8 +1,44 @@
 var pg = require('pg');
-
 var config = require('./config.js');
-
 var jwt = require('jsonwebtoken');
+var nodemailer = require('nodemailer');
+var uuidGen = require('node-uuid');
+
+var transporter = nodemailer.createTransport({
+	'service': 'gmail',
+	'auth': config.mailConfig.auth
+});
+
+var mailOptions = config.mailConfig.template;
+
+function sendConfirmationEmail(email, userId, link, cb) {
+	if (cb == null) {
+		throw new Error('no callback in sendMail method');
+	}
+	console.log('call sendMail method: email = ' + email);
+	var from = mailOptions.from;
+	var to = email;
+	var subject = mailOptions.subject;
+	var html = mailOptions.html;
+	html = html.replace('link_placeholder', link);
+	
+	var options = {
+	        'from': from,
+	        'to': to,
+        	'subject': subject,
+	        'html': html
+	}
+
+	transporter.sendMail(options, function(error, info) {
+		if (error) {
+		        console.log(error);
+			successFalseCb(error, cb);
+			return;
+		}
+		console.log('Message sent: ' + info.response);
+		successCb(cb);
+	});
+}
 
 //TODO use connection pool
 function query_pool(text, values, cb) {
@@ -52,7 +88,7 @@ function mergeJson(obj1, obj2) {
 	return result;
 }
 
-function successCb(callback, additionalParams) {
+function successCb(callback, additionalParams, separateParams) {
 	var result = {
 		'success': true
 	}
@@ -60,12 +96,30 @@ function successCb(callback, additionalParams) {
 		result = mergeJson(result, additionalParams);
 	}
         if (callback != null) {
-                callback(null, result);
+		if (separateParams) {
+			callback(null, result, separateParams);
+		} else {
+	                callback(null, result);
+		}
         }
 }
 
-function sendConfirmationEmail(email) {
-	//TODO send message to specified email
+function createEmailConfirmationEntry(userId, code, callback) {
+	try {
+		console.log('call method createEmailConfirmationEntry: userId = ' + userId + ', code = ' + code);
+		query('INSERT INTO public.email_confirmation(user_id, code)' +
+                	' VALUES ($1, $2) RETURNING id;', [userId, code], function(err, result) {
+                        if (err) {
+                        	successFalseCb(err, callback);
+                        } else {
+                        	successCb(callback);
+			}
+                });
+
+	} catch (err) {
+		console.log('error in method createEmailConfirmationEntry: ' + err);
+                successFalseCb(err, callback);
+	}
 }
 
 function createUser(email, password, name, callback) {
@@ -82,11 +136,15 @@ function createUser(email, password, name, callback) {
 				return;
 			}
 			query('INSERT INTO public.user(email, password, name)' +
-	                	' VALUES ($1, $2, $3);', [email, password, name], function(err, result) {
+	                	' VALUES ($1, $2, $3) RETURNING id;', [email, password, name], function(err, result) {
 				if (err) {
 					successFalseCb(err, callback);
 				} else {
-					successCb(callback);
+                                        var row = result.rows[0];
+                                        var userId = row.id;
+                                        successCb(callback, null, {
+                                                'user_id': userId
+                                        });
 				}
 			});
 
@@ -196,7 +254,7 @@ function checkAuth(email, password, callback) {
                         }
 			var isEmailEx = result;
                         if (!isEmailEx) {
-				successFalseCb('Email ' + email + ' doesn\'t exist', callback);
+				successFalseCb('Email ' + email + ' doesn\'t registered', callback);
                                 return;
                         } else {
 				getUserInfo(email, function(err, user) {
@@ -340,6 +398,7 @@ io1.on('connection', function(socket1) {
 			var email = message.email;
         	        var password = message.password;
 	                var name = message.name;
+			var frontPath = message.front_path;
         	        
 			var notFilledFields = [];
 			var notFilledMessage = 'Required fields are not filled: ';
@@ -360,9 +419,27 @@ io1.on('connection', function(socket1) {
 				return;
 			}
 
-			createUser(email, password, name, function(err, result) {
+			createUser(email, password, name, function(err, result, sepParams) {
                 	        console.log('send singup result: ' + JSON.stringify(result));
-        	                socket1.emit('signup_response', result);
+//        	                socket1.emit('signup_response', result);
+				var userId = sepParams.user_id;
+				var uuid = uuidGen.v4();
+				createEmailConfirmationEntry(userId, uuid, function (err1, result1) {
+					if (result1 && result1.success) {
+						var link = frontPath + uuid;
+						console.log('link: ' + link);
+						sendConfirmationEmail(email, userId, link, function(err2, result2) {
+							console.log('sendConfirmationEmail result: ' + JSON.stringify(result2));
+							//emit initial result (success = true)
+							socket1.emit('signup_response', result);
+						});
+					} else {
+						socket1.emit('signup_response', {
+							'success': false,
+							'msg': err1
+						});
+					}
+				});
 	                });
 		});
 	});
@@ -405,4 +482,3 @@ io1.on('connection', function(socket1) {
                 });
         });
 });
-

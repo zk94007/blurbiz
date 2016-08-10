@@ -15,7 +15,8 @@ socket.emit('signup', {
         'password': userData,
         'name': 'Test Name',
         'company': 'Test',
-        'email': userData
+        'email': userData,
+	'front_path': 'http://www.blurbiz.com/confirm/'
 });
 
 socket.on('signup_response', function(msg) {

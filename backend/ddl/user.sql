@@ -24,3 +24,6 @@ WITH (
 );
 ALTER TABLE "user"
   OWNER TO postgres;
+
+//user for tests
+INSERT INTO public."user" (email, password, name) VALUES ('TestUserBase@gmail.com', 'Test', 'Test Name');
