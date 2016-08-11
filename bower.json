@@ -1,24 +1,25 @@
 {
-    "name": "blurbiz-client",
-    "version": "0.0.1",
-    "description": "An AngularJS implementation of the responsive dashboard",
-    "main": "app/index.html",
-    "license": "MIT",
-    "ignore": [
-        "**/.*",
-        "node_modules",
-        "components",
-        "bower_components",
-        "test",
-        "tests"
-    ],
-    "dependencies": {
-        "rdash-ui": "1.0.*",
-        "angular": "~1.5.0",
-        "angular-cookies": "~1.5.0",
-        "angular-bootstrap": "~1.0.3",
-        "angular-ui-router": "^0.2.15",
-        "bootstrap": "~3.3.6",
-        "font-awesome": "~4.5.0"
-    }
+  "name": "blurbiz-client",
+  "version": "0.0.1",
+  "description": "An AngularJS implementation of the responsive dashboard",
+  "main": "app/index.html",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "rdash-ui": "1.0.*",
+    "angular": "~1.5.0",
+    "angular-cookies": "~1.5.0",
+    "angular-bootstrap": "~1.0.3",
+    "angular-ui-router": "^0.2.15",
+    "bootstrap": "~3.3.6",
+    "font-awesome": "~4.5.0",
+    "angular-socket-io": "^0.7.0"
+  }
 }
