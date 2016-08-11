@@ -40,6 +40,36 @@ function sendConfirmationEmail(email, userId, link, cb) {
 	});
 }
 
+function updateFields(tableName, tableIdValue, namesAndValuesArray, callback) {
+	 try {
+                console.log('call method updateFields: tableName = ' + tableName + ', tableIdValue = ' + tableIdValue + ', namesAndValues = ' + JSON.stringify(namesAndValuesArray));
+		var names = [];
+		var values = [];
+		namesAndValuesArray.forEach(function (nameAndValue) {
+			names.push(nameAndValue.name);
+			values.push("'" + nameAndValue.value  + "'");
+		});
+		var queryText = 'UPDATE public."' + tableName + '" SET (' + names.join(', ') + ') = (' + values.join(', ') + ') WHERE id = ' + tableIdValue + ';';
+		console.log(queryText);
+                query(queryText, [], function(err, result) {
+                        if (err) {
+                                successFalseCb(err, callback);
+                        } else {
+                                successCb(callback);
+                        }
+                });
+
+        } catch (err) {
+                console.log('error in method createEmailConfirmationEntry: ' + err);
+                successFalseCb(err, callback);
+        }
+
+}
+
+function updateProjectFields(projectId, namesAndValuesArray, cb) {
+	updateFields('project', projectId, namesAndValuesArray, cb);
+}
+
 //TODO use connection pool
 function query_pool(text, values, cb) {
       pg.connect(function(err, client, done) {
@@ -205,6 +235,39 @@ function deleteProject(projectId, callback) {
                 successFalseCb(err, callback);
         }
 }
+
+function confirmateEmail(userId, code, callback) {
+        try {
+                console.log('call method confirmateEmail: userId = ' + userId + ', code = ' + code);
+                query('SELECT count(*) FROM public.email_confirmation WHERE user_id = $1 and code = $2;', [userId, code], function(err, result) {
+                        if (err) {
+                                successFalseCb(err, callback);
+                        } else {
+				var count = result.rows[0].count;
+				if (count == 0) {
+					successFalseCb('code ' + code + ' is not found for user ' + userId, callback);
+				} else {
+					updateFields('user', userId, [
+					        {
+							'name': 'is_confirmed', 
+							'value': true
+						}
+					], function(err1, result1) {
+						if (err1) {
+							successFalseCb(err1, callback);
+							return;
+						}
+	                                	successCb(callback);
+					});
+				}
+                        }
+                });
+        } catch (err) {
+                console.log('error in method confirmateEmail: ' + err);
+                successFalseCb(err, callback);
+        }
+}
+
 
 
 function projectList(userId, callback) {
@@ -479,6 +542,20 @@ io1.on('connection', function(socket1) {
                 deleteProject(message.project_id, function(err, result) {
                         console.log('send delete_project response: ' + JSON.stringify(result))
                         socket1.emit('delete_project_response', result);
+                });
+        });
+
+	authRequiredCall(socket1, 'confirmate_email', function(userInfo, message) {
+                confirmateEmail(userInfo.id, message.email_code, function(err, result) {
+                        console.log('send confirmate_email response: ' + JSON.stringify(result))
+                        socket1.emit('confirmate_email_response', result);
+                });
+        });
+
+        authRequiredCall(socket1, 'update_project', function(userInfo, message) {
+                updateProjectFields(message.project_id, message.fields, function(err, result) {
+                        console.log('send update_project response: ' + JSON.stringify(result))
+                        socket1.emit('update_project_response', result);
                 });
         });
 });
