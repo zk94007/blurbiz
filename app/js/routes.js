@@ -8,10 +8,15 @@
         function($stateProvider, $urlRouterProvider) {
 
             // For unmatched routes
-            $urlRouterProvider.otherwise('/');
+            $urlRouterProvider.otherwise('/login');
 
             // Application routes
             $stateProvider
+                .state('login', {
+                    url: '/login',
+                    templateUrl: 'templates/login.html',
+                    controller: 'LoginController'
+                })
                 .state('index', {
                     url: '/',
                     templateUrl: 'templates/project/all.html',
@@ -25,59 +30,59 @@
                     data: { pageTitle: 'Schedule' }
                 });
         }
-    ])
-    .run(['$http', '$rootScope', '$window', '$cookieStore', 'UserService', function($http, $rootScope, $window, $cookieStore, UserService) {
-        // add JWT token as default auth header
-        $http.defaults.headers.common['Authorization'] = 'Bearer ' + $window.jwtToken;
+    ]);
+    // .run(['$http', '$rootScope', '$window', '$cookieStore', 'UserService', function($http, $rootScope, $window, $cookieStore, UserService) {
+    //     // add JWT token as default auth header
+    //     $http.defaults.headers.common['Authorization'] = 'Bearer ' + $window.jwtToken;
 
-        // update active tab on state change
-        $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
-            $rootScope.pageTitle = toState.data.pageTitle;
-        });
+    //     // update active tab on state change
+    //     $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+    //         $rootScope.pageTitle = toState.data.pageTitle;
+    //     });
 
-        /**
-         * Sidebar Toggle & Cookie Control
-         */
-        var mobileView = 992;
+    //     /**
+    //      * Sidebar Toggle & Cookie Control
+    //      */
+    //     var mobileView = 992;
 
-        UserService.GetCurrent().then(function(user) {
-            $rootScope.user = user;
-        });
+    //     UserService.GetCurrent().then(function(user) {
+    //         $rootScope.user = user;
+    //     });
 
-        $rootScope.getWidth = function() {
-            return window.innerWidth;
-        };
+    //     $rootScope.getWidth = function() {
+    //         return window.innerWidth;
+    //     };
 
-        $rootScope.$watch($rootScope.getWidth, function(newValue, oldValue) {
-            if (newValue >= mobileView) {
-                if (angular.isDefined($cookieStore.get('toggle'))) {
-                    $rootScope.toggle = ! $cookieStore.get('toggle') ? false : true;
-                } else {
-                    $rootScope.toggle = true;
-                }
-            } else {
-                $rootScope.toggle = false;
-            }
+    //     $rootScope.$watch($rootScope.getWidth, function(newValue, oldValue) {
+    //         if (newValue >= mobileView) {
+    //             if (angular.isDefined($cookieStore.get('toggle'))) {
+    //                 $rootScope.toggle = ! $cookieStore.get('toggle') ? false : true;
+    //             } else {
+    //                 $rootScope.toggle = true;
+    //             }
+    //         } else {
+    //             $rootScope.toggle = false;
+    //         }
 
-        });
+    //     });
 
-        $rootScope.toggleSidebar = function() {
-            $rootScope.toggle = !$rootScope.toggle;
-            $cookieStore.put('toggle', $rootScope.toggle);
-        };
+    //     $rootScope.toggleSidebar = function() {
+    //         $rootScope.toggle = !$rootScope.toggle;
+    //         $cookieStore.put('toggle', $rootScope.toggle);
+    //     };
 
-        window.onresize = function() {
-            $rootScope.$apply();
-        };
-    }]);
+    //     window.onresize = function() {
+    //         $rootScope.$apply();
+    //     };
+    // }]);    
 
     // manually bootstrap angular after the JWT token is retrieved from the server
-    $(function () {
-        // get JWT token from server
-        $.get('/app/token', function (token) {
-            window.jwtToken = token;
+    // $(function () {
+    //     // get JWT token from server
+    //     $.get('/app/token', function (token) {
+    //         window.jwtToken = token;
 
-            angular.bootstrap(document, ['Blurbiz']);
-        });
-    });
+    //         angular.bootstrap(document, ['Blurbiz']);
+    //     });
+    // });
 })();
