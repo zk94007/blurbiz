@@ -105,11 +105,14 @@ function query(text, values, cb) {
 	});
 }
 
-function successFalseCb(msg, callback) {
+function successFalseCb(msg, callback, additionalParams) {
 	var result = {
         	'success': false,
                 'msg': '' + msg
         };
+	if (additionalParams) {
+                result = mergeJson(result, additionalParams);
+        }
         if (callback != null) {
         	callback(null, result);
         }
@@ -334,9 +337,15 @@ function checkAuth(email, password, callback) {
                         		}
 					//console.log(JSON.stringify(user));
 					if (user.password == password) {
-						successCb(callback, {
-							'token': getToken(user)
-						});
+						if (user.is_confirmed == false) {
+							successFalseCb('email is not confirmed: ' + email, callback, {
+								'is_confirmed': false
+							});
+						} else {
+							successCb(callback, {
+								'token': getToken(user)
+							});
+						}
 					} else {
 						successFalseCb('incorrect password for user ' + email, callback);
 					}
