@@ -70,6 +70,10 @@ function updateProjectFields(projectId, namesAndValuesArray, cb) {
 	updateFields('project', projectId, namesAndValuesArray, cb);
 }
 
+function updateUserFields(userId, namesAndValuesArray, cb) {
+        updateFields('user', userId, namesAndValuesArray, cb);
+}
+
 //TODO use connection pool
 function query_pool(text, values, cb) {
       pg.connect(function(err, client, done) {
@@ -558,4 +562,12 @@ io1.on('connection', function(socket1) {
                         socket1.emit('update_project_response', result);
                 });
         });
+
+        authRequiredCall(socket1, 'update_user', function(userInfo, message) {
+                updateUserFields(message.user_id, message.fields, function(err, result) {
+                        console.log('send update_user response: ' + JSON.stringify(result))
+                        socket1.emit('update_user_response', result);
+                });
+        });
+
 });
