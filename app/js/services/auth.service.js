@@ -5,11 +5,12 @@
         .module('Blurbiz')
         .factory('AuthService', Service);
 
-    function Service(socket) {
+    function Service($window, socket) {
         var service = {};
         service.saveToken = saveToken;
         service.getToken = getToken;
         service.login = login;
+        service.logout = logout;
         service.signup = signup;
         service.confirmation = email_confirmation;
 
@@ -21,6 +22,10 @@
 
         function getToken() {
             return $window.localStorage['jwtToken'];
+        }
+
+        function logout() {
+            $window.localStorage.removeItem('jwtToken');
         }
 
         function login(email, password) {

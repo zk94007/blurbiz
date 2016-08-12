@@ -7,6 +7,13 @@ angular.module('Blurbiz')
 
 function LoginController($scope, $cookieStore, $state, socket, AuthService) {
     $scope.message = {};
+
+    initController();
+
+    function initController() {
+        AuthService.logout();
+    }
+    
     $scope.login = function() {
         socket.emit('authenticate', {
             'login': $scope.email,

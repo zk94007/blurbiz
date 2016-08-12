@@ -5,7 +5,7 @@
         .module('Blurbiz.project')
         .controller('Project.IndexController', Controller);
 
-    function Controller($window, $scope, $rootScope, $uibModal, ProjectService, FlashService) {
+    function Controller($window, $scope, $rootScope, $uibModal, socket, AuthService, ProjectService, FlashService) {
 
         $scope.emptyImg = 'img/empty.png';
 
@@ -32,8 +32,10 @@
             //     $scope.projects = projects;
             // });
 
+            sendProjectListMessage(AuthService.getToken());
+
         }
-        
+
         function sendProjectListMessage(token) {
             console.log('send project list message with token = ' + token);
             socket.on('project_list_response', function(msg) {
