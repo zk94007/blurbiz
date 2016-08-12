@@ -70,6 +70,10 @@ function updateProjectFields(projectId, namesAndValuesArray, cb) {
 	updateFields('project', projectId, namesAndValuesArray, cb);
 }
 
+function updateUserFields(userId, namesAndValuesArray, cb) {
+        updateFields('user', userId, namesAndValuesArray, cb);
+}
+
 //TODO use connection pool
 function query_pool(text, values, cb) {
       pg.connect(function(err, client, done) {
@@ -101,11 +105,14 @@ function query(text, values, cb) {
 	});
 }
 
-function successFalseCb(msg, callback) {
+function successFalseCb(msg, callback, additionalParams) {
 	var result = {
         	'success': false,
                 'msg': '' + msg
         };
+	if (additionalParams) {
+                result = mergeJson(result, additionalParams);
+        }
         if (callback != null) {
         	callback(null, result);
         }
@@ -236,6 +243,23 @@ function deleteProject(projectId, callback) {
         }
 }
 
+function deleteEmailConfirmationEntry(userId, callback) {
+        try {
+                console.log('call method deleteEmailConfirmationEntry: userId = ' + userId);
+                query('DELETE FROM public.email_confirmation WHERE user_id = $1;', [userId], function(err, result) {
+                        if (err) {
+                                successFalseCb(err, callback);
+                        } else {
+                                successCb(callback);
+
+                        }
+                });
+        } catch (err) {
+                console.log('error in method deleteEmailConfirmationEntry: ' + err);
+                successFalseCb(err, callback);
+        }
+}
+
 function confirmateEmail(userId, code, callback) {
         try {
                 console.log('call method confirmateEmail: userId = ' + userId + ', code = ' + code);
@@ -257,7 +281,13 @@ function confirmateEmail(userId, code, callback) {
 							successFalseCb(err1, callback);
 							return;
 						}
-	                                	successCb(callback);
+						deleteEmailConfirmationEntry(userId, function(err2, result2) {
+			                                if (err2) {
+                	                                        successFalseCb(err2, callback);
+        	                                                return;
+	                                                }
+		                                	successCb(callback);
+						});
 					});
 				}
                         }
@@ -273,7 +303,7 @@ function confirmateEmail(userId, code, callback) {
 function projectList(userId, callback) {
         try {
                 console.log('call method projectList: userId = ' + userId);      
-		query('SELECT id, project_name FROM public.project WHERE user_id = $1;', 
+		query('SELECT id, project_name, screen_count, representative, created_at FROM public.project WHERE user_id = $1;', 
 			[userId], function(err, result) {
                         if (err) {
                         	successFalseCb(err, callback);
@@ -283,7 +313,10 @@ function projectList(userId, callback) {
 	                        	var row = result.rows[i];
 					var project = {
 						'project_id': row.id,
-						'project_name': row.project_name
+						'project_name': row.project_name,
+						'screen_count': row.screen_count,
+						'representative': row.representative,
+						'created_at': row.created_at
 					};
        	                        	projects.push(project);
 				}
@@ -327,9 +360,15 @@ function checkAuth(email, password, callback) {
                         		}
 					//console.log(JSON.stringify(user));
 					if (user.password == password) {
-						successCb(callback, {
-							'token': getToken(user)
-						});
+						if (user.is_confirmed == false) {
+							successFalseCb('email is not confirmed: ' + email, callback, {
+								'is_confirmed': false
+							});
+						} else {
+							successCb(callback, {
+								'token': getToken(user)
+							});
+						}
 					} else {
 						successFalseCb('incorrect password for user ' + email, callback);
 					}
@@ -558,4 +597,12 @@ io1.on('connection', function(socket1) {
                         socket1.emit('update_project_response', result);
                 });
         });
+
+        authRequiredCall(socket1, 'update_user', function(userInfo, message) {
+                updateUserFields(message.user_id, message.fields, function(err, result) {
+                        console.log('send update_user response: ' + JSON.stringify(result))
+                        socket1.emit('update_user_response', result);
+                });
+        });
+
 });

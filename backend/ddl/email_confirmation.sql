@@ -20,3 +20,5 @@ WITH (
 );
 ALTER TABLE email_confirmation
   OWNER TO postgres;
+
+INSERT INTO public.email_confirmation (user_id, code) VALUES ((SELECT id FROM public."user" where email = 'TestUserBase@gmail.com'), '68080683-37ea-4f7f-ae64-7476312222d8');
