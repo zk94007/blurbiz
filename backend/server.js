@@ -277,7 +277,7 @@ function confirmateEmail(userId, code, callback) {
 function projectList(userId, callback) {
         try {
                 console.log('call method projectList: userId = ' + userId);      
-		query('SELECT id, project_name FROM public.project WHERE user_id = $1;', 
+		query('SELECT id, project_name, screen_count, representative, created_at FROM public.project WHERE user_id = $1;', 
 			[userId], function(err, result) {
                         if (err) {
                         	successFalseCb(err, callback);
@@ -287,7 +287,10 @@ function projectList(userId, callback) {
 	                        	var row = result.rows[i];
 					var project = {
 						'project_id': row.id,
-						'project_name': row.project_name
+						'project_name': row.project_name,
+						'screen_count': row.screen_count,
+						'representative': row.representative,
+						'created_at': row.created_at
 					};
        	                        	projects.push(project);
 				}
