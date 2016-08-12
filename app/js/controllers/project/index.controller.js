@@ -28,10 +28,38 @@
 
         function initController() {
             // get current user
-            ProjectService.GetAll($rootScope.user._id).then(function (projects) {
-                $scope.projects = projects;
+            // ProjectService.GetAll($rootScope.user._id).then(function (projects) {
+            //     $scope.projects = projects;
+            // });
+
+        }
+        
+        function sendProjectListMessage(token) {
+            console.log('send project list message with token = ' + token);
+            socket.on('project_list_response', function(msg) {
+                console.log('received project list response: ' + JSON.stringify(msg));
+                if (msg == null) {
+                        console.log('ERROR: msg is null');
+                        return;
+                }
+                if (msg.success == true) {
+                        if (msg.projects != null) {
+                                console.log('CORRECT');
+                        } else {
+                                console.log('ERROR: success == true, but projects field is null');
+                        }
+                        return;
+                }
+                if (msg.err != null && msg.err != '') {
+                        console.log('ERROR: ' + err);
+                        return;
+                }
+            });
+            socket.emit('project_list', {
+                    'token': token
             });
         }
+
 
         function saveUser() {
             UserService.Update(vm.user)

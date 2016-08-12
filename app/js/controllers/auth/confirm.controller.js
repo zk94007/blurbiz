@@ -3,9 +3,9 @@
  */
 
 angular.module('Blurbiz')
-    .controller('LoginController', ['$scope', '$cookieStore', '$state', 'socket', 'AuthService', LoginController]);
+    .controller('ConfirmController', ['$scope', '$cookieStore', '$state', 'socket', ConfirmController]);
 
-function LoginController($scope, $cookieStore, $state, socket, AuthService) {
+function ConfirmController($scope, $cookieStore, $state, socket) {
     $scope.message = {};
     $scope.login = function() {
         socket.emit('authenticate', {
@@ -30,8 +30,7 @@ function LoginController($scope, $cookieStore, $state, socket, AuthService) {
         }
         if (msg.success == true && msg.token != null) {
                 console.log('CORRECT');
-                AuthService.saveToken(msg.token);
-                $state.go("index");
+                
                 return;
         }
         if (msg.success == true && msg.token == null) {

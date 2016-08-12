@@ -13,13 +13,13 @@ function SignupController($scope, $cookieStore, socket) {
             'name': $scope.name,
             'company': $scope.company,
             'email': $scope.email,
-            'front_path': 'http://www.blurbiz.com/confirm/'
+            'front_path': 'http://localhost:4000/#/confirm/'
         });
     };   
 
     socket.on('signup_response', function(msg) {
         debugger;
-        console.log('singup response: ' + JSON.stringify(msg));
+        console.log('signup response: ' + JSON.stringify(msg));
         if (msg == null) {
                 console.log('ERROR: msg is null');
                 return;

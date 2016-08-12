@@ -7,11 +7,21 @@
 
     function Service(socket) {
         var service = {};
+        service.saveToken = saveToken;
+        service.getToken = getToken;
         service.login = login;
         service.signup = signup;
         service.confirmation = email_confirmation;
 
         return service;
+
+        function saveToken(token) {
+            $window.localStorage['jwtToken'] = token;
+        }
+
+        function getToken() {
+            return $window.localStorage['jwtToken'];
+        }
 
         function login(email, password) {
         	socket.emit('authenticate', {

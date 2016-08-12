@@ -14,13 +14,18 @@
             $stateProvider
                 .state('login', {
                     url: '/login',
-                    templateUrl: 'templates/login.html',
+                    templateUrl: 'templates/auth/login.html',
                     controller: 'LoginController'
                 })
                 .state('register', {
                     url: '/signup', 
-                    templateUrl: 'templates/signup.html',
+                    templateUrl: 'templates/auth/signup.html',
                     controller: 'SignupController'
+                })
+                .state('confirmation', {
+                    url: '/confirmation/:uuid',
+                    templateUrl: 'templates/auth/confirmation.html',
+                    controller: 'ConfirmControlller'
                 })
                 .state('index', {
                     url: '/',
@@ -35,7 +40,16 @@
                     data: { pageTitle: 'Schedule' }
                 });
         }
-    ]);
+    ])
+    .run(['$rootScope', '$location', 'AuthService', function($rootScope, $location, AuthService) {
+        $rootScope.$on('$locationChnageStart', function(event, next, current) {
+            var publicPages = ['/login', '/signup'];
+            var restrictedPage = publicPages.indexOf($location.path()) === -1;
+            if (restrictedPage && !AuthService.getToken()) {
+                $location.path('/login');
+            }
+        });
+    }]);
     // .run(['$http', '$rootScope', '$window', '$cookieStore', 'UserService', function($http, $rootScope, $window, $cookieStore, UserService) {
     //     // add JWT token as default auth header
     //     $http.defaults.headers.common['Authorization'] = 'Bearer ' + $window.jwtToken;
