@@ -17,6 +17,11 @@
                     templateUrl: 'templates/login.html',
                     controller: 'LoginController'
                 })
+                .state('register', {
+                    url: '/signup', 
+                    templateUrl: 'templates/signup.html',
+                    controller: 'SignupController'
+                })
                 .state('index', {
                     url: '/',
                     templateUrl: 'templates/project/all.html',
