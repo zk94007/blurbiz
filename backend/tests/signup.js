@@ -1,5 +1,5 @@
 var io = require('socket.io-client')
-var socket = io.connect('http://52.27.133.78:3040');
+var socket = io.connect('http://localhost:3040');
 
 function randomIntInc (low, high) {
     return Math.floor(Math.random() * (high - low + 1) + low);
