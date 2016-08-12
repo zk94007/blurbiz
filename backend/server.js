@@ -243,6 +243,23 @@ function deleteProject(projectId, callback) {
         }
 }
 
+function deleteEmailConfirmationEntry(userId, callback) {
+        try {
+                console.log('call method deleteEmailConfirmationEntry: userId = ' + userId);
+                query('DELETE FROM public.email_confirmation WHERE user_id = $1;', [userId], function(err, result) {
+                        if (err) {
+                                successFalseCb(err, callback);
+                        } else {
+                                successCb(callback);
+
+                        }
+                });
+        } catch (err) {
+                console.log('error in method deleteEmailConfirmationEntry: ' + err);
+                successFalseCb(err, callback);
+        }
+}
+
 function confirmateEmail(userId, code, callback) {
         try {
                 console.log('call method confirmateEmail: userId = ' + userId + ', code = ' + code);
@@ -264,7 +281,13 @@ function confirmateEmail(userId, code, callback) {
 							successFalseCb(err1, callback);
 							return;
 						}
-	                                	successCb(callback);
+						deleteEmailConfirmationEntry(userId, function(err2, result2) {
+			                                if (err2) {
+                	                                        successFalseCb(err2, callback);
+        	                                                return;
+	                                                }
+		                                	successCb(callback);
+						});
 					});
 				}
                         }
