@@ -29,6 +29,10 @@ function SignupController($scope, $cookieStore, socket) {
                 console.log('ERROR: expected answer - { success: true }, err: ' + msg.msg);
         } else {
                 console.log('CORRECT');
+                socket.emit('authenticate', {
+                    'login': $scope.email,
+                    'password': $scope.password
+                });
         }
     }); 
 }
