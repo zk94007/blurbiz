@@ -48,6 +48,7 @@
     ])
     .run(['$rootScope', '$location', 'AuthService', function($rootScope, $location, AuthService) {
         $rootScope.$on('$locationChnageStart', function(event, next, current) {
+            debugger;
             var publicPages = ['/login', '/signup'];
             var restrictedPage = publicPages.indexOf($location.path()) === -1;
             if (restrictedPage && !AuthService.getToken()) {
