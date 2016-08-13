@@ -400,6 +400,53 @@ function getUserInfo(email, callback) {
 	}
 }
 
+function getUserInfoById(id, callback) {
+        console.log('call method getUserInfoById: id = ' + id);
+        try {
+                query('SELECT * from public.user where id = $1', [id], function(err, result) {
+                        if (err) {
+                                successFalseCb(err, callback);
+                                return;
+                        }
+                        var user = result.rows[0];
+                        //console.log(JSON.stringify(user));
+                        if (callback != null) {
+                                callback(null, user);
+                        }
+                });
+        } catch (err) {
+                console.log('error in method getUserInfoById: ' + err);
+                successFalseCb(err, callback);
+        }
+}
+
+function getUserIdByResetCode(resetCode, callback) {
+	console.log('call method getUserIdByResetCode: resetCode = ' + resetCode);
+	try {
+                query('SELECT user_id from public.reset_password where code = $1', [resetCode], function(err, result) {
+                        if (err) {
+                                successFalseCb(err, callback);
+                                return;
+                        }
+			var row = result.rows[0];
+			if (!row) {
+				successCb(callback, {
+					'userId': null
+				});
+				return;
+			}
+                        var userId = result.rows[0].user_id;
+			successCb(callback, {
+				'userId': userId
+			});
+                });
+        } catch (err) {
+                console.log('error in method getUserIdByResetCode: ' + err);
+                successFalseCb(err, callback);
+        }
+
+}
+
 function isEmailExists(email, callback) {
 	console.log('call method isEmailExists, email = ' + email);
 	try {
@@ -491,6 +538,59 @@ function authRequiredCall(socket1, methodName, cb) {
 
 io1.on('connection', function(socket1) {
 	console.log("client connected");
+
+	//reset password
+	socket1.on('reset_password', function(message) {
+		console.log('received reset_password message: ' + JSON.stringify(message));
+                checkIfNotEmptyMessage(socket1, message, 'reset_password_response', function() {
+			var password = message.password;
+			var pass2 = message.confirm_password;
+			var resetCode = message.reset_code;
+			if (password != pass2) {
+				console.log('send reset_password_response: password and confirm_password are not equal');
+				socket1.emit('reset_password_response', {
+                                	'success': false,
+                                        'msg': 'password and confirm_password are not equal'
+                                });
+				return;
+			}
+			getUserIdByResetCode(resetCode, function(err, result) {
+				if (result.success == false) {
+					console.log('send reset_password_response: ' + result.msg);
+                                        socket1.emit('reset_password_response', result);
+					return;
+				} 
+				var userId = result.userId;
+				if (!userId) {
+					var result = {
+						'success': false,
+						'msg': 'user not found'
+					};
+                                        console.log('send reset_password_response: user not found');
+                                        socket1.emit('reset_password_response', result);
+					return;
+				}
+				getUserInfoById(userId, function(err1, result1) {
+					if (result.success == false) {
+						console.log('send reset_password_response: ' + JSON.stringify(result1));
+						socket1.emit('reset_password_response', result1);
+						return;
+					}
+					//passwords are equal, reset_code exists - updateUser, set new password
+					var fields = [
+						{
+							'name': 'password',
+							'value': password
+						}
+					];
+					updateUserFields(userId, fields, function(err2, result2) {
+			                        console.log('send reset_password_response: ' + JSON.stringify(result2))
+                        			socket1.emit('reset_password_response', result2);
+					});
+				});
+			});
+		});
+	});
 
 	//signup method
 	socket1.on('signup', function(message)      {
@@ -607,5 +707,4 @@ io1.on('connection', function(socket1) {
                         socket1.emit('update_user_response', result);
                 });
         });
-
 });

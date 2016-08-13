@@ -2,7 +2,7 @@ CREATE SEQUENCE user_id_seq
   INCREMENT 1
   MINVALUE 1
   MAXVALUE 9223372036854775807
-  START 14
+  START 1
   CACHE 1;
 ALTER TABLE user_id_seq
   OWNER TO postgres;
@@ -25,5 +25,4 @@ WITH (
 ALTER TABLE "user"
   OWNER TO postgres;
   
-
 INSERT INTO public."user" (email, password, name, is_confirmed) VALUES ('TestUserBase@gmail.com', 'Test', 'Test Name', true);
