@@ -38,7 +38,14 @@ function LoginController($scope, $cookieStore, $state, socket, AuthService) {
         if (msg.success == true && msg.token != null) {
                 console.log('CORRECT');
                 AuthService.saveToken(msg.token);
+                AuthService.saveConfirmStatus(msg.is_confirmed);
+
+                // if (msg.is_confirmed)
+                //     $state.go("index");
+                // else
+                //     $state.go("waiting");
                 $state.go("index");
+                
                 return;
         }
         if (msg.success == true && msg.token == null) {

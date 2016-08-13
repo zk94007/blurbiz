@@ -9,6 +9,8 @@
         var service = {};
         service.saveToken = saveToken;
         service.getToken = getToken;
+        service.saveConfirmStatus = saveConfirmStatus;
+        service.getConfirmStatus = getConfirmStatus;
         service.login = login;
         service.logout = logout;
         service.signup = signup;
@@ -24,8 +26,17 @@
             return $window.localStorage['jwtToken'];
         }
 
+        function saveConfirmStatus(status) {
+            $window.localStorage['is_confirmed'] = status;
+        }
+
+        function getConfirmStatus() {
+            return $window.localStorage['is_confirmed'];
+        }
+
         function logout() {
             $window.localStorage.removeItem('jwtToken');
+            $window.localStorage.removeItem('is_confirmed');
         }
 
         function login(email, password) {

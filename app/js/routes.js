@@ -23,9 +23,14 @@
                     controller: 'SignupController'
                 })
                 .state('confirmation', {
-                    url: '/confirmation/:uuid',
-                    templateUrl: 'templates/auth/confirmation.html',
+                    url: '/confirm/:uuid',
+                    templateUrl: 'templates/auth/waiting.html',
                     controller: 'ConfirmControlller'
+                })
+                .state('waiting', {
+                    url: '/unverified',
+                    templateUrl: 'templates/auth/waiting.html',
+                    // controller: 'WaitingController'
                 })
                 .state('index', {
                     url: '/',
@@ -47,6 +52,9 @@
             var restrictedPage = publicPages.indexOf($location.path()) === -1;
             if (restrictedPage && !AuthService.getToken()) {
                 $location.path('/login');
+            }
+            else if (restrictedPage && AuthService.getToken() && !AuthService.getConfirmStatus()) {
+                $location.path('/waiting');
             }
         });
     }]);
