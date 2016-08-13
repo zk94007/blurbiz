@@ -25,7 +25,7 @@
                 .state('confirmation', {
                     url: '/confirm/:uuid',
                     templateUrl: 'templates/auth/waiting.html',
-                    controller: 'ConfirmControlller'
+                    controller: 'ConfirmController'
                 })
                 .state('waiting', {
                     url: '/unverified',

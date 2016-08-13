@@ -33,6 +33,11 @@ function SignupController($scope, $cookieStore, socket) {
                     'login': $scope.email,
                     'password': $scope.password
                 });
+
+                socket.on('authenticate_response', function(msg) {
+                    debugger;
+                    console.log("here");
+                });
         }
     }); 
 }
