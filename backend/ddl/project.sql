@@ -25,4 +25,7 @@ WITH (
 ALTER TABLE public.project
   OWNER TO postgres;
 
-INSERT INTO public.project (user_id, project_name) VALUES ((SELECT id FROM public."user" where email = 'TestUserBase@gmail.com'), 'project_name_test');
+INSERT INTO public.project (user_id, project_name) VALUES (
+	(SELECT id FROM public."user" where email = 'TestUserBase@gmail.com'), 
+	'project_name_test'
+);
