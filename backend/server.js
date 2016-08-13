@@ -152,7 +152,6 @@ function createEmailConfirmationEntry(userId, code, callback) {
                         	successCb(callback);
 			}
                 });
-
 	} catch (err) {
 		console.log('error in method createEmailConfirmationEntry: ' + err);
                 successFalseCb(err, callback);
@@ -179,7 +178,7 @@ function createUser(email, password, name, callback) {
 				} else {
                                         var row = result.rows[0];
                                         var userId = row.id;
-                                        successCb(callback, null, {
+                                        successCb(callback, {
                                                 'user_id': userId
                                         });
 				}
@@ -360,15 +359,15 @@ function checkAuth(email, password, callback) {
                         		}
 					//console.log(JSON.stringify(user));
 					if (user.password == password) {
+						var msg = null;
 						if (user.is_confirmed == false) {
-							successFalseCb('email is not confirmed: ' + email, callback, {
-								'is_confirmed': false
-							});
-						} else {
-							successCb(callback, {
-								'token': getToken(user)
-							});
-						}
+							msg = 'waiting for email confirmation';
+						}  
+						successCb(callback, {
+                                                	'is_confirmed': user.is_confirmed,
+                                                        'msg': msg,
+							'token': getToken(user)
+                                                });
 					} else {
 						successFalseCb('incorrect password for user ' + email, callback);
 					}
@@ -521,11 +520,15 @@ io1.on('connection', function(socket1) {
 				return;
 			}
 
-			createUser(email, password, name, function(err, result, sepParams) {
+			createUser(email, password, name, function(err, result) {
                 	        console.log('send singup result: ' + JSON.stringify(result));
 //        	                socket1.emit('signup_response', result);
-				var userId = sepParams.user_id;
+				var userId = result.user_id;
 				var uuid = uuidGen.v4();
+				if (result.success == false) {
+					socket1.emit('signup_response', result);
+					return;
+				}
 				createEmailConfirmationEntry(userId, uuid, function (err1, result1) {
 					if (result1 && result1.success) {
 						var link = frontPath + uuid;
