@@ -22,6 +22,6 @@ ALTER TABLE reset_password
   OWNER TO postgres;
 
 INSERT INTO public.reset_password (user_id, code) VALUES (
-	(SELECT id FROM public."user" where email = 'TestUserBase@gmail.com'), 
+	(SELECT id FROM public."user" where email = 'TestUserBasePassword@gmail.com'), 
 	'9930633a-6ce8-4019-83fb-f2d6e74c7d50'
 );

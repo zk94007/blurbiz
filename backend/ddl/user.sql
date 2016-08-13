@@ -24,5 +24,8 @@ WITH (
 );
 ALTER TABLE "user"
   OWNER TO postgres;
+
   
+--Test data
 INSERT INTO public."user" (email, password, name, is_confirmed) VALUES ('TestUserBase@gmail.com', 'Test', 'Test Name', true);
+INSERT INTO public."user" (email, password, name, is_confirmed) VALUES ('TestUserBasePassword@gmail.com', 'Test', 'Test Name', true);
