@@ -152,7 +152,6 @@ function createEmailConfirmationEntry(userId, code, callback) {
                         	successCb(callback);
 			}
                 });
-
 	} catch (err) {
 		console.log('error in method createEmailConfirmationEntry: ' + err);
                 successFalseCb(err, callback);
@@ -179,7 +178,7 @@ function createUser(email, password, name, callback) {
 				} else {
                                         var row = result.rows[0];
                                         var userId = row.id;
-                                        successCb(callback, null, {
+                                        successCb(callback, {
                                                 'user_id': userId
                                         });
 				}
@@ -360,15 +359,15 @@ function checkAuth(email, password, callback) {
                         		}
 					//console.log(JSON.stringify(user));
 					if (user.password == password) {
+						var msg = null;
 						if (user.is_confirmed == false) {
-							successFalseCb('email is not confirmed: ' + email, callback, {
-								'is_confirmed': false
-							});
-						} else {
-							successCb(callback, {
-								'token': getToken(user)
-							});
-						}
+							msg = 'waiting for email confirmation';
+						}  
+						successCb(callback, {
+                                                	'is_confirmed': user.is_confirmed,
+                                                        'msg': msg,
+							'token': getToken(user)
+                                                });
 					} else {
 						successFalseCb('incorrect password for user ' + email, callback);
 					}
@@ -399,6 +398,53 @@ function getUserInfo(email, callback) {
 		console.log('error in method getUserInfo: ' + err);
 		successFalseCb(err, callback);
 	}
+}
+
+function getUserInfoById(id, callback) {
+        console.log('call method getUserInfoById: id = ' + id);
+        try {
+                query('SELECT * from public.user where id = $1', [id], function(err, result) {
+                        if (err) {
+                                successFalseCb(err, callback);
+                                return;
+                        }
+                        var user = result.rows[0];
+                        //console.log(JSON.stringify(user));
+                        if (callback != null) {
+                                callback(null, user);
+                        }
+                });
+        } catch (err) {
+                console.log('error in method getUserInfoById: ' + err);
+                successFalseCb(err, callback);
+        }
+}
+
+function getUserIdByResetCode(resetCode, callback) {
+	console.log('call method getUserIdByResetCode: resetCode = ' + resetCode);
+	try {
+                query('SELECT user_id from public.reset_password where code = $1', [resetCode], function(err, result) {
+                        if (err) {
+                                successFalseCb(err, callback);
+                                return;
+                        }
+			var row = result.rows[0];
+			if (!row) {
+				successCb(callback, {
+					'userId': null
+				});
+				return;
+			}
+                        var userId = result.rows[0].user_id;
+			successCb(callback, {
+				'userId': userId
+			});
+                });
+        } catch (err) {
+                console.log('error in method getUserIdByResetCode: ' + err);
+                successFalseCb(err, callback);
+        }
+
 }
 
 function isEmailExists(email, callback) {
@@ -493,6 +539,59 @@ function authRequiredCall(socket1, methodName, cb) {
 io1.on('connection', function(socket1) {
 	console.log("client connected");
 
+	//reset password
+	socket1.on('reset_password', function(message) {
+		console.log('received reset_password message: ' + JSON.stringify(message));
+                checkIfNotEmptyMessage(socket1, message, 'reset_password_response', function() {
+			var password = message.password;
+			var pass2 = message.confirm_password;
+			var resetCode = message.reset_code;
+			if (password != pass2) {
+				console.log('send reset_password_response: password and confirm_password are not equal');
+				socket1.emit('reset_password_response', {
+                                	'success': false,
+                                        'msg': 'password and confirm_password are not equal'
+                                });
+				return;
+			}
+			getUserIdByResetCode(resetCode, function(err, result) {
+				if (result.success == false) {
+					console.log('send reset_password_response: ' + result.msg);
+                                        socket1.emit('reset_password_response', result);
+					return;
+				} 
+				var userId = result.userId;
+				if (!userId) {
+					var result = {
+						'success': false,
+						'msg': 'user not found'
+					};
+                                        console.log('send reset_password_response: user not found');
+                                        socket1.emit('reset_password_response', result);
+					return;
+				}
+				getUserInfoById(userId, function(err1, result1) {
+					if (result.success == false) {
+						console.log('send reset_password_response: ' + JSON.stringify(result1));
+						socket1.emit('reset_password_response', result1);
+						return;
+					}
+					//passwords are equal, reset_code exists - updateUser, set new password
+					var fields = [
+						{
+							'name': 'password',
+							'value': password
+						}
+					];
+					updateUserFields(userId, fields, function(err2, result2) {
+			                        console.log('send reset_password_response: ' + JSON.stringify(result2))
+                        			socket1.emit('reset_password_response', result2);
+					});
+				});
+			});
+		});
+	});
+
 	//signup method
 	socket1.on('signup', function(message)      {
 	        console.log('received singup message: ' + JSON.stringify(message));
@@ -521,11 +620,15 @@ io1.on('connection', function(socket1) {
 				return;
 			}
 
-			createUser(email, password, name, function(err, result, sepParams) {
+			createUser(email, password, name, function(err, result) {
                 	        console.log('send singup result: ' + JSON.stringify(result));
 //        	                socket1.emit('signup_response', result);
-				var userId = sepParams.user_id;
+				var userId = result.user_id;
 				var uuid = uuidGen.v4();
+				if (result.success == false) {
+					socket1.emit('signup_response', result);
+					return;
+				}
 				createEmailConfirmationEntry(userId, uuid, function (err1, result1) {
 					if (result1 && result1.success) {
 						var link = frontPath + uuid;
@@ -604,5 +707,4 @@ io1.on('connection', function(socket1) {
                         socket1.emit('update_user_response', result);
                 });
         });
-
 });
