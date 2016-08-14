@@ -14,53 +14,72 @@
             $stateProvider
                 .state('login', {
                     url: '/login',
-                    templateUrl: 'templates/auth/login.html',
-                    controller: 'LoginController'
+                    templateUrl: 'templates/login.html',
+                    controller: 'AuthController',
+                    requireAuth: false
                 })
                 .state('register', {
                     url: '/signup', 
-                    templateUrl: 'templates/auth/signup.html',
-                    controller: 'SignupController'
+                    templateUrl: 'templates/signup.html',
+                    controller: 'AuthController',
+                    requireAuth: false
                 })
-                .state('confirmation', {
-                    url: '/confirm/:uuid',
-                    templateUrl: 'templates/auth/waiting.html',
-                    controller: 'ConfirmController'
+                .state('wait-confirm', {
+                    url: '/wait-confirm',
+                    templateUrl: 'templates/wait-confirm.html',
+                    controller: 'WaitConfirmateEmailController',
+                    requireAuth: true
                 })
-                .state('waiting', {
-                    url: '/unverified',
-                    templateUrl: 'templates/auth/waiting.html',
-                    // controller: 'WaitingController'
+                .state('confirm', {
+                    url: '/confirm/{email_code}',
+                    templateUrl: 'templates/confirm.html',
+                    controller: 'ConfirmateEmailController',
+                    requireAuth: true
                 })
                 .state('index', {
                     url: '/',
                     templateUrl: 'templates/project/all.html',
                     controller: 'Project.IndexController',
-                    data: { pageTitle: 'All Projects' }
+                    data: { pageTitle: 'All Projects' },
+                    requireAuth: true
                 })
                 .state('tables', {
                     url: '/tables',
                     templateUrl: 'templates/tables.html',
                     // controller: 'Schedule.IndexController',
-                    data: { pageTitle: 'Schedule' }
+                    data: { pageTitle: 'Schedule' },
+                    requireAuth: true
                 });
         }
     ])
-    .run(['$rootScope', '$location', '$state', 'AuthService', function($rootScope, $location, $state, AuthService) {
-        $rootScope.$on('$locationChangeStart', function(event, next, current) {
-            var publicPages = ['/login', '/signup'];
-            var restrictedPage = publicPages.indexOf($location.path()) === -1;
-            if (restrictedPage && !AuthService.getToken()) {
-                // $location.path('/login');
-                $state.go('login');
-            }
-            else if (restrictedPage && AuthService.getToken() && !AuthService.getConfirmStatus()) {
-                if($location.path() != '/unverified' && !$location.path().startsWith("/confirm/"))
-                    // $location.path('/unverified');
-                $state.go('waiting');
-            }
-        });
-    }]);
+    .run(['$rootScope', '$state', 'LocalStorageService', function($rootScope, $state, LocalStorageService) {
+          $rootScope.$on('$stateChangeStart',
+            function(event, toState, toParams, fromState, fromParams, options){
+
+                // redirect to login page if user not loggedin
+                var token = LocalStorageService.getToken();
+                if (toState.requireAuth == true && (token === undefined || token === null)){
+                    event.preventDefault();
+                    $state.go('login')
+                }
+
+                // redirect to wait confirm if email not confirmed
+                //todo exclude other routes if needed
+                var exclude_routes = [
+                  'login',
+                  'register',
+                  'confirm',
+                  'wait-confirm'
+                ];
+                var userEmailisConfirmed = LocalStorageService.get('is_confirmed');
+                userEmailisConfirmed = (userEmailisConfirmed !== undefined && userEmailisConfirmed !== null) ? JSON.parse(userEmailisConfirmed) : false;
+                if (exclude_routes.indexOf(toState.name) === -1 && userEmailisConfirmed === false){
+                    event.preventDefault();
+                    $state.go('wait-confirm')
+                }
+          });
+      }
+      ]);
     // .run(['$http', '$rootScope', '$window', '$cookieStore', 'UserService', function($http, $rootScope, $window, $cookieStore, UserService) {
     //     // add JWT token as default auth header
     //     $http.defaults.headers.common['Authorization'] = 'Bearer ' + $window.jwtToken;

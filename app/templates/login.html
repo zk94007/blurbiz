@@ -1,0 +1,13 @@
+<div class="form-container">
+  <form class="form-signin" method="post" ng-submit="login()">
+    <h2>Login</h2>
+
+    <div ng-if="message.error" class="alert alert-danger">{{ message.error }}</div>
+    <div ng-if="message.success" class="alert alert-success">{{ message.success }}</div>
+    <input type="text" name="email" id="email" ng-model="email" class="form-control" placeholder="Email"/>
+    <input type="password" name="password" id="password" ng-model="password" class="form-control" placeholder="Password"/>
+
+    <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
+    <a ui-sref="register" class="btn btn-link">Register</a>
+  </form>
+</div>

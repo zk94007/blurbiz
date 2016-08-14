@@ -1,0 +1,16 @@
+<div class="form-container">
+  <form class="form-signup" method="post" ng-submit="signup()">
+    <h2>Register</h2>
+
+    <div ng-if="message.error" class="alert alert-danger">{{ message.error }}</div>
+    <div ng-if="message.success" class="alert alert-success">{{ message.success }}</div>
+
+    <input type="text" name="name" id="name" class="form-control" ng-model="name" required placeholder="Name"/>
+    <input type="text" name="email" id="email" ng-model="email" class="form-control" required placeholder="Email"/>
+    <input type="text" name="company" id="company" class="form-control" ng-model="company" required placeholder="Company"/>
+    <input type="password" name="password" id="password" ng-model="password" class="form-control" required placeholder="Password"/>
+
+    <button type="submit" class="btn btn-primary btn-lg btn-block">Register</button>
+    <a ui-sref="login" class="btn btn-link">Login</a>
+  </form>
+</div>

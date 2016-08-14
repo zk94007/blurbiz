@@ -1,14 +1,3 @@
-<header>
-    <ul class="nav nav-tabs">
-        <li ng-class="{active: activeTab === 'home'}"><a ui-sref="home">Home</a></li>
-        <li ng-class="{active: activeTab === 'account'}"><a ui-sref="account">Account</a></li>
-        <li><a ui-sref="login" target="_self">Logout</a></li>
-    </ul>
-    <div class="flash-message" ng-if="flash">
-        <div class="{{'alert alert-' + flash.type}}" ng-bind="flash.message"></div>
-    </div>
-</header>
-
 <div class="projects-container">
 	<div class="row">
 		<button type="button" class="btn btn-success pull-right" ng-click="openModal()">Create Project</button>
