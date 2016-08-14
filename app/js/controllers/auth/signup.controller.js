@@ -39,7 +39,6 @@ function SignupController($scope, $cookieStore, $state, socket, AuthService) {
                 });
 
                 socket.on('authenticate_response', function(msg) {
-                    debugger;
                     console.log('authenticate response: ' + JSON.stringify(msg));
                     if (msg.success == false) {
                         $scope.message = {

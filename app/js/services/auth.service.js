@@ -31,7 +31,7 @@
         }
 
         function getConfirmStatus() {
-            return $window.localStorage['is_confirmed'];
+            return $window.localStorage['is_confirmed'] == "true";
         }
 
         function logout() {

@@ -46,16 +46,18 @@
                 });
         }
     ])
-    .run(['$rootScope', '$location', 'AuthService', function($rootScope, $location, AuthService) {
-        $rootScope.$on('$locationChnageStart', function(event, next, current) {
-            debugger;
+    .run(['$rootScope', '$location', '$state', 'AuthService', function($rootScope, $location, $state, AuthService) {
+        $rootScope.$on('$locationChangeStart', function(event, next, current) {
             var publicPages = ['/login', '/signup'];
             var restrictedPage = publicPages.indexOf($location.path()) === -1;
             if (restrictedPage && !AuthService.getToken()) {
-                $location.path('/login');
+                // $location.path('/login');
+                $state.go('login');
             }
             else if (restrictedPage && AuthService.getToken() && !AuthService.getConfirmStatus()) {
-                $location.path('/waiting');
+                if($location.path() != '/unverified' && !$location.path().startsWith("/confirm/"))
+                    // $location.path('/unverified');
+                $state.go('waiting');
             }
         });
     }]);

@@ -21,6 +21,7 @@ function ConfirmController($scope, $stateParams, $cookieStore, $state, socket, A
         }
         if (msg.success == true) {
                 AuthService.saveConfirmStatus(true);
+                $state.go("index");
                 return;
         }
         if (msg.err != null && msg.err != '') {
