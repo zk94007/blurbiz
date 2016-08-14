@@ -27,21 +27,19 @@
   <script type="text/javascript" src="js/module.js"></script>
   <script type="text/javascript" src="js/routes.js"></script>
 
-  <script type="text/javascript" src="js/services/auth.service.js"></script>
   <script type="text/javascript" src="js/services/socket.service.js"></script>
   <script type="text/javascript" src="js/services/user.service.js"></script>
   <script type="text/javascript" src="js/services/project.service.js"></script>
   <script type="text/javascript" src="js/services/flash.service.js"></script>
+  <script type="text/javascript" src="js/services/local.storage.service.js"></script>
 
-  <script type="text/javascript" src="js/controllers/auth/login.controller.js"></script>
-  <script type="text/javascript" src="js/controllers/auth/signup.controller.js"></script>
-  <script type="text/javascript" src="js/controllers/auth/confirm.controller.js"></script>
-  
+  <script type="text/javascript" src="js/controllers/auth/auth.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/auth/confirmate.email.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/auth/wait.confirmate.email.controller.js"></script>
   <script type="text/javascript" src="js/controllers/project/index.controller.js"></script>
   <script type="text/javascript" src="js/controllers/project/modal.controller.js"></script>
   <script type="text/javascript" src="js/controllers/master-ctrl.js"></script>
   <script type="text/javascript" src="js/controllers/alert-ctrl.js"></script>
-
   <script type="text/javascript" src="js/directives/err-src.js"></script>
   <script type="text/javascript" src="js/directives/loading.js"></script>
   <script type="text/javascript" src="js/directives/widget-body.js"></script>
@@ -51,7 +49,7 @@
 
 </head>
 <body>
-  <div ui-view>
+  <div class="container" ui-view>
 
   </div><!-- End Page Wrapper -->
 </body>
