@@ -114,3 +114,33 @@ function upload {
 }
 
 invoke echo ok
+
+if [ -z "${branch+xxx}" ]; then branch=`git rev-parse --abbrev-ref HEAD` ; fi
+
+echo "branch is $branch"
+
+invoke "sudo apt-get update"
+invoke "sudo apt-get upgrade -y"
+invoke "sudo apt-get install -y software-properties-common"
+invoke "sudo apt-get install -y wget"
+invoke "sudo apt-get install -y curl"
+invoke "sudo add-apt-repository ppa:git-core/ppa && sudo apt-get update && sudo apt-get install -y git"
+invoke "export LC_ALL=C.UTF-8"
+invoke "sudo apt-get remove --purge nodejs npm"
+invoke "sudo curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -"
+invoke "sudo apt-get install -y nodejs"
+invoke "git config --global user.email 'aoshmyanskaya@gmail.com'"
+invoke "git config --global user.name 'Alexandra Oshmyanskaya'"
+invoke "curl -sL https://deb.nodesource.com/setup | sudo bash -"
+invoke "sudo npm install -g bower"
+upload ./id_rsa /home/ubuntu/.ssh/id_rsa
+upload ./id_rsa.pub /home/ubuntu/.ssh/id_rsa.pub
+invoke "sudo chmod 600 /home/ubuntu/.ssh/id_rsa"
+invoke "sudo chmod 644 /home/ubuntu/.ssh/id_rsa.pub"
+invoke "sudo chown ubuntu /home/ubuntu/.ssh/id_rsa"
+invoke "sudo chgrp nogroup /home/ubuntu/.ssh/id_rsa"
+invoke "sudo chown ubuntu /home/ubuntu/.ssh/id_rsa.pub"
+invoke "sudo chgrp nogroup /home/ubuntu/.ssh/id_rsa.pub"
+invoke "ssh-keyscan github.com >>/home/ubuntu/.ssh/known_hosts"
+invoke "cd /home/ubuntu && git clone -b $branch --single-branch git@github.com:TimurDaudpota/bb" 
+
