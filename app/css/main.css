@@ -22,6 +22,20 @@ ul.sidebar li.active {
     background: #363636;
 }
 
+img.icon {
+    height: 15px;
+}
+
+a.btn.center {
+    text-align: center;
+}
+
+a.btn.center img.icon{
+    display: block;
+    margin: 0 auto;
+
+}
+
  /* Toggle Styles */
  
  #wrapper {

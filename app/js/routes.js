@@ -45,11 +45,19 @@
                     template: '<div ui-view></div>'
                 })
                 .state('project.index', {
-                    url: '/project/all',
+                    url: '/all',
                     templateUrl: 'templates/project/all.html',
                     controller: 'Project.IndexController', 
                     data: {
                         title: 'All Projects'
+                    }
+                })
+                .state('project.edit',  {
+                    url: '/:id',
+                    templateUrl: 'templates/project/edit.html',
+                    controller: 'Project.EditController',
+                    data: {
+                        title: ''
                     }
                 })
                 .state('tables', {
