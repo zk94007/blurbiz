@@ -1,3 +1,4 @@
+
 ul.sidebar .sidebar-main .menu-icon {
     float: left;
     font-size: 18px;
@@ -14,7 +15,11 @@ ul.sidebar .sidebar-list .menu-icon {
 }
 
 ul.sidebar li {
-	background: green;
+	background: #3F3F3F;
+}
+
+ul.sidebar li.active {
+    background: #363636;
 }
 
  /* Toggle Styles */
@@ -41,7 +46,7 @@ ul.sidebar li {
     height: 100%;
     margin-left: -250px;
     overflow-y: auto;
-    background: #000;
+    background: #3F3F3F;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
@@ -201,4 +206,64 @@ hr {
         transition: all 0.5s ease;
         width: auto;
     }
+}
+
+.form-signup,
+.form-signin {
+  max-width: 400px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-signup .form-signup-heading,
+.form-signup .checkbox,
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signup .checkbox,
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signup .form-control,
+.form-signin .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signup .form-control:focus,
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[name="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-signin input[name="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.form-signup input[name="name"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-signup input[name="email"] {
+  margin-bottom: -1px;
+  border-radius: 0;
+}
+.form-signup input[name="company"] {
+  margin-bottom: -1px;
+  border-radius: 0;
+}
+.form-signup input[name="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }

@@ -31,8 +31,14 @@ function sendConfirmationEmail(email, link, cb) {
 	var template = config.mailConfig.template_signup_confirmation;
 	var from = template.from;
 	var to = email;
+<<<<<<< HEAD
+	var subject = mailOptions.subject;
+	var html = mailOptions.html;
+	console.log("link is " + link);
+=======
 	var subject = template.subject;
 	var html = template.html;
+>>>>>>> master
 	html = html.replace('link_placeholder', link);
 	
 	var options = {
