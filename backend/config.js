@@ -10,10 +10,15 @@ module.exports = {
 			user: 'no.reply.blurbiz@gmail.com',
 			pass: 'td#blurbiz123'
 		},
-		template: {
+		template_signup_confirmation: {
 		        'from': 'no.reply.blurbiz@gmal.com',
 		        'subject': 'Signup confirmation',
 		        'html': '<b>To finish registration follow the link:</b> link_placeholder'
+		},
+		template_reset_password: {
+			'from': 'no.reply.blurbiz@gmal.com',
+                        'subject': 'Reset password',
+                        'html': '<b>To reset password follow the link:</b> link_placeholder'
 		}
 	},
 	tokenKey: 'secret_token_key'
