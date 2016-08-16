@@ -5,8 +5,9 @@
         .module('Blurbiz.project')
         .controller('Project.IndexController', Controller);
 
-    function Controller($window, $scope, $rootScope, $uibModal, socket, ProjectService, FlashService) {
+    function Controller($window, $scope, $rootScope, $uibModal, socket, ProjectService, FlashService, LocalStorageService) {
 
+        var token = LocalStorageService.getToken();
         $scope.emptyImg = 'img/empty.png';
 
         $scope.sort_item = 'name';
@@ -32,7 +33,7 @@
             //     $scope.projects = projects;
             // });
 
-            // sendProjectListMessage(AuthService.getToken());
+             sendProjectListMessage(token);
 
         }
 
@@ -47,6 +48,7 @@
                 if (msg.success == true) {
                         if (msg.projects != null) {
                                 console.log('CORRECT');
+                                $scope.projects = msg.projects;
                         } else {
                                 console.log('ERROR: success == true, but projects field is null');
                         }

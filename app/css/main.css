@@ -1,17 +1,3 @@
-body {
-    padding-top: 100px;
-}
-
-.form-container {
-    width: 400px;
-    margin: auto;
-}
-
-.credits {
-    border-top: 1px solid #ddd;
-    margin-top: 40px;
-    padding-top: 20px;
-}
 
 ul.sidebar .sidebar-main .menu-icon {
     float: left;
@@ -29,7 +15,11 @@ ul.sidebar .sidebar-list .menu-icon {
 }
 
 ul.sidebar li {
-	background: green;
+	background: #3F3F3F;
+}
+
+ul.sidebar li.active {
+    background: #363636;
 }
 
  /* Toggle Styles */
@@ -56,7 +46,7 @@ ul.sidebar li {
     height: 100%;
     margin-left: -250px;
     overflow-y: auto;
-    background: #000;
+    background: #3F3F3F;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;

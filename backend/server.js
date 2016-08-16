@@ -20,6 +20,7 @@ function sendConfirmationEmail(email, userId, link, cb) {
 	var to = email;
 	var subject = mailOptions.subject;
 	var html = mailOptions.html;
+	console.log("link is " + link);
 	html = html.replace('link_placeholder', link);
 	
 	var options = {

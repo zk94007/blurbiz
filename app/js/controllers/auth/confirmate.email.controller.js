@@ -45,7 +45,7 @@ function ConfirmateEmailController($scope, $cookies, LocalStorageService, $state
       };
 
       $timeout(function(){
-        $state.go('index');
+        $state.go('index.project');
       }, 4000);
 
       console.log('CORRECT');

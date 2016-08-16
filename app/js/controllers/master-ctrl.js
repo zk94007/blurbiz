@@ -3,17 +3,21 @@
  */
 
 angular.module('Blurbiz')
-    .controller('MasterCtrl', ['$scope', '$cookieStore', 'UserService', MasterCtrl]);
+    .controller('IndexController', ['$scope', '$cookieStore',  MasterCtrl]);
 
-function MasterCtrl($scope, $cookieStore, UserService) {
+function MasterCtrl($scope, $cookieStore) {
     /**
      * Sidebar Toggle & Cookie Control
      */
     var mobileView = 992;
 
-    UserService.GetCurrent().then(function(user) {
-        $scope.user = user;
-    });
+    // UserService.GetCurrent().then(function(user) {
+    //     $scope.user = user;
+    // });
+
+    $scope.user = {
+        name: 'Aaron Wagner'
+    };
 
     $scope.getWidth = function() {
         return window.innerWidth;

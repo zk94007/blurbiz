@@ -15,40 +15,52 @@
                 .state('login', {
                     url: '/login',
                     templateUrl: 'templates/login.html',
-                    controller: 'AuthController',
-                    requireAuth: false
+                    controller: 'AuthController'
                 })
                 .state('register', {
                     url: '/signup', 
                     templateUrl: 'templates/signup.html',
-                    controller: 'AuthController',
-                    requireAuth: false
+                    controller: 'AuthController'
                 })
                 .state('wait-confirm', {
                     url: '/wait-confirm',
                     templateUrl: 'templates/wait-confirm.html',
-                    controller: 'WaitConfirmateEmailController',
-                    requireAuth: true
+                    controller: 'WaitConfirmateEmailController'
                 })
                 .state('confirm', {
                     url: '/confirm/{email_code}',
                     templateUrl: 'templates/confirm.html',
-                    controller: 'ConfirmateEmailController',
-                    requireAuth: true
+                    controller: 'ConfirmateEmailController'
                 })
                 .state('index', {
-                    url: '/',
-                    templateUrl: 'templates/project/all.html',
-                    controller: 'Project.IndexController',
-                    data: { pageTitle: 'All Projects' },
-                    requireAuth: true
+                    url: '',
+                    abstract: true,
+                    templateUrl: 'templates/index.html',
+                    controller: 'IndexController'
                 })
-                .state('tables', {
+                .state('index.project', {
+                    url: '/project/all',
+                    views: { 
+                        pageTitle: {
+                            template: 'All Projects'
+                        },
+                        content: {
+                            templateUrl: 'templates/project/all.html',
+                            controller: 'Project.IndexController'
+                        }
+                    }
+                })
+                .state('index.tables', {
                     url: '/tables',
-                    templateUrl: 'templates/tables.html',
                     // controller: 'Schedule.IndexController',
-                    data: { pageTitle: 'Schedule' },
-                    requireAuth: true
+                    views: {
+                        pageTitle: {
+                            template: 'Schedule'
+                        },
+                        content: {
+                            templateUrl: 'templates/tables.html',
+                        }
+                    }
                 });
         }
     ])
@@ -58,7 +70,10 @@
 
                 // redirect to login page if user not loggedin
                 var token = LocalStorageService.getToken();
-                if (toState.requireAuth == true && (token === undefined || token === null)){
+                var publicPages = ['login', 'register'];
+                var restrictedPage = publicPages.indexOf(toState.name) === -1;
+
+                if (restrictedPage && (token === undefined || token === null)){
                     event.preventDefault();
                     $state.go('login')
                 }
