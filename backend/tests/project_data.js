@@ -4,9 +4,11 @@ var baseTest = require('./base_auth_test.js');
 
 baseTest.baseAuth(socket, function(token) {
 	baseTest.checkResponse('project_data', token, socket, function(msg) {
-		console.log('project_data: ' + msg);
-		if (msg.id == 1) {
+		console.log('project_data_response: ' + msg);
+		if (msg.success) {
 			console.log('SUCCESS');
+		} else {
+			console.log('ERROR: ' + msg.err);
 		}
 	});
 	socket.emit('project_data', {

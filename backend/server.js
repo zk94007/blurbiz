@@ -474,9 +474,9 @@ function getProjectData(projectId, callback) {
                                 return;
                         }
                         var project = result.rows[0];
-                        if (callback != null) {
-                                callback(null, project);
-                        }
+			successCb(callback, {
+				'project_data': project
+			});
                 });
         } catch (err) {
                 console.log('error in method getProjectData: ' + err);
