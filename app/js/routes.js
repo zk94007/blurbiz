@@ -41,7 +41,7 @@
                 .state('index.project', {
                     url: '/project/all',
                     views: { 
-                        pageTitle: {
+                        title: {
                             template: 'All Projects'
                         },
                         content: {
@@ -54,7 +54,7 @@
                     url: '/tables',
                     // controller: 'Schedule.IndexController',
                     views: {
-                        pageTitle: {
+                        title: {
                             template: 'Schedule'
                         },
                         content: {
