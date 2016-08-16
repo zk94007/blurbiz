@@ -465,6 +465,48 @@ function getUserInfo(email, callback) {
 }
 
 
+function addMediaFile(projectId, path, callback) {
+        try {
+                console.log('call method addMediaFile: projectId = ' + projectId + ', path: ' + path);
+                query('INSERT INTO public.media_file (project_id, path) VALUES ($1, $2) RETURNING id;', [projectId, path], function(err, result) {
+                        if (err) {
+                                successFalseCb(err, callback);
+                        } else {
+				var row = result.rows[0];
+				if (row != null) {
+	                                successCb(callback, {
+        	                                'media_file_id': row.id
+                	                });
+				} else {
+					successFalseCb('result row is null for the query', callback);
+				}
+                        }
+                });
+        } catch (err) {
+                console.log('error in method addMediaFile: ' + err);
+                successFalseCb(err, callback);
+        }
+
+}
+
+function getMediaFileList(projectId, callback) {
+	console.log('call method getMediaFileList: projectId = ' + projectId);
+        try {
+                query('SELECT * from public.media_file where project_id = $1', [projectId], function(err, result) {
+                        if (err) {
+                                successFalseCb(err, callback);
+                                return;
+                        }
+                        successCb(callback, {
+                                'media_file_list': result.rows
+                        });
+                });
+        } catch (err) {
+                console.log('error in method getMediaFileList: ' + err);
+                successFalseCb(err, callback);
+        }
+}
+
 function getProjectData(projectId, callback) {
         console.log('call method getProjectData: projectId = ' + projectId);
         try {
@@ -474,8 +516,20 @@ function getProjectData(projectId, callback) {
                                 return;
                         }
                         var project = result.rows[0];
-			successCb(callback, {
-				'project_data': project
+			getMediaFileList(projectId, function(err1, result1) {
+				if (err1) {
+                	                successFalseCb(err1, callback);
+        	                        return;
+	                        }
+				if (result.success == false) {
+					successFalseCb(result1.msg, callback);
+					return;
+				}
+				successCb(callback, {
+                        	        'project_data': project,
+					'media_files': result1.media_file_list
+                	        });
+
 			});
                 });
         } catch (err) {
@@ -840,4 +894,11 @@ io1.on('connection', function(socket1) {
                 });
         });
 
+
+        authRequiredCall(socket1, 'media_file_add', function(userInfo, message) {
+                addMediaFile(message.project_id, message.path, function(err, result) {
+                        console.log('send media_file_add response: ' + JSON.stringify(result))
+                        socket1.emit('media_file_add_response', result);
+                });
+        });
 });
