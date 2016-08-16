@@ -32,7 +32,7 @@ function AuthController($scope, $state, $cookies, LocalStorageService, socket) {
       console.log('CORRECT');
       LocalStorageService.saveToken(msg.token);
       LocalStorageService.put('is_confirmed', msg.is_confirmed);
-      $state.go('index.project');
+      $state.go('project.index');
       return;
     }
     if (msg.success == true && msg.token == null) {

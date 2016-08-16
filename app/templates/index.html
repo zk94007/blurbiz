@@ -10,10 +10,10 @@
           </a>
         </li>
         <li ui-sref-active="active" class="sidebar-list">
-          <a ui-sref=".project"><span class="menu-icon fa fa-tachometer"></span> Home </a>
+          <a ui-sref="project.index"><span class="menu-icon fa fa-tachometer"></span> Home </a>
         </li>
         <li ui-sref-active="active" class="sidebar-list">
-          <a ui-sref=".tables"> <span class="menu-icon fa fa-table"></span> Schedule </a>
+          <a ui-sref="tables"> <span class="menu-icon fa fa-table"></span> Schedule </a>
         </li>
       </ul>
     </div>
@@ -75,7 +75,7 @@
             </div>
             <div class="meta">
               <div class="page">
-                <div ui-view="title"></div>
+                {{ state.current.data.title }}
               </div>
             </div>
           </div>
@@ -83,7 +83,7 @@
         <!-- End Header Bar -->
 
         <!-- Main Content -->
-        <div ui-view="content"></div>
+        <div ui-view></div>
 
       </div><!-- End Page Content -->
     </div><!-- End Content Wrapper -->

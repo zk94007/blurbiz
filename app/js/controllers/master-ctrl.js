@@ -3,9 +3,9 @@
  */
 
 angular.module('Blurbiz')
-    .controller('IndexController', ['$scope', '$cookieStore',  MasterCtrl]);
+    .controller('IndexController', ['$scope', '$cookieStore', '$state', MasterCtrl]);
 
-function MasterCtrl($scope, $cookieStore) {
+function MasterCtrl($scope, $cookieStore, $state) {
     /**
      * Sidebar Toggle & Cookie Control
      */
@@ -18,6 +18,8 @@ function MasterCtrl($scope, $cookieStore) {
     $scope.user = {
         name: 'Aaron Wagner'
     };
+
+    $scope.state = $state;
 
     $scope.getWidth = function() {
         return window.innerWidth;

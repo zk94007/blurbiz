@@ -38,28 +38,26 @@
                     templateUrl: 'templates/index.html',
                     controller: 'IndexController'
                 })
-                .state('index.project', {
+                .state('project', {
+                    url: '/project',
+                    parent: 'index',
+                    abstract: true,
+                    template: '<div ui-view></div>'
+                })
+                .state('project.index', {
                     url: '/project/all',
-                    views: { 
-                        title: {
-                            template: 'All Projects'
-                        },
-                        content: {
-                            templateUrl: 'templates/project/all.html',
-                            controller: 'Project.IndexController'
-                        }
+                    templateUrl: 'templates/project/all.html',
+                    controller: 'Project.IndexController', 
+                    data: {
+                        title: 'All Projects'
                     }
                 })
-                .state('index.tables', {
+                .state('tables', {
                     url: '/tables',
-                    // controller: 'Schedule.IndexController',
-                    views: {
-                        title: {
-                            template: 'Schedule'
-                        },
-                        content: {
-                            templateUrl: 'templates/tables.html',
-                        }
+                    parent: 'index',
+                    templateUrl: 'templates/tables.html',
+                    data: {
+                        title: 'Schedule'
                     }
                 });
         }
