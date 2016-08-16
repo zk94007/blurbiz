@@ -9,18 +9,36 @@ var transporter = nodemailer.createTransport({
 	'auth': config.mailConfig.auth
 });
 
-var mailOptions = config.mailConfig.template;
+function sendEmail(options, cb) {
+	console.log('send email: ' + JSON.stringify(options));
+	transporter.sendMail(options, function(error, info) {
+                if (error) {
+                        console.log(error);
+                        successFalseCb(error, cb);
+                        return;
+                }
+                console.log('Message sent: ' + info.response);
+                successCb(cb);
+        });
+}
 
-function sendConfirmationEmail(email, userId, link, cb) {
+function sendConfirmationEmail(email, link, cb) {
 	if (cb == null) {
-		throw new Error('no callback in sendMail method');
+		throw new Error('no callback in sendConfirmationEmail method');
 	}
-	console.log('call sendMail method: email = ' + email);
-	var from = mailOptions.from;
+	console.log('call sendConfirmationEmail method: email = ' + email);
+
+	var template = config.mailConfig.template_signup_confirmation;
+	var from = template.from;
 	var to = email;
+<<<<<<< HEAD
 	var subject = mailOptions.subject;
 	var html = mailOptions.html;
 	console.log("link is " + link);
+=======
+	var subject = template.subject;
+	var html = template.html;
+>>>>>>> master
 	html = html.replace('link_placeholder', link);
 	
 	var options = {
@@ -30,15 +48,30 @@ function sendConfirmationEmail(email, userId, link, cb) {
 	        'html': html
 	}
 
-	transporter.sendMail(options, function(error, info) {
-		if (error) {
-		        console.log(error);
-			successFalseCb(error, cb);
-			return;
-		}
-		console.log('Message sent: ' + info.response);
-		successCb(cb);
-	});
+	sendEmail(options, cb);
+}
+
+function sendResetPasswordEmail(email, link, cb) {
+	if (cb == null) {
+                throw new Error('no callback in sendResetPasswordEmail method');
+        }
+        console.log('call sendResetPasswordEmail method: email = ' + email);
+
+	var template = config.mailConfig.template_reset_password;
+        var from = template.from;
+        var to = email;
+        var subject = template.subject;
+        var html = template.html;
+        html = html.replace('link_placeholder', link);
+
+        var options = {
+                'from': from,
+                'to': to,
+                'subject': subject,
+                'html': html
+        }
+
+	sendEmail(options, cb);
 }
 
 function updateFields(tableName, tableIdValue, namesAndValuesArray, callback) {
@@ -159,6 +192,25 @@ function createEmailConfirmationEntry(userId, code, callback) {
 	}
 }
 
+
+function createResetPasswordEntry(userId, code, callback) {
+        try {
+                console.log('call method createResetPasswordEntry: userId = ' + userId + ', code = ' + code);
+                query('INSERT INTO public.reset_password(user_id, code)' +
+                        ' VALUES ($1, $2) RETURNING id;', [userId, code], function(err, result) {
+                        if (err) {
+                                successFalseCb(err, callback);
+                        } else {
+                                successCb(callback);
+                        }
+                });
+        } catch (err) {
+                console.log('error in method createResetPasswordEntry: ' + err);
+                successFalseCb(err, callback);
+        }
+}
+
+
 function createUser(email, password, name, callback) {
 	try {
 		console.log('call method createUser: email = ' + email + ', name = ' + name);
@@ -256,6 +308,23 @@ function deleteEmailConfirmationEntry(userId, callback) {
                 });
         } catch (err) {
                 console.log('error in method deleteEmailConfirmationEntry: ' + err);
+                successFalseCb(err, callback);
+        }
+}
+
+function deleteResetPasswordEntry(userId, callback) {
+        try {
+                console.log('call method deleteResetPasswordEntry: userId = ' + userId);
+                query('DELETE FROM public.reset_password WHERE user_id = $1;', [userId], function(err, result) {
+                        if (err) {
+                                successFalseCb(err, callback);
+                        } else {
+                                successCb(callback);
+
+                        }
+                });
+        } catch (err) {
+                console.log('error in method deleteResetPasswordEntry: ' + err);
                 successFalseCb(err, callback);
         }
 }
@@ -399,6 +468,26 @@ function getUserInfo(email, callback) {
 		console.log('error in method getUserInfo: ' + err);
 		successFalseCb(err, callback);
 	}
+}
+
+
+function getProjectData(projectId, callback) {
+        console.log('call method getProjectData: projectId = ' + projectId);
+        try {
+                query('SELECT * from public.project where id = $1', [projectId], function(err, result) {
+                        if (err) {
+                                successFalseCb(err, callback);
+                                return;
+                        }
+                        var project = result.rows[0];
+                        if (callback != null) {
+                                callback(null, project);
+                        }
+                });
+        } catch (err) {
+                console.log('error in method getProjectData: ' + err);
+                successFalseCb(err, callback);
+        }
 }
 
 function getUserInfoById(id, callback) {
@@ -585,8 +674,17 @@ io1.on('connection', function(socket1) {
 						}
 					];
 					updateUserFields(userId, fields, function(err2, result2) {
-			                        console.log('send reset_password_response: ' + JSON.stringify(result2))
-                        			socket1.emit('reset_password_response', result2);
+						deleteResetPasswordEntry(userId, function(err3, result3) {
+							if (err2) {
+                	                                        console.log('send reset_password_response: ' + JSON.stringify(result3));
+		                                                socket1.emit('reset_password_response', result3);
+
+        	                                                return;
+	                                                }
+						
+				                        console.log('send reset_password_response: ' + JSON.stringify(result3));
+	                        			socket1.emit('reset_password_response', result3);
+						});
 					});
 				});
 			});
@@ -650,6 +748,38 @@ io1.on('connection', function(socket1) {
 		});
 	});
 
+	socket1.on('forgot_password', function(message) {
+		console.log('received forgot_password message: ' + JSON.stringify(message));
+                checkIfNotEmptyMessage(socket1, message, 'forgot_password', function() {
+			var email = message.email;
+			var frontPath = message.front_path;
+			var uuid = uuidGen.v4();
+			getUserInfo(email, function(err0, user) {
+				if (err0) {
+					successFalseCb(err0, callback);
+                	               	return;
+				}
+				var userId = user.id;
+				createResetPasswordEntry(userId, uuid, function(err, result) {
+					if (err) {
+						socket1.emit('forgot_password_response', {
+ 	                	                       'success': false,
+                                	               'msg': err
+                                        	});
+						return;
+					}
+					var link = frontPath + uuid;
+					console.log('link: ' + link);
+					sendResetPasswordEmail(email, link, function(err1, result1) {
+						console.log('sendResetPasswordEmail result: ' + JSON.stringify(result1));
+                	                        socket1.emit('forgot_password_response', result1);
+					});
+				});
+			});
+		});
+
+	});
+
 	//authenticate method
         socket1.on('authenticate', function(message) {
 		console.log('received authenticate message: ' + JSON.stringify(message));
@@ -708,4 +838,12 @@ io1.on('connection', function(socket1) {
                         socket1.emit('update_user_response', result);
                 });
         });
+
+	authRequiredCall(socket1, 'project_data', function(userInfo, message) {
+                getProjectData(message.project_id, function(err, result) {
+                        console.log('send project_data response: ' + JSON.stringify(result))
+                        socket1.emit('project_data_response', result);
+                });
+        });
+
 });
