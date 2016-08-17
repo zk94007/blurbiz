@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en" ng-app="Blurbiz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>BlurBiz</title>
+  <!-- STYLES -->
+  <!-- build:css lib/css/main.min.css -->
+  <link rel="stylesheet" type="text/css" href="components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="components/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="components/rdash-ui/dist/css/rdash.min.css">
+  <link rel="stylesheet" type="text/css" href="css/main.css">
+  <!-- endbuild -->
+  <!-- SCRIPTS -->
+  <!-- build:js lib/js/main.min.js -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script type="text/javascript" src="components/angular/angular.min.js"></script>
+  <script type="text/javascript" src="js/socket.io.js"></script>
+  <script type="text/javascript" src="components/angular-socket-io/socket.js"></script>
+  <script type="text/javascript" src="components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+  <script type="text/javascript" src="components/angular-cookies/angular-cookies.min.js"></script>
+  <script type="text/javascript" src="components/angular-ui-router/release/angular-ui-router.min.js"></script>
+  <!-- endbuild -->
+  <!-- Custom Scripts -->
+  
+  <script type="text/javascript" src="js/module.js"></script>
+  <script type="text/javascript" src="js/routes.js"></script>
+
+  <script type="text/javascript" src="js/services/socket.service.js"></script>
+  <script type="text/javascript" src="js/services/user.service.js"></script>
+  <script type="text/javascript" src="js/services/project.service.js"></script>
+  <script type="text/javascript" src="js/services/flash.service.js"></script>
+  <script type="text/javascript" src="js/services/local.storage.service.js"></script>
+
+  <script type="text/javascript" src="js/controllers/auth/auth.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/auth/confirmate.email.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/auth/wait.confirmate.email.controller.js"></script>
+
+  <script type="text/javascript" src="js/controllers/project/edit.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/project/index.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/project/modal.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/master-ctrl.js"></script>
+  <script type="text/javascript" src="js/controllers/alert-ctrl.js"></script>
+  <script type="text/javascript" src="js/directives/err-src.js"></script>
+  <script type="text/javascript" src="js/directives/loading.js"></script>
+  <script type="text/javascript" src="js/directives/widget-body.js"></script>
+  <script type="text/javascript" src="js/directives/widget-header.js"></script>
+  <script type="text/javascript" src="js/directives/widget-footer.js"></script>
+  <script type="text/javascript" src="js/directives/widget.js"></script>
+
+</head>
+<body>
+  <div ui-view>
+
+  </div><!-- End Page Wrapper -->
+</body>
+</html>

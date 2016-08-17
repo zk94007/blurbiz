@@ -3,7 +3,7 @@
  */
 
 angular
-    .module('RDash')
+    .module('Blurbiz')
     .directive('rdWidgetHeader', rdWidgetTitle);
 
 function rdWidgetTitle() {

@@ -2,14 +2,24 @@
  * Master Controller
  */
 
-angular.module('RDash')
-    .controller('MasterCtrl', ['$scope', '$cookieStore', MasterCtrl]);
+angular.module('Blurbiz')
+    .controller('IndexController', ['$scope', '$cookieStore', '$state', MasterCtrl]);
 
-function MasterCtrl($scope, $cookieStore) {
+function MasterCtrl($scope, $cookieStore, $state) {
     /**
      * Sidebar Toggle & Cookie Control
      */
     var mobileView = 992;
+
+    // UserService.GetCurrent().then(function(user) {
+    //     $scope.user = user;
+    // });
+
+    $scope.user = {
+        name: 'Aaron Wagner'
+    };
+
+    $scope.state = $state;
 
     $scope.getWidth = function() {
         return window.innerWidth;

@@ -4,7 +4,7 @@
  */
 
 angular
-    .module('RDash')
+    .module('Blurbiz')
     .directive('rdLoading', rdLoading);
 
 function rdLoading() {
