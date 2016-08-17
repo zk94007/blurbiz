@@ -18,11 +18,32 @@
     <div class="row">
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="project in projects | orderBy: sort_item">
             <div class="project-container text-center">
-                <a ui-sref="project.edit({id: project.project_id, title: project.project_name})">
+                <div class="hovereffect">
                     <img class="representative" ng-src="{{ project.representative }}" err-src="img/empty.png">
-                    <h4>{{ project.project_name }}</h4>
-                    <p>{{ project.screen_count }} screens</p>
-                </a>
+                    <div class="img-cover">
+                        <div class="item dropdown" uib-dropdown>
+                            <a href="#" class="btn btn-dark dropdown-toggle" uib-dropdown-toggle>
+                              options
+                            </a>
+                            <ul class="option dropdown-menu dropdown-menu-right">
+                              <li class="link">
+                                <a href="#">
+                                  Play
+                                </a>
+                              </li>
+                              <li class="link">
+                                <a href="#">
+                                  Delete
+                                </a>
+                              </li>
+                            </ul>
+                        </div>
+                        <a class="info" ui-sref="project.edit({id: project.project_id, title: project.project_name})">View Project</a>
+                        
+                    </div>
+                </div>
+                <h4>{{ project.project_name }}</h4>
+                <p>{{ project.screen_count }} screens</p>
             </div>
         </div>
     </div>  

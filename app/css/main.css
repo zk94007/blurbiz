@@ -26,6 +26,15 @@ img.icon {
     height: 15px;
 }
 
+.btn-dark {
+    background: #363636;
+    color: white;
+}
+
+.btn.btn-dark.focus, .btn.btn-dark:focus, .btn.btn-dark:hover {
+    color: white;
+}
+
 a.btn.center {
     text-align: center;
 }
