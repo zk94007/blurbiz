@@ -1,7 +1,39 @@
 
 <div class="projects-container">
     <div class="row">
-        <button type="button" class="btn btn-default" ng-click="openModal()"><img class="icon" src="img/icons/add.png">Add Media Files</button>
+        <div class="item dropdown" uib-dropdown>
+            <a class="btn btn-default dropdown-toggle" href="#" uib-dropdown-toggle>
+                <img class="icon" src="img/icons/add.png">Add Media Files
+            </a>
+            <ul class="dropdown-menu">
+                <li class="link">
+                    <a href="#" class="center">
+                        <img class="icon" src="img/icons/cloud-computing.png">
+                        <span>Computer</span>
+                    </a>
+                    <a href="#" class="center">
+                        <img class="icon" src="img/icons/dropbox.png">
+                        <span>Dropbox</span>
+                    </a>
+                    <a href="#" class="center">
+                        <img class="icon" src="img/icons/drive.png">
+                        <span>Google Drive</span>
+                    </a>
+                    <a href="#" class="center">
+                        <img class="icon" src="img/icons/box.png">
+                        <span>Box</span>
+                    </a>
+                    <a href="#" class="center">
+                        <img class="icon" src="img/icons/instagram.png">
+                        <span>Instagram</span>
+                    </a>
+                    <a href="#" class="center">
+                        <img class="icon" src="img/icons/url-link.png">
+                        <span>URL</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
         <div class="pull-right">
             <a href="#" class="btn btn-link center">
                 <img class="icon" src="img/icons/down-arrow-on-horizontal-line.png" />
@@ -19,25 +51,16 @@
     </div>
     
     <div class="row">
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="project in projects | orderBy: sort_item">
-            <div class="project-container text-center">
-                <a href="#">
-                    <img class="representative" ng-src="{{ project.representative }}" err-src="img/empty.png">
-                    <h4>{{ project.project_name }}</h4>
-                    <p>{{ project.screen_count }} screens</p>
-                </a>
-            </div>
-        </div>
+        <form class="box" method="post" action="" enctype="multipart/form-data">
+          <div class="box__input">
+            <input class="box__file" type="file" name="files[]" id="file" data-multiple-caption="{count} files selected" multiple />
+            <label for="file"><strong>Choose a file</strong><span class="box__dragndrop"> or drag it here</span>.</label>
+            <button class="box__button" type="submit">Upload</button>
+          </div>
+          <div class="box__uploading">Uploading&hellip;</div>
+          <div class="box__success">Done!</div>
+          <div class="box__error">Error! <span></span>.</div>
+        </form>
     </div>  
-    <script type="text/ng-template" id="createProjectModal.html">
-        <div class="modal-header">
-            <h4>Create Project</h4>
-        </div>
-        <div class="modal-body">
-            <input type="text" class="form-control" placeholder="Your project name" ng-model="project_name" />
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-success" ng-click="ok()">Create</button>
-        </div>
-    </div>
+    
 </div>

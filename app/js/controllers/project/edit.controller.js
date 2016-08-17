@@ -37,7 +37,7 @@
                   };
                 } else {
                   console.log('CORRECT');
-                  $state.$current.data.title = msg.project_name;
+                  $state.$current.data.title = msg.project_data.project_name;
                 }
             });
 
