@@ -9,6 +9,7 @@
         var service = {};
         service.put = put;
         service.get = get;
+        service.delete = remove;
         service.saveToken = saveToken;
         service.getToken = getToken;
 
@@ -20,6 +21,10 @@
 
         function get(key) {
             return $window.localStorage[key];
+        }
+
+        function remove(key) {
+            $window.localStorage.removeItem(key);
         }
 
         function saveToken(token) {

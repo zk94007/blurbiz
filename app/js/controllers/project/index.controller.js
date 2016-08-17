@@ -12,6 +12,27 @@
 
         $scope.sort_item = 'name';
 
+        $scope.deleteProject = function(id) {
+            socket.on('delete_project_response', function(msg) {
+                console.log('received project delete response: ' + JSON.stringify(msg));
+                if (msg == null) {
+                        console.log('ERROR: msg is null');
+                        return;
+                }
+                if (msg.success == true) {
+                        sendProjectListMessage(token);
+                }
+                if (msg.err != null && msg.err != '') {
+                        console.log('ERROR: ' + err);
+                        return;
+                }
+            });
+            socket.emit('delete_project', {
+                    'project_id': id,
+                    'token': token
+            });
+        }
+
         $scope.openModal = function() {
             var modalInstance = $uibModal.open({
                 animation: true,

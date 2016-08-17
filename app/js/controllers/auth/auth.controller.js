@@ -6,7 +6,16 @@ angular.module('Blurbiz')
   .controller('AuthController', ['$scope', '$state', '$cookies', 'LocalStorageService', 'socket', AuthController]);
 
 function AuthController($scope, $state, $cookies, LocalStorageService, socket) {
+
   $scope.message = {};
+
+  initController();
+
+  function initController() {
+    LocalStorageService.delete('jwtToken');
+    LocalStorageService.delete('is_confirmed');
+  }
+
   $scope.login = function () {
     socket.emit('authenticate', {
       'login': $scope.email,
