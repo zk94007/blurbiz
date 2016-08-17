@@ -82,7 +82,6 @@ a.btn.center img.icon{
 #content-wrapper {
     position: absolute;
     padding: 15px;
-    width: auto;  
     overflow-x: hidden; 
 }
 .xyz{

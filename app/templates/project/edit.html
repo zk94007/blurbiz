@@ -51,16 +51,37 @@
     </div>
     
     <div class="row">
-        <form class="box" method="post" action="" enctype="multipart/form-data">
-          <div class="box__input">
-            <input class="box__file" type="file" name="files[]" id="file" data-multiple-caption="{count} files selected" multiple />
-            <label for="file"><strong>Choose a file</strong><span class="box__dragndrop"> or drag it here</span>.</label>
-            <button class="box__button" type="submit">Upload</button>
-          </div>
-          <div class="box__uploading">Uploading&hellip;</div>
-          <div class="box__success">Done!</div>
-          <div class="box__error">Error! <span></span>.</div>
-        </form>
+        <droplet ng-model="interface">
+            <div class="loading" ng-class="{ visible: interface.isUploading() }">
+                <svg viewBox="0 0 400 400">
+                    <path class="loading-path" data-progressbar ng-model="interface.progress.percent"
+                          d="M 0,1 L 398,1 L 398,234 L 1,234 L 0,1"
+                          stroke="#D3B2D1" stroke-width="1" fill-opacity="0"
+                          style="stroke-dasharray: 392px, 392px;stroke-dashoffset: 392px;"></path>
+                </svg>
+            </div>
+
+            <comment></comment>
+
+            <section class="message success" ng-class="{ visible: success }" ng-click="success = false">
+                Successfully uploaded {{uploadCount}} files.
+            </section>
+
+            <section class="message error" ng-class="{ visible: error }" ng-click="error = false">
+                Failed to upload any of the files.
+            </section>
+
+            <ul class="files">
+
+                <li ng-repeat="model in interface.getFiles(interface.FILE_TYPES.VALID)">
+                    <droplet-preview ng-model="model"></droplet-preview>
+                    <div class="delete" ng-click="model.deleteFile()">&times;</div>
+                    <div class="size">{{model.file.size / 1024 / 1024 | number: 1}}MB</div>
+                </li>
+
+            </ul>
+
+        </droplet>
     </div>  
     
 </div>
