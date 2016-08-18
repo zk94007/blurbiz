@@ -17,9 +17,17 @@
                   var file = files[i];
                   if (!file.$error) {
                     Upload.upload({
-                        url: 'https://angular-file-upload-cors-srv.appspot.com/upload',
+                        url: 'https://blurbiz-media.s3.amazonaws.com/',
+                        method: 'POST',
                         data: {
-                          file: file  
+                            key: file.name,
+                            AWSAccessKeyId: 'AKIAJC3WS3R4MGCEQCZQ',
+                            acl: 'private',
+                            "Content-Type": file.type != '' ? file.type : 'application/octet-stream',
+                            filename: file.name,
+                            policy: $scope.policy,
+                            signature: $scope.signature,
+                            file: file  
                         }
                     }).then(function (resp) {
                         $timeout(function() {
@@ -28,7 +36,7 @@
                             ', Response: ' + JSON.stringify(resp.data) +
                             '\n' + $scope.log;
 
-                            $scope.result = response.data;
+                            $scope.result = resp.data;
                         });
                     }, null, function (evt) {
                         var progressPercentage = parseInt(100.0 *
