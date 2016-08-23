@@ -20,7 +20,9 @@
   <!-- build:js lib/js/main.min.js -->
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   <script type="text/javascript" src="components/angular/angular.min.js"></script>
-  <script type="text/javascript" src="js/socket.io.js"></script>
+  <script src="node_modules/socket.io-client/socket.io.js"></script>
+  <script src="node_modules/socket.io-stream/socket.io-stream.js"></script>
+
   <script type="text/javascript" src="components/angular-socket-io/socket.js"></script>
   <script type="text/javascript" src="components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
   <script type="text/javascript" src="components/angular-cookies/angular-cookies.min.js"></script>
@@ -28,6 +30,9 @@
   <script type="text/javascript" src="components/ng-droplet/dist/ng-droplet.min.js"></script>
   <script type="text/javascript" src="components/ng-file-upload/ng-file-upload-shim.min.js"></script>
   <script type="text/javascript" src="components/ng-file-upload/ng-file-upload.min.js"></script>
+
+  <!-- <script type="text/javascript" src="//api.filepicker.io/v2/filepicker.js"></script> -->
+  
   <!-- endbuild -->
   <!-- Custom Scripts -->
   
@@ -37,6 +42,7 @@
   <script type="text/javascript" src="js/services/socket.service.js"></script>
   <script type="text/javascript" src="js/services/user.service.js"></script>
   <script type="text/javascript" src="js/services/project.service.js"></script>
+  <script type="text/javascript" src="js/services/upload.service.js"></script>
   <script type="text/javascript" src="js/services/flash.service.js"></script>
   <script type="text/javascript" src="js/services/local.storage.service.js"></script>
 
