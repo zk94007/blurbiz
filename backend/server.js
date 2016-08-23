@@ -294,6 +294,55 @@ function deleteProject(projectId, callback) {
         }
 }
 
+function deleteImage(file_path, callback) {
+        try {
+            var client = s3.createClient({
+                    s3Options: {
+                        accessKeyId: config.s3_config.ACCESS_KEY,
+                        secretAccessKey: config.s3_config.SECRECT_KEY,
+                        region: 'us-west-2'
+                    }
+            });
+
+            var deleteParam = {
+                Bucket: config.s3_config.BUCKET_NAME,
+                Delete: {
+                    Objects: [
+                        {
+                            Key: path.basename(file_path)
+                        }
+                    ]
+                }
+            };
+
+            var deleter = client.deleteObjects(deleteParam);
+
+            deleter.on('error', function(err) {
+                console.error("unable to delete:", err.stack);
+                successFalseCb(err, callback);
+            });
+
+            deleter.on('progress', function() {
+                console.log("progress", deleter.progressAmount, deleter.progressTotal);
+            });
+
+            deleter.on('end', function() {
+                console.log("File Deleted", file_path);                
+                query('DELETE FROM public.media_file WHERE path = $1;', [file_path], function(err, result) {
+                    if (err) {
+                            successFalseCb(err, callback);
+                    } else {
+                            successCb(callback);
+                    }
+                });                 
+            });
+            
+        } catch (err) {
+            console.log('error in method deleteImage: ' + err);
+            successFalseCb(err, callback);
+        }
+}
+
 function deleteEmailConfirmationEntry(userId, callback) {
         try {
                 console.log('call method deleteEmailConfirmationEntry: userId = ' + userId);
@@ -886,12 +935,19 @@ io1.on('connection', function(socket1) {
     });
 
 
-        authRequiredCall(socket1, 'delete_project', function(userInfo, message) {
-                deleteProject(message.project_id, function(err, result) {
-                        console.log('send delete_project response: ' + JSON.stringify(result))
-                        socket1.emit('delete_project_response', result);
-                });
-        });
+    authRequiredCall(socket1, 'delete_project', function(userInfo, message) {
+            deleteProject(message.project_id, function(err, result) {
+                    console.log('send delete_project response: ' + JSON.stringify(result))
+                    socket1.emit('delete_project_response', result);
+            });
+    });
+
+    authRequiredCall(socket1, 'delete_image', function(userInfo, message) {
+            deleteImage(message.file_path, function(err, result) {
+                    console.log('send delete_image response: ' + JSON.stringify(result))
+                    socket1.emit('delete_image_response', result);
+            });
+    });
 
     authRequiredCall(socket1, 'confirmate_email', function(userInfo, message) {
                 confirmateEmail(userInfo.id, message.email_code, function(err, result) {
@@ -934,7 +990,7 @@ io1.on('connection', function(socket1) {
             var writeStream = fs.createWriteStream("uploads/"+filename)
             stream.pipe(writeStream);
             writeStream.on('close', function(){
-                    var client = s3.createClient({
+                var client = s3.createClient({
                         s3Options: {
                             accessKeyId: config.s3_config.ACCESS_KEY,
                             secretAccessKey: config.s3_config.SECRECT_KEY,
@@ -942,34 +998,34 @@ io1.on('connection', function(socket1) {
                         }
                 });
 
-          var uploader = client.uploadFile({
-               localFile: "uploads/"+filename,
-               s3Params: {
-                 Bucket: config.s3_config.BUCKET_NAME,
-                 Key: filename
-               }
-             });
+                var uploader = client.uploadFile({
+                   localFile: "uploads/"+filename,
+                   s3Params: {
+                     Bucket: config.s3_config.BUCKET_NAME,
+                     Key: filename
+                   }
+                });
 
-             uploader.on('error', function(err) {
-               console.error("unable to upload:", err.stack);
-             });
+                uploader.on('error', function(err) {
+                   console.error("unable to upload:", err.stack);
+                });
 
-             uploader.on('progress', function() {
-               console.log("progress", uploader.progressMd5Amount,
-                 uploader.progressAmount, uploader.progressTotal);
-             });
+                uploader.on('progress', function() {
+                    console.log("progress", uploader.progressMd5Amount,
+                    uploader.progressAmount, uploader.progressTotal);
+                });
 
                 uploader.on('end', function() {
-                        var uploadedPath = s3.getPublicUrl(config.s3_config.BUCKET_NAME, filename, "");
-                        console.log("FILE UPLOADED", uploadedPath);
-                        fs.unlink("uploads/"+filename);
-                        uploadedPath = uploadedPath.replace('s3', 's3-us-west-2');
-                        console.log("PATH", uploadedPath);
-                        //Saving the file in the database
-                        addMediaFile(data.project_id, uploadedPath, function(err, data) {
-                                console.log("Saving in database", err, data);
-                                socket1.emit('media_added', data);
-                        });
+                    var uploadedPath = s3.getPublicUrl(config.s3_config.BUCKET_NAME, filename, "");
+                    console.log("FILE UPLOADED", uploadedPath);
+                    fs.unlink("uploads/"+filename);
+                    uploadedPath = uploadedPath.replace('s3', 's3-us-west-2');
+                    console.log("PATH", uploadedPath);
+                    //Saving the file in the database
+                    addMediaFile(data.project_id, uploadedPath, function(err, data) {
+                            console.log("Saving in database", err, data);
+                            socket1.emit('media_added', data);
+                    });
                 });
             });
         });
