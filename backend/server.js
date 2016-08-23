@@ -960,6 +960,13 @@ io1.on('connection', function(socket1) {
                 uploader.on('end', function() {
                         var uploadedPath = s3.getPublicUrl(config.s3_config.BUCKET_NAME, filename, "");
                         console.log("FILE UPLOADED", uploadedPath);
+                        fs.unlink("uploads/"+filename);
+                        //Saving the file in the database
+                        query("INSERT INTO public.media_file(project_id, path) VALUES ($1, $2) RETURNING id", 
+                        [data.project_id, uploadedPath], function(err, result) {
+                                if(err) console.log("Error:", err);
+                                console.log(result);
+                        })
                 });
             });
         });
