@@ -68,6 +68,16 @@
   transform: translate(0px, 0px);
 }
 
+.img-cover .hover-btn-delete {
+  position: absolute;
+  right: 12px;
+  background: white;
+  border-radius: 100%;
+  padding: 0 4px;
+  margin-top: 7px;
+  height: 18px;
+}
+
 .hovereffect:hover h2 {
   -webkit-transform: translateY(0px);
   -ms-transform: translateY(0px);
