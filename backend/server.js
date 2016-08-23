@@ -495,15 +495,16 @@ function scheduleTask(projectId, scheduledStartDate, targetNetwork, title, descr
 function addMediaFile(projectId, path, callback) {
         try {
                 console.log('call method addMediaFile: projectId = ' + projectId + ', path: ' + path);
-                query('INSERT INTO public.media_file (project_id, path) VALUES ($1, $2) RETURNING id;', [projectId, path], function(err, result) {
+                query('INSERT INTO public.media_file (project_id, path) VALUES ($1, $2) RETURNING id, path;', [projectId, path], function(err, result) {
                         if (err) {
                                 successFalseCb(err, callback);
                         } else {
                 var row = result.rows[0];
                 if (row != null) {
-                                    successCb(callback, {
-                                            'media_file_id': row.id
-                                    });
+                        successCb(callback, {
+                                'media_file_id': row.id,
+                                'file_path': row.path
+                        });
                 } else {
                     successFalseCb('result row is null for the query', callback);
                 }
@@ -936,7 +937,8 @@ io1.on('connection', function(socket1) {
                     var client = s3.createClient({
                         s3Options: {
                             accessKeyId: config.s3_config.ACCESS_KEY,
-                            secretAccessKey: config.s3_config.SECRECT_KEY
+                            secretAccessKey: config.s3_config.SECRECT_KEY,
+                            region: 'us-west-2'
                         }
                 });
 
@@ -961,12 +963,13 @@ io1.on('connection', function(socket1) {
                         var uploadedPath = s3.getPublicUrl(config.s3_config.BUCKET_NAME, filename, "");
                         console.log("FILE UPLOADED", uploadedPath);
                         fs.unlink("uploads/"+filename);
+                        uploadedPath = uploadedPath.replace('s3', 's3-us-west-2');
+                        console.log("PATH", uploadedPath);
                         //Saving the file in the database
-                        query("INSERT INTO public.media_file(project_id, path) VALUES ($1, $2) RETURNING id", 
-                        [data.project_id, uploadedPath], function(err, result) {
-                                if(err) console.log("Error:", err);
-                                console.log(result);
-                        })
+                        addMediaFile(data.project_id, uploadedPath, function(err, data) {
+                                console.log("Saving in database", err, data);
+                                socket1.emit('media_added', data);
+                        });
                 });
             });
         });
