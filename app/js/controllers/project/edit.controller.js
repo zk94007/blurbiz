@@ -5,7 +5,7 @@
         .module('Blurbiz.project')
         .controller('Project.EditController', Controller);
 
-    function Controller($state, $stateParams, $scope, $uibModal, $timeout, socket, Upload, ProjectService, FlashService, LocalStorageService) {
+    function Controller($state, $stateParams, $scope, $uibModal, $timeout, socket, Upload, ProjectService, UploadService, LocalStorageService) {
 
         var token = LocalStorageService.getToken();
 
@@ -16,35 +16,7 @@
                 for (var i = 0; i < files.length; i++) {
                   var file = files[i];
                   if (!file.$error) {
-                    Upload.upload({
-                        url: 'https://blurbiz-media.s3.amazonaws.com/',
-                        method: 'POST',
-                        data: {
-                            key: file.name,
-                            AWSAccessKeyId: 'AKIAJC3WS3R4MGCEQCZQ',
-                            acl: 'private',
-                            "Content-Type": file.type != '' ? file.type : 'application/octet-stream',
-                            filename: file.name,
-                            policy: $scope.policy,
-                            signature: $scope.signature,
-                            file: file  
-                        }
-                    }).then(function (resp) {
-                        $timeout(function() {
-                            $scope.log = 'file: ' +
-                            resp.config.data.file.name +
-                            ', Response: ' + JSON.stringify(resp.data) +
-                            '\n' + $scope.log;
-
-                            $scope.result = resp.data;
-                        });
-                    }, null, function (evt) {
-                        var progressPercentage = parseInt(100.0 *
-                                evt.loaded / evt.total);
-                        $scope.log = 'progress: ' + progressPercentage + 
-                            '% ' + evt.config.data.file.name + '\n' + 
-                          $scope.log;
-                    });
+                    UploadService.uploadFile(file);
                   }
                 }
             }

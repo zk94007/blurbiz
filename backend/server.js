@@ -3,6 +3,10 @@ var config = require('./config.js');
 var jwt = require('jsonwebtoken');
 var nodemailer = require('nodemailer');
 var uuidGen = require('node-uuid');
+var ss = require('socket.io-stream');
+var path = require('path');
+var fs = require('fs');
+
 
 var transporter = nodemailer.createTransport({
     'service': 'gmail',
@@ -916,11 +920,16 @@ io1.on('connection', function(socket1) {
         });
 
 
-        authRequiredCall(socket1, 'media_file_add', function(userInfo, message) {
-                addMediaFile(message.project_id, message.path, function(err, result) {
-                        console.log('send media_file_add response: ' + JSON.stringify(result))
-                        socket1.emit('media_file_add_response', result);
-                });
+        // authRequiredCall(socket1, 'media_file_add', function(userInfo, message) {
+        //         addMediaFile(message.project_id, message.path, function(err, result) {
+        //                 console.log('send media_file_add response: ' + JSON.stringify(result))
+        //                 socket1.emit('media_file_add_response', result);
+        //         });
+        // });
+
+        ss(socket1).on('media_file_add', function(stream, data) {
+            var filename = path.basename(data.name);
+            stream.pipe(fs.createWriteStream("uploads/"+filename));
         });
 
         authRequiredCall(socket1, 'schedule_task', function(userInfo, message) {
