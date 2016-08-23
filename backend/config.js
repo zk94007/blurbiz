@@ -21,5 +21,10 @@ module.exports = {
                         'html': '<b>To reset password follow the link:</b> link_placeholder'
 		}
 	},
-	tokenKey: 'secret_token_key'
+	tokenKey: 'secret_token_key',
+	s3_config: {
+		BUCKET_NAME: "blurbiz-media",
+		ACCESS_KEY: "AKIAJ76FOT7IZL4K5B5A",
+		SECRECT_KEY: "WcaFbktZtKVLLA1qbmk2UsDaBDczC4oUFWLw9ell",
+	}
 }

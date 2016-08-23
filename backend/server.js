@@ -6,6 +6,7 @@ var uuidGen = require('node-uuid');
 var ss = require('socket.io-stream');
 var path = require('path');
 var fs = require('fs');
+var s3 = require('s3');
 
 
 var transporter = nodemailer.createTransport({
@@ -929,7 +930,38 @@ io1.on('connection', function(socket1) {
 
         ss(socket1).on('media_file_add', function(stream, data) {
             var filename = path.basename(data.name);
-            stream.pipe(fs.createWriteStream("uploads/"+filename));
+            var writeStream = fs.createWriteStream("uploads/"+filename)
+            stream.pipe(writeStream);
+            writeStream.on('close', function(){
+                    var client = s3.createClient({
+                        s3Options: {
+                            accessKeyId: config.s3_config.ACCESS_KEY,
+                            secretAccessKey: config.s3_config.SECRECT_KEY
+                        }
+                });
+
+          var uploader = client.uploadFile({
+               localFile: "uploads/"+filename,
+               s3Params: {
+                 Bucket: config.s3_config.BUCKET_NAME,
+                 Key: filename
+               }
+             });
+
+             uploader.on('error', function(err) {
+               console.error("unable to upload:", err.stack);
+             });
+
+             uploader.on('progress', function() {
+               console.log("progress", uploader.progressMd5Amount,
+                 uploader.progressAmount, uploader.progressTotal);
+             });
+
+                uploader.on('end', function() {
+                        var uploadedPath = s3.getPublicUrl(config.s3_config.BUCKET_NAME, filename, "");
+                        console.log("FILE UPLOADED", uploadedPath);
+                });
+            });
         });
 
         authRequiredCall(socket1, 'schedule_task', function(userInfo, message) {
