@@ -8,15 +8,16 @@
     function Controller($state, $stateParams, $scope, $uibModal, $timeout, socket, Upload, ProjectService, UploadService, LocalStorageService) {
 
         var token = LocalStorageService.getToken();
-
+        $scope.project_id = $stateParams.id;
+            
         $scope.interface = {};
 
-        $scope.uploadFiles = function (files, cb) {
+        $scope.uploadFiles = function (files, project_id, cb) {
             if (files && files.length) {
                 for (var i = 0; i < files.length; i++) {
                   var file = files[i];
                   if (!file.$error) {
-                    UploadService.uploadFile(file, cb);
+                    UploadService.uploadFile(file, $stateParams.id, cb);
                   }
                 }
             }
@@ -29,7 +30,7 @@
             // ProjectService.GetAll($rootScope.user._id).then(function (projects) {
             //     $scope.projects = projects;
             // });
-
+            
             socket.emit('project_data', {
                 'project_id': $stateParams.id,
                 'token': token

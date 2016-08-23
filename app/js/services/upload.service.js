@@ -9,13 +9,13 @@
 		  
 		var factory = {};	
 		
-		factory.uploadFile = function (file, cb) {
+		factory.uploadFile = function (file, projectId, cb) {
 
 			var stream = ss.createStream();				
 			console.log('file selected : '+file.name);
 		    
 		    // upload a file to the server.
-		    ss(socket).emit('media_file_add', stream, {size: file.size , name:file.name});			    
+		    ss(socket).emit('media_file_add', stream, {size: file.size , name:file.name, project_id: projectId});			    
 		    var blobStream = ss.createBlobReadStream(file);		
 		    blobStream.on('data', function(chunk) {
 		    	// progressHandler(chunk);
