@@ -23,6 +23,32 @@
             }
         }
 
+        $scope.deleteImage = function(file_path) {
+            socket.emit('delete_image', {
+              'file_path': file_path,
+              'token': token
+            });
+
+            socket.on('delete_image_response', function(msg) {
+              console.log('project response: ' + JSON.stringify(msg));
+              if (msg == null) {
+                console.log('ERROR: msg is null');
+                return;
+              }
+
+              if (msg.success == false) {
+                console.log('ERROR: expected answer - { success: true }, err: ' + msg.msg);
+                $scope.message = {
+                  error: msg.msg,
+                  success: false
+                };
+              } else {
+                console.log('CORRECT');
+                $scope.$apply();
+              }
+            });
+        }
+
         initController();
 
         function initController() {
