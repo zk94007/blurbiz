@@ -72,8 +72,15 @@ function dragDropUploader() {
     }
 
     if (tests.dnd) { 
-    holder.ondragover = function () { this.className = 'hover'; return false; };
-    holder.ondragend = function () { this.className = ''; return false; };
+    holder.ondragover = function () {
+        this.className = 'hover'; 
+        return false; 
+    };
+    holder.ondragend = function () 
+    { 
+        this.className = ''; 
+        return false; 
+    };
     holder.ondrop = function (e) {
         this.className = '';
         e.preventDefault();
