@@ -44,6 +44,9 @@
                 };
               } else {
                 console.log('CORRECT');
+                $scope.media = $scope.media.filter(function(obj) {
+                  return obj.path != file_path;
+                });
                 $scope.$apply();
               }
             });
@@ -58,7 +61,7 @@
             // });
             $scope.media = [];
 
-            $scope.$watch('media', function() {
+            $scope.$watch('media.length', function() {
                 if($scope.media.length > 0) {
                     $scope.showProjects = true;
                 } else {
