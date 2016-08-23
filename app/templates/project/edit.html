@@ -68,5 +68,26 @@ progress { width: 100%; }
 progress:after { content: '%'; }
 .fail { background: #c00; padding: 2px; color: #fff; }
 .hidden { display: none !important;}
-</style> 
+</style>
+
+
+    <div class="row" ng-show="showProjects">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="m in media">
+            <div style="height: 184px" class="project-container text-center">
+                <div class="hovereffect">
+                    <img class="representative" ng-src="{{ m.path }}">
+                </div>
+            </div>
+        </div>
+    </div>  
+
+    <div class="row" ng-hide="showProjects">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+            <div style="height: 184px" class="project-container text-center">
+                <div class="hovereffect">
+                    <img class="representative" ng-src="/img/empty.png">
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

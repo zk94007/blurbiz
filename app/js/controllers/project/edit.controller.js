@@ -12,7 +12,7 @@
             
         $scope.interface = {};
 
-        $scope.uploadFiles = function (files, project_id, cb) {
+        $scope.uploadFiles = function (files, cb) {
             if (files && files.length) {
                 for (var i = 0; i < files.length; i++) {
                   var file = files[i];
@@ -30,7 +30,16 @@
             // ProjectService.GetAll($rootScope.user._id).then(function (projects) {
             //     $scope.projects = projects;
             // });
-            
+            $scope.media = [];
+
+            $scope.$watch('media', function() {
+                if($scope.media.length > 0) {
+                    $scope.showProjects = true;
+                } else {
+                    $scope.showProjects = false;
+                }
+            });
+
             socket.emit('project_data', {
                 'project_id': $stateParams.id,
                 'token': token
@@ -52,7 +61,16 @@
                 } else {
                   console.log('CORRECT');
                   $state.$current.data.title = msg.project_data.project_name;
+                  $scope.media = msg.media_files;
+                  $scope.$apply();
                 }
+            });
+
+            socket.on('media_added', function(msg) {
+                console.log(msg);
+                $scope.media.push(msg);
+                $scope.$apply();
+                location.reload();
             });
         }
 

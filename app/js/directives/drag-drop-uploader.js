@@ -67,7 +67,6 @@ function dragDropUploader() {
         }
 
         $scope.uploadFiles(files, function() {
-            location.reload();
         });
     }
 
