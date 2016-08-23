@@ -9,7 +9,7 @@
 		  
 		var factory = {};	
 		
-		factory.uploadFile = function (file) {
+		factory.uploadFile = function (file, cb) {
 
 			var stream = ss.createStream();				
 			console.log('file selected : '+file.name);
@@ -21,7 +21,11 @@
 		    	// progressHandler(chunk);
 		    	console.log(chunk.length);
  			});			    
-		    blobStream.pipe(stream);	
+		    blobStream.pipe(stream);
+			blobStream.on('end', function(chunk) {
+				console.log("Upload successful");
+				if(cb) cb();
+ 			});		
 		};		
 		
 		

@@ -11,12 +11,12 @@
 
         $scope.interface = {};
 
-        $scope.uploadFiles = function (files) {
+        $scope.uploadFiles = function (files, cb) {
             if (files && files.length) {
                 for (var i = 0; i < files.length; i++) {
                   var file = files[i];
                   if (!file.$error) {
-                    UploadService.uploadFile(file);
+                    UploadService.uploadFile(file, cb);
                   }
                 }
             }
@@ -53,10 +53,8 @@
                   $state.$current.data.title = msg.project_data.project_name;
                 }
             });
-
-            
-
         }
+
     }
 
 })();
