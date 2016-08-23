@@ -70,7 +70,7 @@
                 console.log(msg);
                 $scope.media.push(msg);
                 $scope.$apply();
-                location.reload();
+                // location.reload();
             });
         }
 

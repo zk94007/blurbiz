@@ -503,7 +503,7 @@ function addMediaFile(projectId, path, callback) {
                 if (row != null) {
                         successCb(callback, {
                                 'media_file_id': row.id,
-                                'file_path': row.path
+                                'path': row.path
                         });
                 } else {
                     successFalseCb('result row is null for the query', callback);

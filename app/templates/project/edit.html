@@ -50,44 +50,47 @@
         </div>
     </div>
     
-    <div class="row">
+    <!-- <div class="row">
 
         Upload Log:
         <pre>{{log}}</pre>
-    </div> 
+    </div>  -->
 
-    <div drag-drop-uploader></div>
-
-<!--<div id="holder"></div><p id="upload" class="hidden"><label>Drag & drop not supported, but you can still upload via this input field:<br><input type="file"></label></p><p id="filereader">File API & FileReader API not supported</p><p id="formdata">XHR2's FormData is not supported</p><p id="progress">XHR2's upload progress isn't supported</p><p>Upload progress: <progress id="uploadprogress" min="0" max="100" value="0">0</progress></p>-->
-     <style>
-#holder { border: 10px dashed #ccc; width: 300px; min-height: 300px; margin: 20px auto;}
-#holder.hover { border: 10px dashed #0c0; }
-#holder img { display: block; margin: 10px auto; }
-#holder p { margin: 10px; font-size: 14px; }
-progress { width: 100%; }
-progress:after { content: '%'; }
-.fail { background: #c00; padding: 2px; color: #fff; }
-.hidden { display: none !important;}
-</style>
-
-
-    <div class="row" ng-show="showProjects">
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="m in media">
-            <div style="height: 184px" class="project-container text-center">
-                <div class="hovereffect">
-                    <img class="representative" ng-src="{{ m.path }}">
+    <div drag-drop-uploader>
+        <div class="row" ng-show="showProjects">
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="m in media">
+                <div style="height: 184px" class="project-container text-center">
+                    <div class="hovereffect">
+                        <img class="representative" ng-src="{{ m.path }}">
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>  
+        </div>  
 
-    <div class="row" ng-hide="showProjects">
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-            <div style="height: 184px" class="project-container text-center">
-                <div class="hovereffect">
-                    <img class="representative" ng-src="/img/empty.png">
+        <div class="row" ng-hide="showProjects">
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                <div style="height: 184px" class="project-container text-center">
+                    <div class="hovereffect">
+                        <img class="representative" ng-src="/img/empty.png">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+<!--<div id="holder"></div><p id="upload" class="hidden"><label>Drag & drop not supported, but you can still upload via this input field:<br><input type="file"></label></p><p id="filereader">File API & FileReader API not supported</p><p id="formdata">XHR2's FormData is not supported</p><p id="progress">XHR2's upload progress isn't supported</p><p>Upload progress: <progress id="uploadprogress" min="0" max="100" value="0">0</progress></p>-->
+
+<style>
+    /*#holder { border: 10px dashed #ccc; width: 300px; min-height: 300px; margin: 20px auto;}*/
+    #holder.hover { border: 10px dashed #0c0; }
+    #holder img { display: block; margin: 10px auto; }
+    #holder p { margin: 10px; font-size: 14px; }
+    progress { width: 100%; }
+    progress:after { content: '%'; }
+    .fail { background: #c00; padding: 2px; color: #fff; }
+    .hidden { display: none !important;}
+</style>
+
+
+    
 </div>

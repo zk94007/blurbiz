@@ -8,7 +8,8 @@ angular
 
 function dragDropUploader() {
     var directive = {
-        template: '<div id="holder"></div><p id="upload" class="hidden"><label>Drag & drop not supported, but you can still upload via this input field:<br><input type="file"></label></p><p id="filereader">File API & FileReader API not supported</p><p id="formdata">XHR2s FormData is not supported</p><p id="progress">XHR2s upload progress isnt supported</p><p>Upload progress: <progress id="uploadprogress" min="0" max="100" value="0">0</progress></p>',
+        template: '<div id="holder" ng-transclude></div><p id="upload" class="hidden"><label>Drag & drop not supported, but you can still upload via this input field:<br><input type="file"></label></p><p id="filereader">File API & FileReader API not supported</p><p id="formdata">XHR2s FormData is not supported</p><p id="progress">XHR2s upload progress isnt supported</p><p class="ng-hide">Upload progress: <progress id="uploadprogress" min="0" max="100" value="0">0</progress></p>',
+        transclude: true,
         link: function($scope, iElm, iAttrs, controller) {
         var holder = document.getElementById("holder"),
         tests = {
@@ -60,11 +61,11 @@ function dragDropUploader() {
     }
 
     function readfiles(files) {
-        var formData = tests.formdata ? new FormData() : null;
-        for (var i = 0; i < files.length; i++) {
-        if (tests.formdata) formData.append('file', files[i]);
-        previewfile(files[i]);
-        }
+        // var formData = tests.formdata ? new FormData() : null;
+        // for (var i = 0; i < files.length; i++) {
+        //     if (tests.formdata) formData.append('file', files[i]);
+        //         previewfile(files[i]);
+        // }
 
         $scope.uploadFiles(files, function() {
         });
