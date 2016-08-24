@@ -11,6 +11,7 @@
     "postinstall": "bower install"
   },
   "dependencies": {
+    "angular-google-picker": "^0.2.2",
     "bcryptjs": "^2.1.0",
     "body-parser": "^1.13.2",
     "cookie-parser": "^1.4.3",

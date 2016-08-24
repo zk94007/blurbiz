@@ -70,6 +70,13 @@
                 });
         }
     ])
+    .config(['lkGoogleSettingsProvider', function(lkGoogleSettingsProvider) {
+        lkGoogleSettingsProvider.configure({
+            apiKey   : 'AIzaSyBhnEvgr1YIAdb9QrDK_Y4hT0GVZkOUf6E',
+            clientId : '716813356542-0tp9oapu88v473012hrg5763fass2d8f.apps.googleusercontent.com',
+            scopes   : ['https://www.googleapis.com/auth/drive'],
+        });
+    }])
     .run(['$rootScope', '$state', 'LocalStorageService', function($rootScope, $state, LocalStorageService) {
           $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams, options){

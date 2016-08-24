@@ -949,6 +949,8 @@ io1.on('connection', function(socket1) {
             });
     });
 
+    
+
     authRequiredCall(socket1, 'confirmate_email', function(userInfo, message) {
                 confirmateEmail(userInfo.id, message.email_code, function(err, result) {
                         console.log('send confirmate_email response: ' + JSON.stringify(result))
@@ -978,12 +980,12 @@ io1.on('connection', function(socket1) {
         });
 
 
-        // authRequiredCall(socket1, 'media_file_add', function(userInfo, message) {
-        //         addMediaFile(message.project_id, message.path, function(err, result) {
-        //                 console.log('send media_file_add response: ' + JSON.stringify(result))
-        //                 socket1.emit('media_file_add_response', result);
-        //         });
-        // });
+        authRequiredCall(socket1, 'media_file_add', function(userInfo, message) {
+                addMediaFile(message.project_id, message.path, function(err, result) {
+                        console.log('send media_file_add response: ' + JSON.stringify(result))
+                        socket1.emit('media_added', result);
+                });
+        });
 
         ss(socket1).on('media_file_add', function(stream, data) {
             var filename = path.basename(data.name);

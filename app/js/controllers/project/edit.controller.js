@@ -23,6 +23,29 @@
             }
         }
 
+        $scope.onGoogleFilePicked = function (docs) {
+          console.log("Google Drive picked");
+          angular.forEach(docs, function(file, index) {
+            $scope.addImage("https://docs.google.com/uc?id=" + file.id);
+          })
+        };
+
+        $scope.onGoogleFileLoaded = function() {
+          console.log('Google Drive loaded');
+        };
+
+        $scope.onGoogleFileCancel = function() {
+          console.log('Google Drive close/cancel !!');
+        };
+
+        $scope.addImage = function(file_path) {
+          socket.emit('media_file_add', {
+            'path': file_path,
+            'project_id': $scope.project_id,
+            'token': token
+          });
+        };
+
         $scope.deleteImage = function(file_path) {
             socket.emit('delete_image', {
               'file_path': file_path,
@@ -50,7 +73,7 @@
                 $scope.$apply();
               }
             });
-        }
+        };
 
         initController();
 
