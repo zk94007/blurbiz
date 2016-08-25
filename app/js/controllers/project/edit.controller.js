@@ -35,7 +35,8 @@
           console.log("dpfiles watch");
           
           for (var i = 0; i < $scope.dpfiles.length; i++) {
-            $scope.addImage($scope.dpfiles[i].thumbnailLink);
+            // $scope.addImage($scope.dpfiles[i].thumbnailLink);
+            $scope.addImage($scope.dpfiles[i].link.replace("?dl=0", "?raw=1"));
           }
           $scope.dpfiles = [];
         });

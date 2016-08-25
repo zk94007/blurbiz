@@ -73,7 +73,8 @@
     .config(['DropBoxSettingsProvider', function(DropBoxSettingsProvider) {
         DropBoxSettingsProvider.configure({
             multiselect: true,
-            box_clientId: 'ol9shnikyhmp0eag26fp6tdq02l3bgqv',
+            // box_clientId: 'ol9shnikyhmp0eag26fp6tdq02l3bgqv',
+            box_clientId: 'vkf7vdl1p0156bdr8qskkag869exln71',
             extensions: [ '.gif','.png','.jpg', 'jpeg'],//dropbox file 
             box_linkType: 'direct'
         });
