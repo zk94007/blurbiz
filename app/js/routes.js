@@ -81,8 +81,8 @@
     }])
     .config(['lkGoogleSettingsProvider', function(lkGoogleSettingsProvider) {
         lkGoogleSettingsProvider.configure({
-            apiKey   : 'AIzaSyBhnEvgr1YIAdb9QrDK_Y4hT0GVZkOUf6E',
-            clientId : '716813356542-0tp9oapu88v473012hrg5763fass2d8f.apps.googleusercontent.com',
+            apiKey   : 'AIzaSyAqBcpJG3DFVEfgHGdSHlCj_zW-GbMTByk',
+            clientId : '944689281546-s3o8lk1e093a3mjetpfgj9hic7r5saae.apps.googleusercontent.com',
             scopes   : ['https://www.googleapis.com/auth/drive'],
         });
     }])
