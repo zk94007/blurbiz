@@ -23,6 +23,12 @@
             }
         }
 
+        /******************************/
+
+        /** 
+         * Dropbox File Picker
+         */
+
         $scope.dpfiles = [];
 
         $scope.$watch('dpfiles.length', function() {
@@ -33,6 +39,28 @@
           }
           $scope.dpfiles = [];
         });
+
+        /******************************/
+        
+        /**
+         * Box File Picker
+         */
+        $scope.boxfiles = [];
+        
+        $scope.$watch('boxfiles.length', function() {
+          console.log("boxfiles watch");
+          
+          for (var i = 0; i < $scope.boxfiles.length; i++) {
+            $scope.addImage($scope.boxfiles[i].url);
+          }
+          $scope.boxfiles = [];
+        });
+
+        /******************************/
+        
+        /**
+         * Google Drive File Picker
+         */
 
         $scope.onGoogleFilePicked = function (docs) {
           console.log("Google Drive picked");
