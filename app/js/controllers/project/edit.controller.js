@@ -23,11 +23,22 @@
             }
         }
 
+        $scope.dpfiles = [];
+
+        $scope.$watch('dpfiles.length', function() {
+          console.log("dpfiles watch");
+          
+          for (var i = 0; i < $scope.dpfiles.length; i++) {
+            $scope.addImage($scope.dpfiles[i].thumbnailLink);
+          }
+          $scope.dpfiles = [];
+        });
+
         $scope.onGoogleFilePicked = function (docs) {
           console.log("Google Drive picked");
           angular.forEach(docs, function(file, index) {
             $scope.addImage("https://docs.google.com/uc?id=" + file.id);
-          })
+          });
         };
 
         $scope.onGoogleFileLoaded = function() {

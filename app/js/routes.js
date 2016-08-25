@@ -70,6 +70,14 @@
                 });
         }
     ])
+    .config(['DropBoxSettingsProvider', function(DropBoxSettingsProvider) {
+        DropBoxSettingsProvider.configure({
+            multiselect: true,
+            box_clientId: 'ol9shnikyhmp0eag26fp6tdq02l3bgqv',
+            extensions: [ '.gif','.png','.jpg', 'jpeg'],//dropbox file 
+            box_linkType: 'direct'
+        });
+    }])
     .config(['lkGoogleSettingsProvider', function(lkGoogleSettingsProvider) {
         lkGoogleSettingsProvider.configure({
             apiKey   : 'AIzaSyBhnEvgr1YIAdb9QrDK_Y4hT0GVZkOUf6E',
