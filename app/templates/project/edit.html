@@ -15,8 +15,6 @@
                             <span>Computer</span>
                         </div>
                     </a>
-                </li>
-                <li class="link">
                     <a drop-box-picker db-picker-files="dpfiles" class="center">
                         <div>
                             <img class="icon" src="img/icons/dropbox.png">
@@ -25,8 +23,6 @@
                             <span>Dropbox</span>
                         </div>
                     </a>
-                </li>
-                <li class="link">
                     <a lk-google-picker on-picked="onGoogleFilePicked(docs)" on-loaded="onGoogleFileLoaded()" on-cancel="onGoogleFileCancel()" class="center">
                         <div>
                             <img class="icon" src="img/icons/drive.png">
@@ -35,8 +31,6 @@
                             <span>Google Drive</span>
                         </div>
                     </a>
-                </li>
-                <li class="link">
                     <a box-picker box-picker-files="boxfiles" class="center">
                         <div>
                             <img class="icon" src="img/icons/box.png">
@@ -45,8 +39,6 @@
                             <span>Box</span>
                         </div>
                     </a>
-                </li>
-                <li class="link">
                     <a href="#" class="center">
                         <div>
                             <img class="icon" src="img/icons/instagram.png">
@@ -55,9 +47,7 @@
                             <span>Instagram</span>
                         </div>
                     </a>
-                </li>
-                <li class="link">
-                    <a href="#" class="center">
+                    <a custom-link-invoker is-editing="custom_link_editing" class="center">
                         <div>
                             <img class="icon" src="img/icons/url-link.png">
                         </div>
@@ -65,6 +55,9 @@
                             <span>URL</span>
                         </div>
                     </a>
+                </li>
+                <li class="link" ng-show="custom_link_editing">
+                    <div class="custom-link-wrapper"><input class="custom-link-box" type="text" placeholder="Paste URL" /></div>
                 </li>
             </ul>
         </div>

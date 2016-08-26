@@ -25,6 +25,14 @@
 
         /******************************/
 
+        /**
+         * Custom Link
+         */
+
+        $scope.custm_link_editing = false;
+
+        /******************************/
+
         /** 
          * Dropbox File Picker
          */
