@@ -10,6 +10,7 @@
 }
 
 .hovereffect .img-cover {
+  display: table;
   width: 100%;
   height: 100%;
   position: absolute;
@@ -76,6 +77,17 @@
   padding: 0 4px;
   margin-top: 7px;
   height: 18px;
+}
+
+.img-cover .hover-btn-play {
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.img-cover .hover-btn-play img.icon {
+    height: 40px;
+    width: initial;
 }
 
 .hovereffect:hover h2 {

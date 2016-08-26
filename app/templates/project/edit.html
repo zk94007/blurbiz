@@ -94,20 +94,25 @@
                     <div class="hovereffect">
                         <img ng-if="isImage(m.path)" class="representative" ng-src="{{ m.path }}">
 
-                        <video ng-if="isVideo(m.path)" class="video-js" controls preload="auto">
-                            <source src="{{ m.path }}">
+                        <video ng-attr-id="{{ getUuid(m.path) }}" ng-if="isVideo(m.path)" class="video-js" controls preload="auto">
+                            <source ng-src="{{ m.path | trustUrl}}">
                             <p class="vjs-no-js">
                             To view this video please enable JavaScript, and consider upgrading to a web browser that
               <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
                             </p>
                         </video>
 
-                        <div class="img-cover">
+                        <div class="img-cover" ng-attr-data-for="{{ getUuid(m.path) }}">
                             <div class="hover-btn-delete">
                                 <button type="button" class="close" ng-click="deleteImage(m.path)">
                                     <span aria-hidden="true">×</span>
                                     <span class="sr-only">Close</span>
                                 </button>
+                            </div>
+                            <div ng-if="isVideo(m.path)" class="hover-btn-play">
+                                <a ng-click="playVideo(getUuid(m.path))" class="btn-play">
+                                    <img class="icon" src="img/icons/play-button-white.png"/>
+                                </a>
                             </div>
                         </div>
                     </div>

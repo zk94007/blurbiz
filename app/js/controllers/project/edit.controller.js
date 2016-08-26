@@ -5,7 +5,7 @@
         .module('Blurbiz.project')
         .controller('Project.EditController', Controller);
 
-    function Controller($state, $stateParams, $scope, $uibModal, $timeout, socket, Upload, ProjectService, UploadService, LocalStorageService) {
+    function Controller($state, $stateParams, $scope, $document, $uibModal, $timeout, socket, Upload, ProjectService, UploadService, LocalStorageService, trustUrlFilter) {
 
         var token = LocalStorageService.getToken();
         $scope.project_id = $stateParams.id;
@@ -50,6 +50,20 @@
 
         $scope.isVideo = function(path) {
           return !!path.match(/.+(\.mp4|\.avi|\.mpeg|\.flv)$/);
+        }
+
+        $scope.getUuid = function(path) {
+          return path.match(/([^\/]+)(?=\.\w+$)/)[0];
+        }
+
+        $scope.playVideo = function(id) {
+          videojs(id).play()
+            .on("play", function() {
+              $($document[0].querySelectorAll("[data-for='" + id + "']")).hide();
+            })
+            .on("pause", function() {
+              $($document[0].querySelectorAll("[data-for='" + id + "']")).show();
+            });
         }
 
         /******************************/
