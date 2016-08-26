@@ -5,32 +5,63 @@
             <a class="btn btn-default dropdown-toggle" href="#" uib-dropdown-toggle>
                 <img class="icon" src="img/icons/add.png">Add Media Files
             </a>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu horizontal">
                 <li class="link">
                     <a ngf-select="uploadFiles($files)" multiple="multiple" class="center">
-                        <img class="icon" src="img/icons/cloud-computing.png">
-                        <span>Computer</span>
+                        <div>
+                            <img class="icon" src="img/icons/cloud-computing.png">
+                        </div>
+                        <div>
+                            <span>Computer</span>
+                        </div>
                     </a>
                     <a drop-box-picker db-picker-files="dpfiles" class="center">
-                        <img class="icon" src="img/icons/dropbox.png">
-                        <span>Dropbox</span>
+                        <div>
+                            <img class="icon" src="img/icons/dropbox.png">
+                        </div>
+                        <div>
+                            <span>Dropbox</span>
+                        </div>
                     </a>
                     <a lk-google-picker on-picked="onGoogleFilePicked(docs)" on-loaded="onGoogleFileLoaded()" on-cancel="onGoogleFileCancel()" class="center">
-                        <img class="icon" src="img/icons/drive.png">
-                        <span>Google Drive</span>
+                        <div>
+                            <img class="icon" src="img/icons/drive.png">
+                        </div>
+                        <div>
+                            <span>Google Drive</span>
+                        </div>
                     </a>
                     <a box-picker box-picker-files="boxfiles" class="center">
-                        <img class="icon" src="img/icons/box.png">
-                        <span>Box</span>
+                        <div>
+                            <img class="icon" src="img/icons/box.png">
+                        </div>
+                        <div>
+                            <span>Box</span>
+                        </div>
                     </a>
                     <a href="#" class="center">
-                        <img class="icon" src="img/icons/instagram.png">
-                        <span>Instagram</span>
+                        <div>
+                            <img class="icon" src="img/icons/instagram.png">
+                        </div>
+                        <div>
+                            <span>Instagram</span>
+                        </div>
                     </a>
-                    <a href="#" class="center">
-                        <img class="icon" src="img/icons/url-link.png">
-                        <span>URL</span>
+                    <a custom-link-invoker is-editing="custom_link_editing" class="center">
+                        <div>
+                            <img class="icon" src="img/icons/url-link.png">
+                        </div>
+                        <div>
+                            <span>URL</span>
+                        </div>
                     </a>
+                </li>
+                <li custom-link-invoker is-editing="custom_link_editing" class="link" ng-show="custom_link_editing">
+                    <div class="custom-link-wrapper">
+                        <form ng-submit="saveCustomFile()">
+                            <input class="custom-link-box" type="text" ng-model="url" placeholder="Paste URL" />
+                        </form>
+                    </div>
                 </li>
             </ul>
         </div>

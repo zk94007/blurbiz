@@ -7,6 +7,9 @@ var ss = require('socket.io-stream');
 var path = require('path');
 var fs = require('fs');
 var s3 = require('s3');
+var download = require('url-download');
+var readChunk = require('read-chunk');
+var fileType = require('file-type');
 
 
 var transporter = nodemailer.createTransport({
@@ -541,6 +544,54 @@ function scheduleTask(projectId, scheduledStartDate, targetNetwork, title, descr
         }
 }
 
+function saveMediaFile(project_id, file_path, callback) {
+        download(file_path, './uploads/')
+            .on('close', function () {
+                console.log('One file has been downloaded.');
+                var filename = path.basename(file_path);
+
+                var buffer = readChunk.sync('./uploads/' + filename, 0, 262);
+                var type = fileType(buffer);
+
+                var newFilename = uuidGen.v1() + '.' + type.ext;
+
+                var client = s3.createClient({
+                        s3Options: {
+                            accessKeyId: config.s3_config.ACCESS_KEY,
+                            secretAccessKey: config.s3_config.SECRECT_KEY,
+                            region: 'us-west-2'
+                        }
+                });
+
+                var uploader = client.uploadFile({
+                   localFile: "uploads/"+filename,
+                   s3Params: {
+                     Bucket: config.s3_config.BUCKET_NAME,
+                     Key: newFilename
+                   }
+                });
+
+                uploader.on('error', function(err) {
+                   console.error("unable to upload:", err.stack);
+                });
+
+                uploader.on('progress', function() {
+                    console.log("progress", uploader.progressMd5Amount,
+                    uploader.progressAmount, uploader.progressTotal);
+                });
+
+                uploader.on('end', function() {
+                    var uploadedPath = s3.getPublicUrl(config.s3_config.BUCKET_NAME, newFilename, "");
+                    console.log("FILE UPLOADED", uploadedPath);
+                    fs.unlink("uploads/"+filename);
+                    uploadedPath = uploadedPath.replace('s3', 's3-us-west-2');
+                    console.log("PATH", uploadedPath);
+                    //Saving the file in the database
+                    addMediaFile(project_id, uploadedPath, callback);
+                });
+            });
+}
+
 function addMediaFile(projectId, path, callback) {
         try {
                 console.log('call method addMediaFile: projectId = ' + projectId + ', path: ' + path);
@@ -981,7 +1032,7 @@ io1.on('connection', function(socket1) {
 
 
         authRequiredCall(socket1, 'media_file_add', function(userInfo, message) {
-                addMediaFile(message.project_id, message.path, function(err, result) {
+                saveMediaFile(message.project_id, message.path, function(err, result) {
                         console.log('send media_file_add response: ' + JSON.stringify(result))
                         socket1.emit('media_added', result);
                 });
@@ -989,9 +1040,16 @@ io1.on('connection', function(socket1) {
 
         ss(socket1).on('media_file_add', function(stream, data) {
             var filename = path.basename(data.name);
-            var writeStream = fs.createWriteStream("uploads/"+filename)
+
+            var writeStream = fs.createWriteStream("uploads/"+filename);
             stream.pipe(writeStream);
+
             writeStream.on('close', function(){
+                var buffer = readChunk.sync('./uploads/' + filename, 0, 262);
+                var type = fileType(buffer);
+
+                var newFilename = uuidGen.v1() + '.' + type.ext;
+
                 var client = s3.createClient({
                         s3Options: {
                             accessKeyId: config.s3_config.ACCESS_KEY,
@@ -1004,7 +1062,7 @@ io1.on('connection', function(socket1) {
                    localFile: "uploads/"+filename,
                    s3Params: {
                      Bucket: config.s3_config.BUCKET_NAME,
-                     Key: filename
+                     Key: newFilename
                    }
                 });
 
@@ -1018,7 +1076,7 @@ io1.on('connection', function(socket1) {
                 });
 
                 uploader.on('end', function() {
-                    var uploadedPath = s3.getPublicUrl(config.s3_config.BUCKET_NAME, filename, "");
+                    var uploadedPath = s3.getPublicUrl(config.s3_config.BUCKET_NAME, newFilename, "");
                     console.log("FILE UPLOADED", uploadedPath);
                     fs.unlink("uploads/"+filename);
                     uploadedPath = uploadedPath.replace('s3', 's3-us-west-2');
