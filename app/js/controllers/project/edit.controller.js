@@ -31,6 +31,13 @@
 
         $scope.custm_link_editing = false;
 
+        $scope.url = "";
+
+        $scope.saveCustomFile = function() {
+          $scope.addImage($scope.url);
+          $scope.url = "";
+        }
+
         /******************************/
 
         /** 

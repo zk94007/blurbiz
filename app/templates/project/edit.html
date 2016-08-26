@@ -56,8 +56,12 @@
                         </div>
                     </a>
                 </li>
-                <li class="link" ng-show="custom_link_editing">
-                    <div class="custom-link-wrapper"><input class="custom-link-box" type="text" placeholder="Paste URL" /></div>
+                <li custom-link-invoker is-editing="custom_link_editing" class="link" ng-show="custom_link_editing">
+                    <div class="custom-link-wrapper">
+                        <form ng-submit="saveCustomFile()">
+                            <input class="custom-link-box" type="text" ng-model="url" placeholder="Paste URL" />
+                        </form>
+                    </div>
                 </li>
             </ul>
         </div>
