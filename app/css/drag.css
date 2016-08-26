@@ -4,3 +4,30 @@
 .box__error {
   display: none;
 }
+
+.dropdown-menu.horizontal {
+	padding: 0;
+}
+
+.dropdown-menu li.link {
+    width: 110px;
+    float: left;
+    text-align: center;
+    border-right: 1px solid #909091;
+}
+
+.dropdown-menu li.link:last-child {
+	border-right: 0;
+}
+
+.dropdown-menu li.link a {
+    padding: 0;
+}
+
+.dropdown-menu li.link a div {
+	padding: 10px;
+}
+
+.dropdown-menu li.link a div img.icon {
+	height: 25px;
+}

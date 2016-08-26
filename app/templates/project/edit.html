@@ -5,31 +5,65 @@
             <a class="btn btn-default dropdown-toggle" href="#" uib-dropdown-toggle>
                 <img class="icon" src="img/icons/add.png">Add Media Files
             </a>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu horizontal">
                 <li class="link">
                     <a ngf-select="uploadFiles($files)" multiple="multiple" class="center">
-                        <img class="icon" src="img/icons/cloud-computing.png">
-                        <span>Computer</span>
+                        <div>
+                            <img class="icon" src="img/icons/cloud-computing.png">
+                        </div>
+                        <div>
+                            <span>Computer</span>
+                        </div>
                     </a>
+                </li>
+                <li class="link">
                     <a drop-box-picker db-picker-files="dpfiles" class="center">
-                        <img class="icon" src="img/icons/dropbox.png">
-                        <span>Dropbox</span>
+                        <div>
+                            <img class="icon" src="img/icons/dropbox.png">
+                        </div>
+                        <div>
+                            <span>Dropbox</span>
+                        </div>
                     </a>
+                </li>
+                <li class="link">
                     <a lk-google-picker on-picked="onGoogleFilePicked(docs)" on-loaded="onGoogleFileLoaded()" on-cancel="onGoogleFileCancel()" class="center">
-                        <img class="icon" src="img/icons/drive.png">
-                        <span>Google Drive</span>
+                        <div>
+                            <img class="icon" src="img/icons/drive.png">
+                        </div>
+                        <div>
+                            <span>Google Drive</span>
+                        </div>
                     </a>
+                </li>
+                <li class="link">
                     <a box-picker box-picker-files="boxfiles" class="center">
-                        <img class="icon" src="img/icons/box.png">
-                        <span>Box</span>
+                        <div>
+                            <img class="icon" src="img/icons/box.png">
+                        </div>
+                        <div>
+                            <span>Box</span>
+                        </div>
                     </a>
+                </li>
+                <li class="link">
                     <a href="#" class="center">
-                        <img class="icon" src="img/icons/instagram.png">
-                        <span>Instagram</span>
+                        <div>
+                            <img class="icon" src="img/icons/instagram.png">
+                        </div>
+                        <div>
+                            <span>Instagram</span>
+                        </div>
                     </a>
+                </li>
+                <li class="link">
                     <a href="#" class="center">
-                        <img class="icon" src="img/icons/url-link.png">
-                        <span>URL</span>
+                        <div>
+                            <img class="icon" src="img/icons/url-link.png">
+                        </div>
+                        <div>
+                            <span>URL</span>
+                        </div>
                     </a>
                 </li>
             </ul>
