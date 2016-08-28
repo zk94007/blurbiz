@@ -110,36 +110,39 @@
           console.log("Google Drive picked");
 
           var accessToken =  gapi.auth.getToken().access_token;
-          var xhr = new XMLHttpRequest();
+          
+          // var xhr = new XMLHttpRequest();
 
           angular.forEach(docs, function(file, index) {
+
+            $scope.addGoogleMedia(file.id, accessToken);
             // $scope.addImage("https://drive.google.com/uc?id=" + file.id);
             // $scope.addImage(file.url);
 
-            debugger;
-            xhr.open('GET', "https://docs.google.com/uc?id=" + file.id);
-            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-            xhr.onload = function() {
-              var stream = ss.createStream();       
-              console.log('file selected : '+file.name);
+            // debugger;
+            // xhr.open('GET', "https://docs.google.com/uc?id=" + file.id);
+            // xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+            // xhr.onload = function() {
+            //   var stream = ss.createStream();       
+            //   console.log('file selected : '+file.name);
                 
-              // upload a file to the server.
-              ss(socket).emit('media_file_add', stream, {size: file.size , name:file.name, project_id: projectId}); 
+            //   // upload a file to the server.
+            //   ss(socket).emit('media_file_add', stream, {size: file.sizeBytes , name:file.name, project_id: $scope.project_id}); 
 
-              var blobStream = ss.createBlobReadStream(xhr.responseText);
-              blobStream.on('data', function(chunk) {
-                  // progressHandler(chunk);
-                  console.log(chunk.length);
-              });         
-              blobStream.pipe(stream);
-              blobStream.on('end', function(chunk) {
-                console.log("Upload successful");
-              }); 
-            };
-            xhr.onerror = function(error) {
-              console.log("error happened");
-            };
-            xhr.send();
+            //   var blobStream = ss.createBlobReadStream(xhr.responseText);
+            //   blobStream.on('data', function(chunk) {
+            //       // progressHandler(chunk);
+            //       console.log(chunk.length);
+            //   });         
+            //   blobStream.pipe(stream);
+            //   blobStream.on('end', function(chunk) {
+            //     console.log("Upload successful");
+            //   }); 
+            // };
+            // xhr.onerror = function(error) {
+            //   console.log("error happened");
+            // };
+            // xhr.send();
             
             // socket.emit('google_file_add', {
             //   'path': "https://docs.google.com/uc?id=" + file.id,
@@ -165,6 +168,15 @@
             'token': token
           });
         };
+
+        $scope.addGoogleMedia = function(fileId, accessToken) {
+          socket.emit('google_file_add', {
+            'fileId': fileId,
+            'accessToken': accessToken,
+            'token': token,
+            'project_id': $scope.project_id
+          });
+        }
 
         $scope.deleteImage = function(file_path) {
             socket.emit('delete_image', {
