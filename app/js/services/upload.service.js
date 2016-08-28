@@ -26,8 +26,11 @@
 				console.log("Upload successful");
 				if(cb) cb();
  			});		
-		};		
-		
+		};
+
+		factory.uploadGoogleFile = function(file, projectId, cb) {
+
+		};
 		
 		return factory;
 	}

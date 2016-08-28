@@ -10,6 +10,8 @@ var s3 = require('s3');
 var download = require('url-download');
 var readChunk = require('read-chunk');
 var fileType = require('file-type');
+var google = require("googleapis");
+var drive = google.drive("v2");
 
 
 var transporter = nodemailer.createTransport({
@@ -544,6 +546,66 @@ function scheduleTask(projectId, scheduledStartDate, targetNetwork, title, descr
         }
 }
 
+function saveGoogleFile(project_id, file_path, callback) {
+        
+        // var stream = fs.createWriteStream('./uploads/' + file.name);
+
+        // drive.files.get({
+        //     fileId: file.id,
+        //     alt: 'media'
+        // })
+        // .on('end', function() {
+        //     console.log("Upload successful");
+        // })
+        // .pipe(stream);
+
+        // download(file_path, './uploads/')
+        //     .on('close', function () {
+        //         console.log('One file has been downloaded.');
+        //         var filename = path.basename(file_path);
+
+        //         var buffer = readChunk.sync('./uploads/' + filename, 0, 262);
+        //         var type = fileType(buffer);
+
+        //         var newFilename = uuidGen.v1() + '.' + type.ext;
+
+        //         var client = s3.createClient({
+        //                 s3Options: {
+        //                     accessKeyId: config.s3_config.ACCESS_KEY,
+        //                     secretAccessKey: config.s3_config.SECRECT_KEY,
+        //                     region: 'us-west-2'
+        //                 }
+        //         });
+
+        //         var uploader = client.uploadFile({
+        //            localFile: "uploads/"+filename,
+        //            s3Params: {
+        //              Bucket: config.s3_config.BUCKET_NAME,
+        //              Key: newFilename
+        //            }
+        //         });
+
+        //         uploader.on('error', function(err) {
+        //            console.error("unable to upload:", err.stack);
+        //         });
+
+        //         uploader.on('progress', function() {
+        //             console.log("progress", uploader.progressMd5Amount,
+        //             uploader.progressAmount, uploader.progressTotal);
+        //         });
+
+        //         uploader.on('end', function() {
+        //             var uploadedPath = s3.getPublicUrl(config.s3_config.BUCKET_NAME, newFilename, "");
+        //             console.log("FILE UPLOADED", uploadedPath);
+        //             fs.unlink("uploads/"+filename);
+        //             uploadedPath = uploadedPath.replace('s3', 's3-us-west-2');
+        //             console.log("PATH", uploadedPath);
+        //             //Saving the file in the database
+        //             addMediaFile(project_id, uploadedPath, callback);
+        //         });
+        //     });
+}
+
 function saveMediaFile(project_id, file_path, callback) {
         download(file_path, './uploads/')
             .on('close', function () {
@@ -1033,6 +1095,13 @@ io1.on('connection', function(socket1) {
 
         authRequiredCall(socket1, 'media_file_add', function(userInfo, message) {
                 saveMediaFile(message.project_id, message.path, function(err, result) {
+                        console.log('send media_file_add response: ' + JSON.stringify(result))
+                        socket1.emit('media_added', result);
+                });
+        });
+
+        authRequiredCall(socket1, 'google_file_add', function(userInfo, message) {
+                addMediaFile(message.project_id, message.path, function(err, result) {
                         console.log('send media_file_add response: ' + JSON.stringify(result))
                         socket1.emit('media_added', result);
                 });

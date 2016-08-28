@@ -26,7 +26,8 @@
     "ng-file-upload": "^12.0.4",
     "angular-file-upload": "angular-file-upload-binaryjs#^1.2.0",
     "filepicker-js-bower": "filepicker-js#^2.4.17",
-    "video.js": "^5.13.0"
+    "video.js": "^5.13.0",
+    "google-drive": "^1.0.1"
   },
   "resolutions": {
     "angular": "~1.5.0"

@@ -108,8 +108,45 @@
 
         $scope.onGoogleFilePicked = function (docs) {
           console.log("Google Drive picked");
+
+          var accessToken =  gapi.auth.getToken().access_token;
+          var xhr = new XMLHttpRequest();
+
           angular.forEach(docs, function(file, index) {
-            $scope.addImage("https://docs.google.com/uc?id=" + file.id);
+            // $scope.addImage("https://drive.google.com/uc?id=" + file.id);
+            // $scope.addImage(file.url);
+
+            debugger;
+            xhr.open('GET', "https://docs.google.com/uc?id=" + file.id);
+            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+            xhr.onload = function() {
+              var stream = ss.createStream();       
+              console.log('file selected : '+file.name);
+                
+              // upload a file to the server.
+              ss(socket).emit('media_file_add', stream, {size: file.size , name:file.name, project_id: projectId}); 
+
+              var blobStream = ss.createBlobReadStream(xhr.responseText);
+              blobStream.on('data', function(chunk) {
+                  // progressHandler(chunk);
+                  console.log(chunk.length);
+              });         
+              blobStream.pipe(stream);
+              blobStream.on('end', function(chunk) {
+                console.log("Upload successful");
+              }); 
+            };
+            xhr.onerror = function(error) {
+              console.log("error happened");
+            };
+            xhr.send();
+            
+            // socket.emit('google_file_add', {
+            //   'path': "https://docs.google.com/uc?id=" + file.id,
+            //   'project_id': $scope.project_id,
+            //   'token': token
+            // });
+
           });
         };
 
@@ -174,6 +211,24 @@
                     $scope.showProjects = false;
                 }
             });
+
+            // gapi.load('auth', { 'callback': function() {
+            //   window.gapi.auth.authorize(
+            //     {
+            //       client_id : '944689281546-s3o8lk1e093a3mjetpfgj9hic7r5saae.apps.googleusercontent.com',
+            //       scope: ['https://www.googleapis.com/auth/drive'],
+            //       immediate: false
+            //     },
+            //     handleAuthResult
+            //   );
+            // }});
+
+            // function handleAuthResult(authResult) {
+            //   if ( authResult && !authResult.error ) {
+            //     $scope.oauthToken = authResult.access_token;
+            //   }
+            // }
+
 
             socket.emit('project_data', {
                 'project_id': $stateParams.id,

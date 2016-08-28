@@ -94,7 +94,7 @@
                     <div class="hovereffect">
                         <img ng-if="isImage(m.path)" class="representative" ng-src="{{ m.path }}">
 
-                        <video ng-attr-id="{{ getUuid(m.path) }}" ng-if="isVideo(m.path)" class="video-js" controls preload="auto">
+                        <video ng-if="isVideo(m.path)" ng-attr-id="{{ getUuid(m.path) }}"  class="video-js" controls preload="auto">
                             <source ng-src="{{ m.path | trustUrl}}">
                             <p class="vjs-no-js">
                             To view this video please enable JavaScript, and consider upgrading to a web browser that
