@@ -70,6 +70,7 @@
                         if (msg.projects != null) {
                                 console.log('CORRECT');
                                 $scope.projects = msg.projects;
+                                debugger;
                         } else {
                                 console.log('ERROR: success == true, but projects field is null');
                         }

@@ -12,6 +12,8 @@ CREATE TABLE public.media_file
   id integer NOT NULL DEFAULT nextval('media_file_id_seq'::regclass),
   project_id integer,
   path text,
+  order_in_project integer,
+  resolution character varying(20),
   CONSTRAINT media_file_pkey PRIMARY KEY (id),
   FOREIGN KEY (project_id) REFERENCES "project" (id) ON UPDATE NO ACTION ON DELETE NO ACTION
 )

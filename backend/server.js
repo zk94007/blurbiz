@@ -423,9 +423,19 @@ function confirmateEmail(userId, code, callback) {
 
 function projectList(userId, callback) {
         try {
+
+            // Select t.*, media_file.path, media_file.order_in_project, media_file.resolution 
+            // FROM (SELECT project.id AS id, project.project_name, COUNT(media_file.path) as screen_count
+            //     FROM public.project AS project
+            //      JOIN public.media_file AS media_file 
+            //      ON project.id = media_file.project_id
+            //      WHERE project.user_id=25
+            //     GROUP By project.id) AS t, public.media_file AS media_file
+            //     WHERE media_file.project_id = t.id AND media_file.order_in_project = (SELECT max(order_in_project) FROM media_file WHERE media_file.project_id = t.id);
+
+
                 console.log('call method projectList: userId = ' + userId);      
-        query('SELECT id, project_name, screen_count, representative, created_at FROM public.project WHERE user_id = $1;', 
-            [userId], function(err, result) {
+                query('Select t.*, media_file.path, media_file.resolution FROM (SELECT project.id AS id, project.project_name, COUNT(media_file.path) as screen_count FROM public.project AS project JOIN public.media_file AS media_file ON project.id = media_file.project_id WHERE project.user_id= $1 GROUP By project.id) AS t, public.media_file AS media_file WHERE media_file.project_id = t.id AND media_file.order_in_project = (SELECT max(order_in_project) FROM media_file WHERE media_file.project_id = t.id);', [userId], function(err, result) {
                         if (err) {
                             successFalseCb(err, callback);
                         } else {
@@ -436,7 +446,8 @@ function projectList(userId, callback) {
                         'project_id': row.id,
                         'project_name': row.project_name,
                         'screen_count': row.screen_count,
-                        'representative': row.representative,
+                        'representative': row.path,
+                        'resolution': row.resolution,
                         'created_at': row.created_at
                     };
                                     projects.push(project);
