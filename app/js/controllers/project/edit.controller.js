@@ -49,7 +49,7 @@
         }
 
         $scope.isVideo = function(path) {
-          return !!path.match(/.+(\.mp4|\.avi|\.mpeg|\.flv)$/);
+          return !!path.match(/.+(\.mp4|\.avi|\.mpeg|\.flv|\.mov)$/);
         }
 
         $scope.getUuid = function(path) {
