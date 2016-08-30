@@ -568,6 +568,44 @@ function saveGoogleFile(message, callback) {
         });
 }
 
+function putMediaToS3bucketAndSaveToDB(project_id, newFileName, filename, callack) {
+    var client = s3.createClient({
+            s3Options: {
+                accessKeyId: config.s3_config.ACCESS_KEY,
+                secretAccessKey: config.s3_config.SECRECT_KEY,
+                region: 'us-west-2'
+            }
+    });
+
+    var uploader = client.uploadFile({
+       localFile: "uploads/"+filename,
+       s3Params: {
+         Bucket: config.s3_config.BUCKET_NAME,
+         Key: newFilename
+       }
+    });
+
+    uploader.on('error', function(err) {
+       console.error("unable to upload:", err.stack);
+    });
+
+    uploader.on('progress', function() {
+        console.log("progress", uploader.progressMd5Amount,
+        uploader.progressAmount, uploader.progressTotal);
+    });
+
+    uploader.on('end', function() {
+        var uploadedPath = s3.getPublicUrl(config.s3_config.BUCKET_NAME, newFilename, "");
+        console.log("FILE UPLOADED", uploadedPath);
+        fs.unlink("uploads/"+filename);
+        uploadedPath = uploadedPath.replace('s3', 's3-us-west-2');
+        console.log("PATH", uploadedPath);
+        //Saving the file in the database
+        addMediaFile(data.project_id, uploadedPath, callback);
+    });
+}
+
+
 function saveMediaFile(project_id, file_path, callback) {
         download(file_path, './uploads/')
             .on('close', function () {
@@ -579,47 +617,18 @@ function saveMediaFile(project_id, file_path, callback) {
 
                 var newFilename = uuidGen.v1() + '.' + type.ext;
 
-                var client = s3.createClient({
-                        s3Options: {
-                            accessKeyId: config.s3_config.ACCESS_KEY,
-                            secretAccessKey: config.s3_config.SECRECT_KEY,
-                            region: 'us-west-2'
-                        }
-                });
-
-                var uploader = client.uploadFile({
-                   localFile: "uploads/"+filename,
-                   s3Params: {
-                     Bucket: config.s3_config.BUCKET_NAME,
-                     Key: newFilename
-                   }
-                });
-
-                uploader.on('error', function(err) {
-                   console.error("unable to upload:", err.stack);
-                });
-
-                uploader.on('progress', function() {
-                    console.log("progress", uploader.progressMd5Amount,
-                    uploader.progressAmount, uploader.progressTotal);
-                });
-
-                uploader.on('end', function() {
-                    var uploadedPath = s3.getPublicUrl(config.s3_config.BUCKET_NAME, newFilename, "");
-                    console.log("FILE UPLOADED", uploadedPath);
-                    fs.unlink("uploads/"+filename);
-                    uploadedPath = uploadedPath.replace('s3', 's3-us-west-2');
-                    console.log("PATH", uploadedPath);
-                    //Saving the file in the database
-                    addMediaFile(project_id, uploadedPath, callback);
-                });
+                putMediaToS3bucketAndSaveToDB(project_id, newFileName, filename, callack);
             });
 }
 
 function addMediaFile(projectId, path, callback) {
         try {
                 console.log('call method addMediaFile: projectId = ' + projectId + ', path: ' + path);
-                query('INSERT INTO public.media_file (project_id, path) VALUES ($1, $2) RETURNING id, path;', [projectId, path], function(err, result) {
+                
+                // get resolution from file path
+
+
+                query('INSERT INTO public.media_file (project_id, path, order_in_project, resolution) VALUES ($1, $2, $3, $4) RETURNING id, path, order_in_project, resolution;', [projectId, path, order_in_project, resolution], function(err, result) {
                         if (err) {
                                 successFalseCb(err, callback);
                         } else {
@@ -1085,43 +1094,10 @@ io1.on('connection', function(socket1) {
 
                 var newFilename = uuidGen.v1() + '.' + type.ext;
 
-                var client = s3.createClient({
-                        s3Options: {
-                            accessKeyId: config.s3_config.ACCESS_KEY,
-                            secretAccessKey: config.s3_config.SECRECT_KEY,
-                            region: 'us-west-2'
-                        }
-                });
-
-                var uploader = client.uploadFile({
-                   localFile: "uploads/"+filename,
-                   s3Params: {
-                     Bucket: config.s3_config.BUCKET_NAME,
-                     Key: newFilename
-                   }
-                });
-
-                uploader.on('error', function(err) {
-                   console.error("unable to upload:", err.stack);
-                });
-
-                uploader.on('progress', function() {
-                    console.log("progress", uploader.progressMd5Amount,
-                    uploader.progressAmount, uploader.progressTotal);
-                });
-
-                uploader.on('end', function() {
-                    var uploadedPath = s3.getPublicUrl(config.s3_config.BUCKET_NAME, newFilename, "");
-                    console.log("FILE UPLOADED", uploadedPath);
-                    fs.unlink("uploads/"+filename);
-                    uploadedPath = uploadedPath.replace('s3', 's3-us-west-2');
-                    console.log("PATH", uploadedPath);
-                    //Saving the file in the database
-                    addMediaFile(data.project_id, uploadedPath, function(err, data) {
+                putMediaToS3bucketAndSaveToDB(data.project_id, newFileName, filename, function(err, data) {
                             console.log("Saving in database", err, data);
                             socket1.emit('media_added', data);
                     });
-                });
             });
         });
 
