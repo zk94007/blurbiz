@@ -19,7 +19,13 @@
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="project in projects | orderBy: sort_item">
             <div class="project-container text-center">
                 <div class="hovereffect">
-                    <img class="representative" ng-src="{{ project.representative }}" err-src="img/empty.png">
+
+                    <img ng-if="isImage(project.representative)" class="representative" ng-src="{{ project.representative }}" err-src="img/empty.png">
+
+                    <video ng-if="isVideo(project.representative)" class="representative video-js"  preload="auto">
+                        <source ng-src="{{ project.representative | trustUrl}}">
+                    </video>
+
                     <div class="img-cover">
                         <div class="item dropdown" uib-dropdown>
                             <a href="#" class="btn btn-dark dropdown-toggle" uib-dropdown-toggle>
