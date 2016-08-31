@@ -90,7 +90,7 @@
     <div drag-drop-uploader ng-cloak>
         <div class="row" ng-show="showProjects">
             <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="m in media">
-                <div style="height: 184px" class="project-container text-center">
+                <div class="project-container text-center">
                     <div class="hovereffect">
                         <img ng-if="isImage(m.path)" class="representative" ng-src="{{ m.path }}">
 
@@ -116,6 +116,9 @@
                             </div>
                         </div>
                     </div>
+
+                    <h4>{{ m.name }}</h4>
+                    <p>{{ m.resolution }}</p>
                 </div>
             </div>
             

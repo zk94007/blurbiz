@@ -619,7 +619,7 @@ function putMediaToS3bucketAndSaveToDB(project_id, filename, callback) {
                     gm('./uploads/' + filename)
                         .size(function(err, size) {
                             if(!err) {
-                                var resolution = size.width + ',' + size.height;
+                                var resolution = size.width + ' x ' + size.height;
                                 addMediaFile(project_id, uploadedPath, resolution, filename, callback);
                             }
                         })    
@@ -639,7 +639,7 @@ function putMediaToS3bucketAndSaveToDB(project_id, filename, callback) {
                         } else {
                             // metadata should contain 'width', 'height' and 'display_aspect_ratio'
                             // console.log(metadata);
-                            var resolution = metadata.streams[0].width + ',' + metadata.streams[0].height;
+                            var resolution = metadata.streams[0].width + ' x ' + metadata.streams[0].height;
                             addMediaFile(project_id, uploadedPath, resolution, filename, callback);
                         }
                     });
