@@ -1,6 +1,6 @@
 angular
     .module("Blurbiz")
-    .directive('confirmReallyDo', ['$uibModal', function($uibModal) {
+    .directive('confirmReallyDo', ['$uibModal', '$timeout', function($uibModal, $timeout) {
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
@@ -13,7 +13,9 @@ angular
 
                 modalInstance.result.then(function (selectedItem) {
                     if (selectedItem == 'ok') {
-                        scope.$apply(attrs.confirmReallyDo);
+                        $timeout(function() {
+                            scope.$apply(attrs.confirmReallyDo);
+                        }, 0);
                     }
                 });
             });
