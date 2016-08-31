@@ -10,7 +10,7 @@
         var token = LocalStorageService.getToken();
         $scope.emptyImg = 'img/empty.png';
 
-        $scope.sort_item = 'name';
+        $scope.sort_item = 'project_name';
 
         $scope.deleteProject = function(id) {
             socket.on('delete_project_response', function(msg) {

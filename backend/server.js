@@ -426,21 +426,10 @@ function confirmateEmail(userId, code, callback) {
 
 function projectList(userId, callback) {
         try {
-
-            // Select t.*, media_file.path, media_file.order_in_project, media_file.resolution 
-            // FROM (SELECT project.id AS id, project.project_name, COUNT(media_file.path) as screen_count
-            //     FROM public.project AS project
-            //      JOIN public.media_file AS media_file 
-            //      ON project.id = media_file.project_id
-            //      WHERE project.user_id=25
-            //     GROUP By project.id) AS t, public.media_file AS media_file
-            //     WHERE media_file.project_id = t.id AND media_file.order_in_project = (SELECT max(order_in_project) FROM media_file WHERE media_file.project_id = t.id);
-
-
+            
                 console.log('call method projectList: userId = ' + userId);      
-                // query('Select t.*, media_file.path, media_file.resolution FROM (SELECT project.id AS id, project.project_name, COUNT(media_file.path) as screen_count FROM public.project AS project JOIN public.media_file AS media_file ON project.id = media_file.project_id WHERE project.user_id= $1 GROUP By project.id) AS t, public.media_file AS media_file WHERE media_file.project_id = t.id AND media_file.order_in_project = (SELECT max(order_in_project) FROM media_file WHERE media_file.project_id = t.id);', [userId], function(err, result) {
-
-                query('SELECT DISTINCT ON(t.id) t.*, media_file.path  FROM (    SELECT project.id AS id, project.project_name, COUNT(media_file.path) as screen_count           FROM public.project AS project          LEFT JOIN public.media_file AS media_file       ON project.id = media_file.project_id       WHERE project.user_id= $1       GROUP By project.id) AS t  LEFT JOIN public.media_file AS media_file    ON media_file.project_id = t.id   AND media_file.order_in_project =     (SELECT MIN(order_in_project) FROM media_file WHERE media_file.project_id = t.id) ORDER BY t.id, media_file.id ASC;', [userId], function(err, result) {
+                
+                query('SELECT DISTINCT ON(t.id) t.*, media_file.path  FROM (    SELECT project.id AS id, project.project_name, COUNT(media_file.path) as screen_count, project.created_at          FROM public.project AS project          LEFT JOIN public.media_file AS media_file       ON project.id = media_file.project_id       WHERE project.user_id= $1       GROUP By project.id) AS t  LEFT JOIN public.media_file AS media_file    ON media_file.project_id = t.id   AND media_file.order_in_project =     (SELECT MIN(order_in_project) FROM media_file WHERE media_file.project_id = t.id) ORDER BY t.id, media_file.id ASC;', [userId], function(err, result) {
                         if (err) {
                             successFalseCb(err, callback);
                         } else {
