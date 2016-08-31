@@ -13,6 +13,7 @@ var fileType = require('file-type');
 var googleDrive = require('google-drive');
 var gm = require('gm');
 var ffmpeg = require('fluent-ffmpeg');
+var async = require('async');
 
 
 var transporter = nodemailer.createTransport({
@@ -570,11 +571,12 @@ function saveGoogleFile(message, callback) {
         });
 }
 
-function putMediaToS3bucketAndSaveToDB(project_id, filename, callack) {
+function putMediaToS3bucketAndSaveToDB(project_id, filename, callback) {
     
     var buffer = readChunk.sync('./uploads/' + filename, 0, 262);
     var type = fileType(buffer);
     var newFilename = uuidGen.v1() + '.' + type.ext;
+    var resolution = '';
 
     var client = s3.createClient({
             s3Options: {
@@ -604,11 +606,47 @@ function putMediaToS3bucketAndSaveToDB(project_id, filename, callack) {
     uploader.on('end', function() {
         var uploadedPath = s3.getPublicUrl(config.s3_config.BUCKET_NAME, newFilename, "");
         console.log("FILE UPLOADED", uploadedPath);
-        fs.unlink("uploads/"+filename);
         uploadedPath = uploadedPath.replace('s3', 's3-us-west-2');
         console.log("PATH", uploadedPath);
         //Saving the file in the database
-        addMediaFile(project_id, uploadedPath, callback);
+
+        if(type.mime.includes("image/")) {
+            debugger;
+            async.series([
+                function() {
+                    gm('./uploads/' + filename)
+                        .size(function(err, size) {
+                            if(!err) {
+                                var resolution = size.width + ',' + size.height;
+                                addMediaFile(project_id, uploadedPath, resolution, callback);
+                            }
+                        })    
+                },
+                function() {
+                    fs.unlink("uploads/"+filename);
+                }
+            ]);
+                
+        } else if (type.mime.includes("video/")) {
+            debugger;
+            async.series([
+                function() {
+                    ffmpeg.ffprobe('./uploads/' + filename, function(err, metadata) {
+                        if (err) {
+                            console.error(err);
+                        } else {
+                            // metadata should contain 'width', 'height' and 'display_aspect_ratio'
+                            console.log(metadata);
+                            var resolution = metadata.width + ',' + metadata.height;
+                            addMediaFile(project_id, uploadedPath, resolution, callback);
+                        }
+                    });
+                },
+                function() {
+                    fs.unlink("uploads/"+filename);
+                }
+            ]);
+        }
     });
 }
 
@@ -619,66 +657,73 @@ function saveMediaFile(project_id, file_path, callback) {
                 console.log('One file has been downloaded.');
                 var filename = path.basename(file_path);
 
-                putMediaToS3bucketAndSaveToDB(project_id, filename, callack);
+                debugger;
+                putMediaToS3bucketAndSaveToDB(project_id, filename, callback);
             });
 }
 
-function insertMediaToDB(projectId, path, resolution, callback) {
-    debugger;
-    query('INSERT INTO public.media_file (project_id, path, order_in_project, resolution) SELECT ($1, $2, MAX(order_in_project, $3) FROM public.media_file WHERE project_id = $1 RETURNING id, path, order_in_project, resolution;', [projectId, path,  resolution], function(err, result) {
-        if (err) {
-            successFalseCb(err, callback);
-        } else {
-            var row = result.rows[0];
-            if (row != null) {
-                    successCb(callback, {
-                            'media_file_id': row.id,
-                            'path': row.path,
-                            'order_in_project': row.order_in_project,
-                            'resolution': row.resolution
-                    });
-            } else {
-                successFalseCb('result row is null for the query', callback);
-            }
-        }
-    });
-}
+function addMediaFile(projectId, path, resolution, callback) {
+    try {
 
-function addMediaFile(projectId, path, callback) {
-        try {
-                debugger;
-                console.log('call method addMediaFile: projectId = ' + projectId + ', path: ' + path);
-                
-                // get resolution from file path
-                var buffer = readChunk.sync(path, 0, 262);
-                var type = fileType(buffer);
-                if(type.mime.includes("image/")) {
-                    gm(path)
-                        .size(function(err, size) {
-                            if(!err) {
-                                var resolution = size.width + ',' + size.height;
-                                insertMediaToDB(projectId, path, resolution, callback);
-                            }
-                        })
-                } else if (type.mime.includes("video/")) {
-
-                    ffmpeg.ffprobe(path, function(err, metadata) {
-                        if (err) {
-                            console.error(err);
-                        } else {
-                            // metadata should contain 'width', 'height' and 'display_aspect_ratio'
-                            console.log(metadata);
-                            var resolution = metadata.width + ',' + metadata.height;
-                            insertMediaToDB(projectId, path, resolution, callback);
-                        }
-                    });
-                }
-                
-        } catch (err) {
-                console.log('error in method addMediaFile: ' + err);
+        query('INSERT INTO public.media_file (project_id, path, order_in_project, resolution) VALUES ($1, $2, (SELECT MAX(order_in_project) + 1 FROM public.media_file WHERE project_id = $1), $3) RETURNING id, path, order_in_project, resolution;', [projectId, path,  resolution], function(err, result) {
+            if (err) {
                 successFalseCb(err, callback);
-        }
+            } else {
+                var row = result.rows[0];
+                if (row != null) {
+                        successCb(callback, {
+                                'media_file_id': row.id,
+                                'path': row.path,
+                                'order_in_project': row.order_in_project,
+                                'resolution': row.resolution
+                        });
+                } else {
+                    successFalseCb('result row is null for the query', callback);
+                }
+            }
+        });
+    } catch (err) {
+            console.log('error in method addMediaFile: ' + err);
+            successFalseCb(err, callback);
+    }
+    
 }
+
+// function addMediaFile(projectId, path, callback) {
+//         try {
+//                 debugger;
+//                 console.log('call method addMediaFile: projectId = ' + projectId + ', path: ' + path);
+                
+//                 // get resolution from file path
+//                 var buffer = readChunk.sync(path, 0, 262);
+//                 var type = fileType(buffer);
+//                 if(type.mime.includes("image/")) {
+//                     gm(path)
+//                         .size(function(err, size) {
+//                             if(!err) {
+//                                 var resolution = size.width + ',' + size.height;
+//                                 insertMediaToDB(projectId, path, resolution, callback);
+//                             }
+//                         })
+//                 } else if (type.mime.includes("video/")) {
+
+//                     ffmpeg.ffprobe(path, function(err, metadata) {
+//                         if (err) {
+//                             console.error(err);
+//                         } else {
+//                             // metadata should contain 'width', 'height' and 'display_aspect_ratio'
+//                             console.log(metadata);
+//                             var resolution = metadata.width + ',' + metadata.height;
+//                             insertMediaToDB(projectId, path, resolution, callback);
+//                         }
+//                     });
+//                 }
+                
+//         } catch (err) {
+//                 console.log('error in method addMediaFile: ' + err);
+//                 successFalseCb(err, callback);
+//         }
+// }
 
 function getMediaFileList(projectId, callback) {
     console.log('call method getMediaFileList: projectId = ' + projectId);
