@@ -638,8 +638,8 @@ function putMediaToS3bucketAndSaveToDB(project_id, filename, callback) {
                             console.error(err);
                         } else {
                             // metadata should contain 'width', 'height' and 'display_aspect_ratio'
-                            console.log(metadata);
-                            var resolution = metadata.width + ',' + metadata.height;
+                            // console.log(metadata);
+                            var resolution = metadata.streams[0].width + ',' + metadata.streams[0].height;
                             addMediaFile(project_id, uploadedPath, resolution, filename, callback);
                         }
                     });
