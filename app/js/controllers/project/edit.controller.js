@@ -166,6 +166,7 @@
         };
 
         $scope.addImage = function(file_path) {
+          console.log("addImage run");
           socket.emit('media_file_add', {
             'path': file_path,
             'project_id': $scope.project_id,
@@ -273,11 +274,17 @@
             });
 
             socket.on('media_added', function(msg) {
-                console.log(msg);
+              console.log(msg);
+              if($scope.media.indexOf(msg) == -1) {
                 $scope.media.push(msg);
-                $scope.$apply();
-                // location.reload();
+                $scope.$apply();  
+              } else {
+                console.log('duplication detected');
+              }
+              
+              // location.reload();
             });
+            
         }
 
     }

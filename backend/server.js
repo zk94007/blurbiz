@@ -1120,7 +1120,7 @@ io1.on('connection', function(socket1) {
                 //         socket1.emit('media_added', result);
                 // });
                 saveGoogleFile(message, function(err, result) {
-                        console.log('send media_file_add response: ' + JSON.stringify(result))
+                        console.log('send google file add response: ' + JSON.stringify(result))
                         socket1.emit('media_added', result);
                 });
         });
