@@ -438,7 +438,9 @@ function projectList(userId, callback) {
 
 
                 console.log('call method projectList: userId = ' + userId);      
-                query('Select t.*, media_file.path, media_file.resolution FROM (SELECT project.id AS id, project.project_name, COUNT(media_file.path) as screen_count FROM public.project AS project JOIN public.media_file AS media_file ON project.id = media_file.project_id WHERE project.user_id= $1 GROUP By project.id) AS t, public.media_file AS media_file WHERE media_file.project_id = t.id AND media_file.order_in_project = (SELECT max(order_in_project) FROM media_file WHERE media_file.project_id = t.id);', [userId], function(err, result) {
+                // query('Select t.*, media_file.path, media_file.resolution FROM (SELECT project.id AS id, project.project_name, COUNT(media_file.path) as screen_count FROM public.project AS project JOIN public.media_file AS media_file ON project.id = media_file.project_id WHERE project.user_id= $1 GROUP By project.id) AS t, public.media_file AS media_file WHERE media_file.project_id = t.id AND media_file.order_in_project = (SELECT max(order_in_project) FROM media_file WHERE media_file.project_id = t.id);', [userId], function(err, result) {
+
+                query('Select DISTINCT t.*, media_file.path FROM (SELECT project.id AS id, project.project_name, COUNT(media_file.path) as screen_count      FROM public.project AS project      LEFT JOIN public.media_file AS media_file   ON project.id = media_file.project_id   WHERE project.user_id= $1   GROUP By project.id) AS t   LEFT JOIN public.media_file AS media_file   ON media_file.project_id = t.id  AND media_file.order_in_project =  (SELECT max(order_in_project) FROM media_file WHERE media_file.project_id = t.id)', [userId], function(err, result) {
                         if (err) {
                             successFalseCb(err, callback);
                         } else {
@@ -618,7 +620,7 @@ function putMediaToS3bucketAndSaveToDB(project_id, filename, callback) {
                         .size(function(err, size) {
                             if(!err) {
                                 var resolution = size.width + ',' + size.height;
-                                addMediaFile(project_id, uploadedPath, resolution, callback);
+                                addMediaFile(project_id, uploadedPath, resolution, filename, callback);
                             }
                         })    
                 },
@@ -638,7 +640,7 @@ function putMediaToS3bucketAndSaveToDB(project_id, filename, callback) {
                             // metadata should contain 'width', 'height' and 'display_aspect_ratio'
                             console.log(metadata);
                             var resolution = metadata.width + ',' + metadata.height;
-                            addMediaFile(project_id, uploadedPath, resolution, callback);
+                            addMediaFile(project_id, uploadedPath, resolution, filename, callback);
                         }
                     });
                 },
@@ -662,10 +664,10 @@ function saveMediaFile(project_id, file_path, callback) {
             });
 }
 
-function addMediaFile(projectId, path, resolution, callback) {
+function addMediaFile(projectId, path, resolution, filename, callback) {
     try {
 
-        query('INSERT INTO public.media_file (project_id, path, order_in_project, resolution) VALUES ($1, $2, (SELECT MAX(order_in_project) + 1 FROM public.media_file WHERE project_id = $1), $3) RETURNING id, path, order_in_project, resolution;', [projectId, path,  resolution], function(err, result) {
+        query('INSERT INTO public.media_file (project_id, path, order_in_project, resolution, name) VALUES ($1, $2, (SELECT COALESCE(MAX(order_in_project), 0) + 1 AS order_in_project_max FROM public.media_file WHERE project_id = $1), $3, $4) RETURNING id, path, order_in_project, resolution, name;', [projectId, path,  resolution, filename], function(err, result) {
             if (err) {
                 successFalseCb(err, callback);
             } else {
@@ -675,7 +677,8 @@ function addMediaFile(projectId, path, resolution, callback) {
                                 'media_file_id': row.id,
                                 'path': row.path,
                                 'order_in_project': row.order_in_project,
-                                'resolution': row.resolution
+                                'resolution': row.resolution,
+                                'name': row.name
                         });
                 } else {
                     successFalseCb('result row is null for the query', callback);
