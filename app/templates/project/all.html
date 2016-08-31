@@ -20,7 +20,7 @@
             <div class="project-container text-center">
                 <div class="hovereffect">
 
-                    <img ng-if="isImage(project.representative)" class="representative" ng-src="{{ project.representative }}" err-src="img/empty.png">
+                    <img ng-if="isImage(project.representative) || !project.representative" class="representative" ng-src="{{ project.representative }}" err-src="img/empty.png">
 
                     <video ng-if="isVideo(project.representative)" class="representative video-js"  preload="auto">
                         <source ng-src="{{ project.representative | trustUrl}}">

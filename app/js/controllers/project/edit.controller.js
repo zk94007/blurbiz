@@ -45,11 +45,15 @@
          */
 
         $scope.isImage = function(path) {
-          return !!path.match(/.+(\.jpg|\.jpeg|\.png|\.gif)$/);
+            if(!path)
+                return false;
+            return !!path.match(/.+(\.jpg|\.jpeg|\.png|\.gif)$/);
         }
 
         $scope.isVideo = function(path) {
-          return !!path.match(/.+(\.mp4|\.avi|\.mpeg|\.flv|\.mov)$/);
+            if(!path)
+                return false;
+            return !!path.match(/.+(\.mp4|\.avi|\.mpeg|\.flv|\.mov)$/);
         }
 
         $scope.getUuid = function(path) {
