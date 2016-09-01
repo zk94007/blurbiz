@@ -8,7 +8,12 @@ angular
                 var modalInstance = $uibModal.open({
                     animation: true,
                     templateUrl: 'templates/confirmModal.html',
-                    controller: 'ConfirmModalController'
+                    controller: 'ConfirmModalController',
+                    resolve: {
+                        content: function() {
+                            return attrs.confirmMessage
+                        }
+                    }
                 });
 
                 modalInstance.result.then(function (selectedItem) {
