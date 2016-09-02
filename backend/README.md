@@ -2,7 +2,7 @@ To run server successfully, you have to install graphicsmagick, imagemagick and 
 
 In Mac OS X, run 
 `brew install graphicsmagick`
-`brew install ffmpeg --with-faac`
+`brew install ffmpeg --with-fdk-aac`
 
 In Ubuntu, run
 
