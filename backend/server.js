@@ -666,7 +666,7 @@ function putMediaToS3bucketAndSaveToDB(project_id, filename, callback) {
                                 });
                             series_callback2();    
                         },
-                        function(series_callback) {
+                        function(series_callback2) {
                             fs.unlink("uploads/"+filename);
                             series_callback2();
                         }
