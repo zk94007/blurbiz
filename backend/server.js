@@ -604,8 +604,8 @@ function putMediaToS3bucketAndSaveToDB(project_id, filename, callback) {
                 ffmpeg("./uploads/"+filename)
                     .output('./uploads/' + filename + '.mp4')
                     // .output(stream)
-                    // .audioCodec('libfaac')
-                    .audioCodec('libfdk_aac')
+                    .audioCodec('libfaac')
+                    // .audioCodec('libfdk_aac')
                     .videoCodec('libx264')
                     .on('end', function() {
                         fs.unlink("./uploads/"+filename);
