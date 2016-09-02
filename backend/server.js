@@ -662,12 +662,13 @@ function putMediaToS3bucketAndSaveToDB(project_id, filename, callback) {
                                     if(!err) {
                                         var resolution = size.width + ' x ' + size.height;
                                         addMediaFile(project_id, uploadedPath, resolution, filename, callback);
+                                        series_callback2(); 
                                     }
                                 });
-                            series_callback2();    
+                              
                         },
                         function(series_callback2) {
-                            fs.unlink("uploads/"+filename);
+                            fs.unlink("./uploads/"+filename);
                             series_callback2();
                         }
                     ], function(err) {
@@ -694,7 +695,7 @@ function putMediaToS3bucketAndSaveToDB(project_id, filename, callback) {
                             });
                         },
                         function(series_callback2) {
-                            fs.unlink("uploads/"+filename);
+                            fs.unlink("./uploads/"+filename);
                             series_callback2();
                         }
                     ], function(err) {
