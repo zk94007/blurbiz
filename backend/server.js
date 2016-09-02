@@ -604,24 +604,26 @@ function putMediaToS3bucketAndSaveToDB(project_id, filename, callback) {
         if(type.mime.includes("image/")) {
             debugger;
             async.series([
-                function() {
+                function(series_callback) {
                     gm('./uploads/' + filename)
                         .size(function(err, size) {
                             if(!err) {
                                 var resolution = size.width + ' x ' + size.height;
                                 addMediaFile(project_id, uploadedPath, resolution, filename, callback);
                             }
-                        })    
+                        });
+                    series_callback();    
                 },
-                function() {
+                function(series_callback) {
                     fs.unlink("uploads/"+filename);
+                    series_callback();
                 }
             ]);
                 
         } else if (type.mime.includes("video/")) {
             debugger;
             async.series([
-                function() {
+                function(series_callback) {
                     ffmpeg.ffprobe('./uploads/' + filename, function(err, metadata) {
                         if (err) {
                             console.error(err);
@@ -631,10 +633,12 @@ function putMediaToS3bucketAndSaveToDB(project_id, filename, callback) {
                             var resolution = metadata.streams[0].width + ' x ' + metadata.streams[0].height;
                             addMediaFile(project_id, uploadedPath, resolution, filename, callback);
                         }
+                        series_callback();
                     });
                 },
-                function() {
+                function(series_callback) {
                     fs.unlink("uploads/"+filename);
+                    series_callback();
                 }
             ]);
         }
