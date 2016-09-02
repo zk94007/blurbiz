@@ -53,7 +53,7 @@
                     }
                 })
                 .state('project.edit',  {
-                    url: '/:id',
+                    url: '/:id?access_token',
                     templateUrl: 'templates/project/edit.html',
                     controller: 'Project.EditController',
                     data: {
@@ -67,9 +67,37 @@
                     data: {
                         title: 'Schedule'
                     }
-                });
+                })
+                .state('instagram_token', {
+                    url: '/access_token={token:.+}',
+                    templateUrl: 'templates/index.html',
+                    controller: function($scope, $stateParams) {
+                        var project_id = sessionStorage.getItem("project_id");
+                        localStorage.setItem("instagram_token", $stateParams.token);
+                        location.reload();
+                        window.close();
+                        // window.location.href = "/#/project/"+project_id+"?access_token="+$stateParams.token;
+
+                    }
+                })
         }
     ])
+    .config(['DropBoxSettingsProvider', function(DropBoxSettingsProvider) {
+        DropBoxSettingsProvider.configure({
+            multiselect: true,
+            // box_clientId: 'ol9shnikyhmp0eag26fp6tdq02l3bgqv',
+            box_clientId: 'vkf7vdl1p0156bdr8qskkag869exln71',
+            extensions: [ '.gif','.png','.jpg', 'jpeg'],//dropbox file 
+            box_linkType: 'direct'
+        });
+    }])
+    .config(['lkGoogleSettingsProvider', function(lkGoogleSettingsProvider) {
+        lkGoogleSettingsProvider.configure({
+            apiKey   : 'AIzaSyAqBcpJG3DFVEfgHGdSHlCj_zW-GbMTByk',
+            clientId : '944689281546-s3o8lk1e093a3mjetpfgj9hic7r5saae.apps.googleusercontent.com',
+            scopes   : ['https://www.googleapis.com/auth/drive'],
+        });
+    }])
     .run(['$rootScope', '$state', 'LocalStorageService', function($rootScope, $state, LocalStorageService) {
           $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams, options){

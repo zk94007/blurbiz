@@ -12,8 +12,6 @@ CREATE TABLE public.project
    id integer NOT NULL DEFAULT nextval('project_id_seq'), 
    user_id integer, 
    project_name character varying(255),
-   screen_count integer DEFAULT 0,
-   representative character varying(255),
    created_at timestamp without time zone DEFAULT now(),
    PRIMARY KEY (id), 
    FOREIGN KEY (user_id) REFERENCES "user" (id) ON UPDATE NO ACTION ON DELETE NO ACTION

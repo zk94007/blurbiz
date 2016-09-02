@@ -9,8 +9,8 @@
             <div class="sorting pull-right">
                 Sort: <select name="sortable" ng-model="sort_item">
                     <option value="-created_at">Newest First</option>
-                    <option value="name">A-Z</option>
-                    <option value="-name">Z-A</option>
+                    <option value="project_name">A-Z</option>
+                    <option value="-project_name">Z-A</option>
                 </select>
             </div>
         </div>
@@ -19,7 +19,13 @@
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="project in projects | orderBy: sort_item">
             <div class="project-container text-center">
                 <div class="hovereffect">
-                    <img class="representative" ng-src="{{ project.representative }}" err-src="img/empty.png">
+
+                    <img ng-if="isImage(project.representative) || !project.representative" class="representative" ng-src="{{ project.representative }}" err-src="img/empty.png">
+
+                    <video ng-if="isVideo(project.representative)" class="representative video-js"  preload="auto">
+                        <source ng-src="{{ project.representative | trustUrl}}">
+                    </video>
+
                     <div class="img-cover">
                         <div class="item dropdown" uib-dropdown>
                             <a href="#" class="btn btn-dark dropdown-toggle" uib-dropdown-toggle>
@@ -32,9 +38,9 @@
                                 </a>
                               </li>
                               <li class="link">
-                                <a ng-click="deleteProject(project.project_id)">
+                                <a confirm-really-do="deleteProject( {{project.project_id}} )" confirm-message="Are you sure you want to delete your project?">
                                   Delete
-                                </a>
+                                </a> 
                               </li>
                             </ul>
                         </div>
@@ -52,7 +58,7 @@
             <h4>Create Project</h4>
         </div>
         <div class="modal-body">
-            <input type="text" class="form-control" placeholder="Your project name" ng-model="project_name" />
+            <input type="text" class="form-control" placeholder="Your project name" ng-model="project_name" ng-enter="ok()" />
         </div>
         <div class="modal-footer">
             <button class="btn btn-success" ng-click="ok()">Create</button>

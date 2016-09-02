@@ -15,6 +15,7 @@
 			console.log('file selected : '+file.name);
 		    
 		    // upload a file to the server.
+		    console.log("ss socket based file upload run");
 		    ss(socket).emit('media_file_add', stream, {size: file.size , name:file.name, project_id: projectId});			    
 		    var blobStream = ss.createBlobReadStream(file);		
 		    blobStream.on('data', function(chunk) {
@@ -26,8 +27,11 @@
 				console.log("Upload successful");
 				if(cb) cb();
  			});		
-		};		
-		
+		};
+
+		factory.uploadGoogleFile = function(file, projectId, cb) {
+
+		};
 		
 		return factory;
 	}

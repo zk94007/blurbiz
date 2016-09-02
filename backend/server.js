@@ -7,7 +7,13 @@ var ss = require('socket.io-stream');
 var path = require('path');
 var fs = require('fs');
 var s3 = require('s3');
-
+var download = require('url-download');
+var readChunk = require('read-chunk');
+var fileType = require('file-type');
+var googleDrive = require('google-drive');
+var gm = require('gm');
+var ffmpeg = require('fluent-ffmpeg');
+var async = require('async');
 
 var transporter = nodemailer.createTransport({
     'service': 'gmail',
@@ -276,18 +282,39 @@ function createProject(userId, projectName, callback) {
         }
 }
 
-
 function deleteProject(projectId, callback) {
         try {
+                debugger;
                 console.log('call method deleteProject: projectId = ' + projectId);
-                query('DELETE FROM public.project WHERE id = $1;', [projectId], function(err, result) {
-                        if (err) {
-                                successFalseCb(err, callback);
-                        } else {
-                                successCb(callback);
-                                
-                        }
-        });
+                query('SELECT path FROM public.media_file WHERE project_id = $1;', [projectId], function(err, result) {
+                    if (!err) {
+                        // for (var i = 0; i < result.rows.length; i++) {
+                        //     var row = result.rows[i];
+                        //     deleteImage(row.file_path, null);
+                        // }
+
+                        debugger;
+
+                        var asyncTasks = [];
+                        result.rows.forEach(function(row) {
+                            asyncTasks.push(function(parallel_callback) {
+                                deleteImage(row.path, parallel_callback);
+                            });
+                        });
+
+                        async.parallel(asyncTasks, function() {
+                            query('DELETE FROM public.project WHERE id = $1;', [projectId], function(err, result) {
+                                if (err) {
+                                        successFalseCb(err, callback);
+                                } else {
+                                        successCb(callback);
+                                }
+                            });
+                        });
+                    }
+                });
+                
+                
         } catch (err) {
                 console.log('error in method deleteProject: ' + err);
                 successFalseCb(err, callback);
@@ -419,9 +446,10 @@ function confirmateEmail(userId, code, callback) {
 
 function projectList(userId, callback) {
         try {
+            
                 console.log('call method projectList: userId = ' + userId);      
-        query('SELECT id, project_name, screen_count, representative, created_at FROM public.project WHERE user_id = $1;', 
-            [userId], function(err, result) {
+                
+                query('SELECT DISTINCT ON(t.id) t.*, media_file.path  FROM (    SELECT project.id AS id, project.project_name, COUNT(media_file.path) as screen_count, project.created_at          FROM public.project AS project          LEFT JOIN public.media_file AS media_file       ON project.id = media_file.project_id       WHERE project.user_id= $1       GROUP By project.id) AS t  LEFT JOIN public.media_file AS media_file    ON media_file.project_id = t.id   AND media_file.order_in_project =     (SELECT MIN(order_in_project) FROM media_file WHERE media_file.project_id = t.id) ORDER BY t.id, media_file.id ASC;', [userId], function(err, result) {
                         if (err) {
                             successFalseCb(err, callback);
                         } else {
@@ -432,7 +460,8 @@ function projectList(userId, callback) {
                         'project_id': row.id,
                         'project_name': row.project_name,
                         'screen_count': row.screen_count,
-                        'representative': row.representative,
+                        'representative': row.path,
+                        'resolution': row.resolution,
                         'created_at': row.created_at
                     };
                                     projects.push(project);
@@ -541,28 +570,184 @@ function scheduleTask(projectId, scheduledStartDate, targetNetwork, title, descr
         }
 }
 
-function addMediaFile(projectId, path, callback) {
-        try {
-                console.log('call method addMediaFile: projectId = ' + projectId + ', path: ' + path);
-                query('INSERT INTO public.media_file (project_id, path) VALUES ($1, $2) RETURNING id, path;', [projectId, path], function(err, result) {
-                        if (err) {
-                                successFalseCb(err, callback);
-                        } else {
+function saveGoogleFile(message, callback) {
+
+        googleDrive(message.accessToken).files(message.fileId).get(function(err, response, body) {
+            if (err) return console.log('err', err);
+            if (response.statusCode != 200) return console.log('Error happened', response.statusCode);
+            console.log('response', response);
+            console.log('body', JSON.parse(body));
+
+            saveMediaFile(message.project_id, JSON.parse(body).thumbnailLink.split("=s")[0], callback);
+        });
+}
+
+function putMediaToS3bucketAndSaveToDB(project_id, filename, callback) {
+    
+    var buffer = readChunk.sync('./uploads/' + filename, 0, 262);
+    var type = fileType(buffer);
+
+    if (!type)
+    {
+        successFalseCb("unsupported file", callback);
+        return;
+    }
+
+    var newFilename = uuidGen.v1() + '.' + type.ext;
+    var resolution = '';
+
+    async.series([
+        function(series_callback) {
+            if (type.mime.includes("video/")) {
+                
+                debugger;
+                ffmpeg("./uploads/"+filename)
+                    .output('./uploads/' + filename + '.mp4')
+                    // .output(stream)
+                    .audioCodec('libfaac')
+                    // .audioCodec('libfdk_aac')
+                    .videoCodec('libx264')
+                    .on('end', function() {
+                        fs.unlink("./uploads/"+filename);
+                        newFilename = newFilename.replace("." + type.ext, '.mp4');
+                        filename = filename + '.mp4';
+                        series_callback();
+                    })
+                    .run();
+            }
+            else {
+                series_callback();
+            }
+        },
+        function(series_callback) {
+            debugger;
+            var client = s3.createClient({
+                    s3Options: {
+                        accessKeyId: config.s3_config.ACCESS_KEY,
+                        secretAccessKey: config.s3_config.SECRECT_KEY,
+                        region: 'us-west-2'
+                    }
+            });
+
+            var uploader = client.uploadFile({
+               localFile: "uploads/"+filename,
+               s3Params: {
+                 Bucket: config.s3_config.BUCKET_NAME,
+                 Key: newFilename
+               }
+            });
+
+            uploader.on('error', function(err) {
+               console.error("unable to upload:", err.stack);
+               successFalseCb(err, callback);
+            });
+
+            uploader.on('progress', function() {
+                console.log("progress", uploader.progressMd5Amount,
+                uploader.progressAmount, uploader.progressTotal);
+            });
+
+            uploader.on('end', function() {
+                var uploadedPath = s3.getPublicUrl(config.s3_config.BUCKET_NAME, newFilename, "");
+                console.log("FILE UPLOADED", uploadedPath);
+                uploadedPath = uploadedPath.replace('s3', 's3-us-west-2');
+                console.log("PATH", uploadedPath);
+                //Saving the file in the database
+
+                if(type.mime.includes("image/")) {
+                    debugger;
+                    async.series([
+                        function(series_callback2) {
+                            gm('./uploads/' + filename)
+                                .size(function(err, size) {
+                                    if(!err) {
+                                        var resolution = size.width + ' x ' + size.height;
+                                        addMediaFile(project_id, uploadedPath, resolution, filename, callback);
+                                        series_callback2(); 
+                                    }
+                                });
+                              
+                        },
+                        function(series_callback2) {
+                            fs.unlink("./uploads/"+filename);
+                            series_callback2();
+                        }
+                    ], function(err) {
+                        if (err)
+                            successFalseCb(err, callback);
+                        series_callback();
+                    });
+                        
+                } else if (type.mime.includes("video/")) {
+                    debugger;
+                    async.series([
+                        function(series_callback2) {
+                            
+                            ffmpeg.ffprobe('./uploads/' + filename, function(err, metadata) {
+                                if (err) {
+                                    console.error(err);
+                                } else {
+                                    // metadata should contain 'width', 'height' and 'display_aspect_ratio'
+                                    // console.log(metadata);
+                                    var resolution = metadata.streams[0].width + ' x ' + metadata.streams[0].height;
+                                    addMediaFile(project_id, uploadedPath, resolution, filename, callback);
+                                }
+                                series_callback2();
+                            });
+                        },
+                        function(series_callback2) {
+                            fs.unlink("./uploads/"+filename);
+                            series_callback2();
+                        }
+                    ], function(err) {
+                        if (err)
+                            successFalseCb(err, callback);
+                        series_callback();
+                    });
+                }
+            });
+        }
+    ]);
+    
+}
+
+
+function saveMediaFile(project_id, file_path, callback) {
+        download(file_path, './uploads/')
+            .on('close', function () {
+                console.log('One file has been downloaded.');
+                var filename = path.basename(file_path);
+
+                putMediaToS3bucketAndSaveToDB(project_id, filename, callback);
+            });
+}
+
+function addMediaFile(projectId, path, resolution, filename, callback) {
+    try {
+
+        query('INSERT INTO public.media_file (project_id, path, order_in_project, resolution, name) VALUES ($1, $2, (SELECT COALESCE(MAX(order_in_project), 0) + 1 AS order_in_project_max FROM public.media_file WHERE project_id = $1), $3, $4) RETURNING id, path, order_in_project, resolution, name;', [projectId, path,  resolution, filename], function(err, result) {
+            if (err) {
+                successFalseCb(err, callback);
+            } else {
                 var row = result.rows[0];
                 if (row != null) {
                         successCb(callback, {
                                 'media_file_id': row.id,
-                                'path': row.path
+                                'path': row.path,
+                                'order_in_project': row.order_in_project,
+                                'resolution': row.resolution,
+                                'name': row.name
                         });
                 } else {
                     successFalseCb('result row is null for the query', callback);
                 }
-                        }
-                });
-        } catch (err) {
-                console.log('error in method addMediaFile: ' + err);
-                successFalseCb(err, callback);
-        }
+            }
+        });
+    } catch (err) {
+            console.log('error in method addMediaFile: ' + err);
+            successFalseCb(err, callback);
+    }
+    
 }
 
 function getMediaFileList(projectId, callback) {
@@ -949,6 +1134,8 @@ io1.on('connection', function(socket1) {
             });
     });
 
+    
+
     authRequiredCall(socket1, 'confirmate_email', function(userInfo, message) {
                 confirmateEmail(userInfo.id, message.email_code, function(err, result) {
                         console.log('send confirmate_email response: ' + JSON.stringify(result))
@@ -978,55 +1165,36 @@ io1.on('connection', function(socket1) {
         });
 
 
-        // authRequiredCall(socket1, 'media_file_add', function(userInfo, message) {
-        //         addMediaFile(message.project_id, message.path, function(err, result) {
-        //                 console.log('send media_file_add response: ' + JSON.stringify(result))
-        //                 socket1.emit('media_file_add_response', result);
-        //         });
-        // });
+        authRequiredCall(socket1, 'media_file_add', function(userInfo, message) {
+                saveMediaFile(message.project_id, message.path, function(err, result) {
+                        console.log('send media_file_add response: ' + JSON.stringify(result))
+                        socket1.emit('media_added', result);
+                });
+        });
+
+        authRequiredCall(socket1, 'google_file_add', function(userInfo, message) {
+                // addMediaFile(message.project_id, message.path, function(err, result) {
+                //         console.log('send media_file_add response: ' + JSON.stringify(result))
+                //         socket1.emit('media_added', result);
+                // });
+                saveGoogleFile(message, function(err, result) {
+                        console.log('send google file add response: ' + JSON.stringify(result))
+                        socket1.emit('media_added', result);
+                });
+        });
 
         ss(socket1).on('media_file_add', function(stream, data) {
             var filename = path.basename(data.name);
-            var writeStream = fs.createWriteStream("uploads/"+filename)
+
+            var writeStream = fs.createWriteStream("uploads/"+filename);
             stream.pipe(writeStream);
+
             writeStream.on('close', function(){
-                var client = s3.createClient({
-                        s3Options: {
-                            accessKeyId: config.s3_config.ACCESS_KEY,
-                            secretAccessKey: config.s3_config.SECRECT_KEY,
-                            region: 'us-west-2'
-                        }
-                });
 
-                var uploader = client.uploadFile({
-                   localFile: "uploads/"+filename,
-                   s3Params: {
-                     Bucket: config.s3_config.BUCKET_NAME,
-                     Key: filename
-                   }
-                });
-
-                uploader.on('error', function(err) {
-                   console.error("unable to upload:", err.stack);
-                });
-
-                uploader.on('progress', function() {
-                    console.log("progress", uploader.progressMd5Amount,
-                    uploader.progressAmount, uploader.progressTotal);
-                });
-
-                uploader.on('end', function() {
-                    var uploadedPath = s3.getPublicUrl(config.s3_config.BUCKET_NAME, filename, "");
-                    console.log("FILE UPLOADED", uploadedPath);
-                    fs.unlink("uploads/"+filename);
-                    uploadedPath = uploadedPath.replace('s3', 's3-us-west-2');
-                    console.log("PATH", uploadedPath);
-                    //Saving the file in the database
-                    addMediaFile(data.project_id, uploadedPath, function(err, data) {
+                putMediaToS3bucketAndSaveToDB(data.project_id, filename, function(err, data) {
                             console.log("Saving in database", err, data);
                             socket1.emit('media_added', data);
                     });
-                });
             });
         });
 

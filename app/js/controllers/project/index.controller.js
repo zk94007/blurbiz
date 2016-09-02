@@ -10,7 +10,7 @@
         var token = LocalStorageService.getToken();
         $scope.emptyImg = 'img/empty.png';
 
-        $scope.sort_item = 'name';
+        $scope.sort_item = 'project_name';
 
         $scope.deleteProject = function(id) {
             socket.on('delete_project_response', function(msg) {
@@ -32,6 +32,29 @@
                     'token': token
             });
         }
+
+        /******************************/
+
+        /** 
+         * video &image checker
+         */
+
+        $scope.isImage = function(path) {
+            if(!path)
+                return false;
+            return !!path.match(/.+(\.jpg|\.jpeg|\.png|\.gif)$/);
+        }
+
+        $scope.isVideo = function(path) {
+            if(!path)
+                return false;
+            return !!path.match(/.+(\.mp4|\.avi|\.mpeg|\.flv|\.mov)$/);
+        }
+
+
+        /**
+         * Modal
+         */
 
         $scope.openModal = function() {
             var modalInstance = $uibModal.open({
