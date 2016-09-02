@@ -39,7 +39,7 @@
                             <span>Box</span>
                         </div>
                     </a>
-                    <a href="#" class="center">
+                    <a ng-click="instagram()"  class="center">
                         <div>
                             <img class="icon" src="img/icons/instagram.png">
                         </div>
@@ -104,7 +104,7 @@
 
                         <div class="img-cover" ng-attr-data-for="{{ getUuid(m.path) }}">
                             <div class="hover-btn-delete">
-                                <button type="button" class="close" ng-click="deleteImage(m.path)">
+                                <button type="button" class="close" confirm-really-do="deleteImage(m.path)" confirm-message="Are you sure you want to delete this file?">
                                     <span aria-hidden="true">×</span>
                                     <span class="sr-only">Close</span>
                                 </button>
@@ -155,3 +155,19 @@
 
     
 </div>
+
+<script type="text/ng-template" id="instagramModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Instagram Images</h3>
+    </div>
+    <div class="modal-body" id="modal-body">
+        <ul>
+            <li ng-click="upload(image)" ng-repeat="image in data">
+                <img src="{{ image.images.thumbnail.url }}" />
+            </li>
+        </ul>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+    </div>
+</script>

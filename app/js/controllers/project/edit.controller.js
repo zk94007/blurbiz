@@ -5,13 +5,121 @@
         .module('Blurbiz.project')
         .controller('Project.EditController', Controller);
 
-    function Controller($state, $stateParams, $scope, $document, $uibModal, $timeout, socket, Upload, ProjectService, UploadService, LocalStorageService, trustUrlFilter) {
+    function Controller($state, $stateParams, $scope, $document, $uibModal, $timeout, socket, Upload, ProjectService, UploadService, LocalStorageService, trustUrlFilter,$http) {
 
         var token = LocalStorageService.getToken();
         $scope.project_id = $stateParams.id;
             
         $scope.interface = {};
+        function processInstagram(token) {
+          //If accessToken is present in the stateParams, then load the user media
 
+          $http({
+              method: 'JSONP',
+              url: 'https://api.instagram.com/v1/users/self/media/recent?access_token='+token,
+              crossDomain:true,
+               params: {
+                format: 'jsonp',
+                callback: 'JSON_CALLBACK'
+              }
+             }).then(function successCallback(response) {
+                // this callback will be called asynchronously
+                // when the response is available
+                console.log(response);
+
+                //Opening the modal
+                var modalInstance = $uibModal.open({
+                  animation: true,
+                  templateUrl: "instagramModal.html",
+                  resolve: {
+                    data: function() { return response.data.data }
+                  },
+                  controller: function($uibModalInstance, data, $scope) {
+                    $scope.data = data;
+
+                    $scope.upload = function(image) {
+                      var canvas = document.createElement("canvas");
+                      canvas.width = image.images.standard_resolution.width;
+                      canvas.height = image.images.standard_resolution.height;
+                      
+                      var img = new Image();
+                      img.width = image.images.standard_resolution.width;
+                      img.height = image.images.standard_resolution.height;
+                      img.crossOrigin = "Anonymous";
+                      img.src = image.images.standard_resolution.url;
+
+                      img.onload = function() {
+                          var ctx = canvas.getContext("2d");
+                            ctx.drawImage(img, 0, 0);
+
+                            var dataUrl = canvas.toDataURL("image/jpg");
+                            var blob = dataURItoBlob(dataUrl);
+
+                            UploadService.uploadFile(blob, $stateParams.id, function() {
+                              $uibModalInstance.close();
+                              $scope.$apply();
+                            });
+                      }
+                    }
+
+                    $scope.cancel = function() {
+                      $uibModalInstance.close();
+                    }
+
+                    function dataURItoBlob(dataURI) {
+                        // convert base64/URLEncoded data component to raw binary data held in a string
+                        var byteString;
+                        if (dataURI.split(',')[0].indexOf('base64') >= 0)
+                            byteString = atob(dataURI.split(',')[1]);
+                        else
+                            byteString = unescape(dataURI.split(',')[1]);
+
+                        // separate out the mime component
+                        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+                        // write the bytes of the string to a typed array
+                        var ia = new Uint8Array(byteString.length);
+                        for (var i = 0; i < byteString.length; i++) {
+                            ia[i] = byteString.charCodeAt(i);
+                        }
+
+                        return new Blob([ia], {type:mimeString});
+                    }
+                  }             
+                });
+
+
+              }, function errorCallback(response) {
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+              });
+        }
+
+        $scope.instagram = function() {
+          localStorage.removeItem("instagram_token");
+
+          //Redirect the user to this url
+          sessionStorage.setItem("project_id", $scope.project_id);
+          var url = "https://api.instagram.com/oauth/authorize/?client_id=6e3e49de0dbf4747a12665fd3c174d14&redirect_uri=http://localhost:4000/&response_type=token";
+          var w = window.open(url,'name','height=400,width=600');
+          w.onbeforeunload = function() {
+            console.log("Window closed");
+            var instagram_token = localStorage.getItem("instagram_token");
+            processInstagram(instagram_token);
+          }
+
+          setTimeout(function() {
+            var i = setInterval(function() {
+              var item = localStorage.getItem("instagram_token");
+              if(item) {
+                clearInterval(i);
+                processInstagram(item);
+                $scope.$apply();
+              }
+            }, 1000);
+          }, 5000);
+        }
+        
         $scope.uploadFiles = function (files, cb) {
             if (files && files.length) {
                 for (var i = 0; i < files.length; i++) {
@@ -47,7 +155,7 @@
         $scope.isImage = function(path) {
             if(!path)
                 return false;
-            return !!path.match(/.+(\.jpg|\.jpeg|\.png|\.gif)$/);
+          return !!path.match(/.+(\.jpg|\.jpeg|\.png|\.gif)$/);
         }
 
         $scope.isVideo = function(path) {
