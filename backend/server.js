@@ -15,7 +15,6 @@ var gm = require('gm');
 var ffmpeg = require('fluent-ffmpeg');
 var async = require('async');
 
-
 var transporter = nodemailer.createTransport({
     'service': 'gmail',
     'auth': config.mailConfig.auth
@@ -566,83 +565,127 @@ function putMediaToS3bucketAndSaveToDB(project_id, filename, callback) {
     
     var buffer = readChunk.sync('./uploads/' + filename, 0, 262);
     var type = fileType(buffer);
+
+    if (!type)
+    {
+        successFalseCb("unsupported file", callback);
+        return;
+    }
+
     var newFilename = uuidGen.v1() + '.' + type.ext;
     var resolution = '';
 
-    var client = s3.createClient({
-            s3Options: {
-                accessKeyId: config.s3_config.ACCESS_KEY,
-                secretAccessKey: config.s3_config.SECRECT_KEY,
-                region: 'us-west-2'
-            }
-    });
-
-    var uploader = client.uploadFile({
-       localFile: "uploads/"+filename,
-       s3Params: {
-         Bucket: config.s3_config.BUCKET_NAME,
-         Key: newFilename
-       }
-    });
-
-    uploader.on('error', function(err) {
-       console.error("unable to upload:", err.stack);
-    });
-
-    uploader.on('progress', function() {
-        console.log("progress", uploader.progressMd5Amount,
-        uploader.progressAmount, uploader.progressTotal);
-    });
-
-    uploader.on('end', function() {
-        var uploadedPath = s3.getPublicUrl(config.s3_config.BUCKET_NAME, newFilename, "");
-        console.log("FILE UPLOADED", uploadedPath);
-        uploadedPath = uploadedPath.replace('s3', 's3-us-west-2');
-        console.log("PATH", uploadedPath);
-        //Saving the file in the database
-
-        if(type.mime.includes("image/")) {
-            debugger;
-            async.series([
-                function(series_callback) {
-                    gm('./uploads/' + filename)
-                        .size(function(err, size) {
-                            if(!err) {
-                                var resolution = size.width + ' x ' + size.height;
-                                addMediaFile(project_id, uploadedPath, resolution, filename, callback);
-                            }
-                        });
-                    series_callback();    
-                },
-                function(series_callback) {
-                    fs.unlink("uploads/"+filename);
-                    series_callback();
-                }
-            ]);
+    async.series([
+        function(series_callback) {
+            if (type.mime.includes("video/")) {
                 
-        } else if (type.mime.includes("video/")) {
+                debugger;
+                ffmpeg("./uploads/"+filename)
+                    .output('./uploads/' + filename + '.mp4')
+                    // .output(stream)
+                    .audioCodec('libfaac')
+                    .videoCodec('libx264')
+                    .on('end', function() {
+                        fs.unlink("./uploads/"+filename);
+                        newFilename = newFilename.replace("." + type.ext, '.mp4');
+                        filename = filename + '.mp4';
+                        series_callback();
+                    })
+                    .run();
+            }
+            else {
+                series_callback();
+            }
+        },
+        function(series_callback) {
             debugger;
-            async.series([
-                function(series_callback) {
-                    ffmpeg.ffprobe('./uploads/' + filename, function(err, metadata) {
-                        if (err) {
-                            console.error(err);
-                        } else {
-                            // metadata should contain 'width', 'height' and 'display_aspect_ratio'
-                            // console.log(metadata);
-                            var resolution = metadata.streams[0].width + ' x ' + metadata.streams[0].height;
-                            addMediaFile(project_id, uploadedPath, resolution, filename, callback);
+            var client = s3.createClient({
+                    s3Options: {
+                        accessKeyId: config.s3_config.ACCESS_KEY,
+                        secretAccessKey: config.s3_config.SECRECT_KEY,
+                        region: 'us-west-2'
+                    }
+            });
+
+            var uploader = client.uploadFile({
+               localFile: "uploads/"+filename,
+               s3Params: {
+                 Bucket: config.s3_config.BUCKET_NAME,
+                 Key: newFilename
+               }
+            });
+
+            uploader.on('error', function(err) {
+               console.error("unable to upload:", err.stack);
+               successFalseCb(err, callback);
+            });
+
+            uploader.on('progress', function() {
+                console.log("progress", uploader.progressMd5Amount,
+                uploader.progressAmount, uploader.progressTotal);
+            });
+
+            uploader.on('end', function() {
+                var uploadedPath = s3.getPublicUrl(config.s3_config.BUCKET_NAME, newFilename, "");
+                console.log("FILE UPLOADED", uploadedPath);
+                uploadedPath = uploadedPath.replace('s3', 's3-us-west-2');
+                console.log("PATH", uploadedPath);
+                //Saving the file in the database
+
+                if(type.mime.includes("image/")) {
+                    debugger;
+                    async.series([
+                        function(series_callback2) {
+                            gm('./uploads/' + filename)
+                                .size(function(err, size) {
+                                    if(!err) {
+                                        var resolution = size.width + ' x ' + size.height;
+                                        addMediaFile(project_id, uploadedPath, resolution, filename, callback);
+                                    }
+                                });
+                            series_callback2();    
+                        },
+                        function(series_callback) {
+                            fs.unlink("uploads/"+filename);
+                            series_callback2();
                         }
+                    ], function(err) {
+                        if (err)
+                            successFalseCb(err, callback);
                         series_callback();
                     });
-                },
-                function(series_callback) {
-                    fs.unlink("uploads/"+filename);
-                    series_callback();
+                        
+                } else if (type.mime.includes("video/")) {
+                    debugger;
+                    async.series([
+                        function(series_callback2) {
+                            
+                            ffmpeg.ffprobe('./uploads/' + filename, function(err, metadata) {
+                                if (err) {
+                                    console.error(err);
+                                } else {
+                                    // metadata should contain 'width', 'height' and 'display_aspect_ratio'
+                                    // console.log(metadata);
+                                    var resolution = metadata.streams[0].width + ' x ' + metadata.streams[0].height;
+                                    addMediaFile(project_id, uploadedPath, resolution, filename, callback);
+                                }
+                                series_callback2();
+                            });
+                        },
+                        function(series_callback2) {
+                            fs.unlink("uploads/"+filename);
+                            series_callback2();
+                        }
+                    ], function(err) {
+                        if (err)
+                            successFalseCb(err, callback);
+                        series_callback();
+                    });
                 }
-            ]);
+            });
         }
-    });
+    ]);
+    
 }
 
 
@@ -652,7 +695,6 @@ function saveMediaFile(project_id, file_path, callback) {
                 console.log('One file has been downloaded.');
                 var filename = path.basename(file_path);
 
-                debugger;
                 putMediaToS3bucketAndSaveToDB(project_id, filename, callback);
             });
 }
