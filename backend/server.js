@@ -283,18 +283,39 @@ function createProject(userId, projectName, callback) {
         }
 }
 
-
 function deleteProject(projectId, callback) {
         try {
+                debugger;
                 console.log('call method deleteProject: projectId = ' + projectId);
-                query('DELETE FROM public.project WHERE id = $1;', [projectId], function(err, result) {
-                        if (err) {
-                                successFalseCb(err, callback);
-                        } else {
-                                successCb(callback);
-                                
-                        }
-        });
+                query('SELECT path FROM public.media_file WHERE project_id = $1;', [projectId], function(err, result) {
+                    if (!err) {
+                        // for (var i = 0; i < result.rows.length; i++) {
+                        //     var row = result.rows[i];
+                        //     deleteImage(row.file_path, null);
+                        // }
+
+                        debugger;
+
+                        var asyncTasks = [];
+                        result.rows.forEach(function(row) {
+                            asyncTasks.push(function(parallel_callback) {
+                                deleteImage(row.path, parallel_callback);
+                            });
+                        });
+
+                        async.parallel(asyncTasks, function() {
+                            query('DELETE FROM public.project WHERE id = $1;', [projectId], function(err, result) {
+                                if (err) {
+                                        successFalseCb(err, callback);
+                                } else {
+                                        successCb(callback);
+                                }
+                            });
+                        });
+                    }
+                });
+                
+                
         } catch (err) {
                 console.log('error in method deleteProject: ' + err);
                 successFalseCb(err, callback);
