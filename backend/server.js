@@ -2746,7 +2746,7 @@ io1.on('connection', function (socket1) {
 
     function projectInfo(project_id, callback) {
         try {
-            query('SELECT id, path, resolution, crop_data, crop_ratio, duration, representative, ratio169, ratio11, ratio916 FROM public.media_file WHERE project_id = $1 AND deleted != 1 ORDER BY order_in_project', [project_id], function (err, result) {
+            query('SELECT id, path, resolution, crop_data, crop_ratio, duration, representative, ratio169, ratio11, ratio916, aspect_ratio FROM public.media_file WHERE project_id = $1 AND deleted != 1 ORDER BY order_in_project', [project_id], function (err, result) {
                 if (err) {
                     successFalseCb(err, callback);
                 } else {
@@ -2774,7 +2774,8 @@ io1.on('connection', function (socket1) {
                                 'durationVideo': duration.duration,
                                 'ratio169': row.ratio169,
                                 'ratio11': row.ratio11,
-                                'ratio916': row.ratio916
+                                'ratio916': row.ratio916,
+                                'crop_ratio': row.aspect_ratio
                             };
                         } else {
                             var media = {
@@ -2787,7 +2788,8 @@ io1.on('connection', function (socket1) {
                                 'durationImage': Number(row.duration),
                                 'ratio169': row.ratio169,
                                 'ratio11': row.ratio11,
-                                'ratio916': row.ratio916
+                                'ratio916': row.ratio916,
+                                'crop_ratio': row.aspect_ratio
                             };
                         }
                         mediaFile.push(media);
@@ -3631,6 +3633,8 @@ io1.on('connection', function (socket1) {
 
 
     function videoPreview(message, callback) {
+        socket1.emit('processData', '(1/6) Initializing process');
+        socket1.emit('ProcessPercentage', 0);
         let processStep = 6;
         let percentTotal = 100;
         let calculatePer = 100/6;
@@ -3761,7 +3765,7 @@ io1.on('connection', function (socket1) {
                         cb();
                     }, 700);
                 }
-
+                
                 var text_overlayPng = [];
                 var updated_file = [];
                 var videoFiles = [];
@@ -3772,7 +3776,7 @@ io1.on('connection', function (socket1) {
                             var stepOne = result_text.rowCount > 0 ? Number(result_text.rowCount*result.rowCount) : result.rowCount;
                             let allOverlay = result_text.rows.reduce((promiseChain1, item1) => {
                                 return promiseChain1.then(() => new Promise((resolve1) => {
-                                    socket1.emit('processData', '(1/6) Initializing process');
+                                    
                                     var guidPng = uuidGen.v1();
                                     var overlayData = item1.base64 ? item1.base64 : '';
                                     overlayData = overlayData.replace(/^data:image\/png;base64,/, '');
@@ -4223,6 +4227,8 @@ io1.on('connection', function (socket1) {
     }
 
     function cropVideo(message, callback) {
+        socket1.emit('processData', 'Please Wait');
+        socket1.emit('ProcessPercentage', 0);
 
         var cropStringGenerator = function (width, height) {
             var crop_scale_string = '-vf scale=' + (parseInt(width / 2) * 2) + ':-2,crop=';
@@ -4262,7 +4268,7 @@ io1.on('connection', function (socket1) {
                 crop_scale_string += ':y=' + padY;
             }
             crop_scale_string += ':color=black,setsar=1:1';
-            
+            socket1.emit('ProcessPercentage', 10);
             return crop_scale_string;
         };
 
@@ -4342,6 +4348,7 @@ io1.on('connection', function (socket1) {
                     if (error) {
                         successFalseCb(err, callback);
                     } else {
+                        socket1.emit('ProcessPercentage', 100);
                         var uploadedPath = "https://" + config.azure_config.AZURE_STORAGE_ACCOUNT + ".blob.core.windows.net/stage/" + preview;
                         console.log("FILE UPLOADED", uploadedPath);
                         if(message.crop_ratio == '916') {
@@ -4397,7 +4404,7 @@ io1.on('connection', function (socket1) {
         query("SELECT path, crop_data::json FROM public.media_file WHERE id = $1", [message.media_spec.id], function (err, result) {
             
             obj = result.rows[0].crop_data;
-
+            socket1.emit('ProcessPercentage', 20);
             switch(message.crop_ratio) {
                 case '916': obj.ratio1 = crop_scale_string;
                             break;
@@ -4409,9 +4416,10 @@ io1.on('connection', function (socket1) {
             
             var pathFile = result.rows[0].path.replace('https://' + config.azure_config.AZURE_STORAGE_ACCOUNT + '.blob.core.windows.net/stage/', './uploads/');
             getDuration(result.rows[0].path).then(duration => {
-                
+                socket1.emit('ProcessPercentage', 30);
                 var code = shell.exec('ffmpeg -i '+ pathFile +' -ss 0 -t '+ duration +' '+crop_scale_string+ ' -codec:v libx264 -codec:a libmp3lame ' + newFilePath).code;
                 if(code == 0) {   
+                    socket1.emit('ProcessPercentage', 65);
                     uploadConcat(newFileName, obj);
                 }
             });

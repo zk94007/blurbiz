@@ -14,13 +14,13 @@
             return diffDays;
         }
         
-        // var windowRe = angular.element($window);
-        // windowRe.on('beforeunload', function (event) {
-        //     //Do Something
-        //     console.log('after reload');
-        //     //After this will prevent reload or navigating away.
-        //     // event.preventDefault();
-        // });
+       /*  var windowRe = angular.element($window);
+        windowRe.on('beforeunload', function (event) {
+            //Do Something
+            console.log('after reload');
+            //After this will prevent reload or navigating away.
+            // event.preventDefault();
+        }); */
 
         // var token = LocalStorageService.getToken();        
          
@@ -29,6 +29,7 @@
 
         socket.removeListener('project_media_response');
         socket.on('project_media_response', function(media) {
+            // console.log(media);
             $scope.time_limit_per_video_in_seconds = media.videoTotalTime;
             var mediaFiles = JSON.parse(JSON.stringify(media.mediaFile));
             // console.log(localStorage.getItem("media_files"), 'Emit !@#$');
@@ -113,6 +114,14 @@
             setObject(key, obj);
         }
 
+        function updateAllItem(key, property, value) {
+            var obj = JSON.parse(getObject(key));
+            for (var i = 0; i < obj.length; i++) {
+                obj[i][property] = value;
+            }
+            setObject(key, obj);
+        }
+
         function objectValue(key, media_id, property) {
             var obj = JSON.parse(getObject(key));
             for(var i=0; i<obj.length; i++) {
@@ -149,7 +158,7 @@
                 }
             }
         }
-        
+
         this.currentTime = 0;
         this.totalTime = 0;
         this.state = null;
@@ -162,11 +171,23 @@
         $scope.downloadVideo = '';
         $scope.progress_percent = 0;
         $scope.progress_text = '';
-        $scope.main_item = { id: $stateParams.media_id, path: '' };
+        // $scope.main_item = { id: $stateParams.media_id, path: '' };
         $scope.loading = false;
         $scope.timer = {
             isopen: false
         };
+
+        if (getObject('main_item')) {
+            $scope.main_item = {
+                id: JSON.parse(getObject('main_item')), 
+            };
+        } else {
+            $scope.main_item = {
+                id: $stateParams.media_id,
+                path: ''
+            };
+            setObject('main_item', $stateParams.media_id);
+        }
         // $scope.zoomLevel = 0;
         $scope.config = {
             isCropping: false,
@@ -195,7 +216,7 @@
             },
             videoSource: '',
             isLoadedVideo: false,
-            ratio: '169',
+            // ratio: '169',
             height: '100%',
             width: '100%',
             top: '0',
@@ -417,7 +438,6 @@
                     $scope.main_item.texts.push(newOverlay);
                 }
             });
-
         }
 
         $scope.zoomslider2 = {
@@ -473,9 +493,12 @@
         }
 
         $scope.$watch('main_item.id', function (newval, oldval) {
-            // console.log(newval, 'Main Item ID');
             var item = filterJSON('media_files', newval);
-
+            if(newval == oldval) {
+                $scope.config.ratio = item.crop_ratio;
+            }
+            console.log($scope.config.ratio);
+            
             if(typeof item != 'undefined')
                 $scope.main_item.style = item.style;
 
@@ -483,7 +506,8 @@
                 $(".controls-container span.rz-vislow").hide();
                 $(".controls-container span.rz-vishigh").hide();
                 $scope.main_item.duration = item.duration;
-                $scope.main_item.videoDuration = timeFormat($scope.main_item.durationVideo); //$scope.main_item.durationVideo.toFixed(2).toString().replace('.', ':');
+                console.log(timeFormat(item.durationVideo));
+                $scope.main_item.videoDuration = timeFormat(item.durationVideo); //$scope.main_item.durationVideo.toFixed(2).toString().replace('.', ':');
                 
                 $scope.minRangeSlider.max = item.duration; 
                 $scope.minRangeSlider.min = item.seekTime;
@@ -524,13 +548,14 @@
                 
                 $scope.main_item.duration = item.durationImage;
                 $scope.minSlider.value = item.durationImage;
-                // console.log(item.durationImage);
+                
                 switch($scope.config.ratio) {
-                    case '169': $scope.main_item.pathAspect = $scope.main_item.ratio169; 
+                    case '169': $scope.main_item.pathAspect = item.ratio169; 
                                 break;
-                    case '11': $scope.main_item.pathAspect = $scope.main_item.ratio11;
+                    case '11': $scope.main_item.pathAspect = item.ratio11;
+                                console.log(item.ratio11);
                                 break;
-                    case '916': $scope.main_item.pathAspect = $scope.main_item.ratio916;
+                    case '916': $scope.main_item.pathAspect = item.ratio916;
                                 break;
                 }
             }
@@ -913,9 +938,12 @@
         }
 
         $scope.setMainItemAs = function (medium) {
+            
             $timeout(function () {
                 if (!medium)
                     return;
+
+                setObject('main_item', medium.id);
                 // $scope.config.isCropping = false;
                 $scope.main_item = $scope.media[$scope.media.findIndex(function (obj) { return medium.id == obj.id })];
                 
@@ -937,36 +965,71 @@
  
                 if (isVideo(medium.path)) {
                     var obj = filterJSON('media_files', medium.id);
-                    // console.log(obj);
+                    $scope.main_item.videoDuration = timeFormat(obj.durationVideo);
                     switch(medium.aspect_ratio) {
-                        case '169': 
-                                    if(obj.ratio169 != null && obj.ratio169 != '') {
-                                        obj.pathAspect =  obj.ratio169;
-                                    }
-                                    break;
-                        case '11': 
-                                    if(obj.ratio11 != null && obj.ratio11 != '') {
-                                        obj.pathAspect =  obj.ratio11;
-                                    }
-                                    break;
-                        case '916': 
-                                    if(obj.ratio916 != null && obj.ratio916 != '') {
-                                        obj.pathAspect =  obj.ratio916;
-                                    }
-                                    break;
+                        case '169':
+                            // console.log(obj.ratio169);
+                            if (obj.ratio169 == null || typeof obj.ratio169 == 'undefined') {
+                                // console.log('Test Case 1');
+                                $scope.main_item.pathAspect = obj.path;
+                            } else {
+                                $scope.main_item.pathAspect = obj.ratio169;
+                            }
+                            break;
+                        case '11':
+                            if (obj.ratio11 == null || typeof obj.ratio11 == 'undefined') {
+                                $scope.main_item.pathAspect = obj.path;
+                            } else {
+                                $scope.main_item.pathAspect = obj.ratio11;
+                            }
+                            break;
+                        case '916':
+                            if (obj.ratio916 == null || typeof obj.ratio916 == 'undefined') {
+                                $scope.main_item.pathAspect = obj.path;
+                            } else {
+                                $scope.main_item.pathAspect = obj.ratio916;
+                            }
+                            break;
                     }
-                                // console.log(obj.path);
+                        // console.log($scope.main_item.pathAspect);
                         $scope.video_config.sources = [
-                            { src: $sce.trustAsResourceUrl(obj.pathAspect), type: "video/mp4" }
+                            { src: $sce.trustAsResourceUrl($scope.main_item.pathAspect), type: "video/mp4" }
                         ];
                     
-                    if (medium.representative && isVideo(medium.representative)) {
+                    /* if (medium.representative && isVideo(medium.representative)) {
                         $timeout(function () {
                             $scope.video_config.download = [
                                 { src: $sce.trustAsResourceUrl(medium.representative), type: "video/mp4" }
                             ];
 
                         }, 0);
+                    } */
+                } else {
+                    var obj = filterJSON('media_files', medium.id);
+                    // console.log(obj);
+                    switch (medium.aspect_ratio) {
+                        case '169':
+                            if (obj.ratio169 == null || typeof obj.ratio169 != 'undefined') {
+                                $scope.main_item.pathAspect = obj.path;
+                            } else {
+                                $scope.main_item.pathAspect = obj.ratio169;
+                            }
+                            break;
+                        case '11':
+                            if (obj.ratio11 == null || typeof obj.ratio11 != 'undefined') {
+                                $scope.main_item.pathAspect = obj.path;
+                            } else {
+                                $scope.main_item.pathAspect = obj.ratio11;
+                            }
+                            break;
+                        case '916':
+                            if (obj.ratio916 == null || typeof obj.ratio916 == 'undefined') {
+                                $scope.main_item.pathAspect = obj.path;
+                            } else {
+                                $scope.main_item.pathAspect = obj.ratio916;
+                            }
+                           
+                            break;
                     }
                 }
                 $scope.config.isCropping = false;
@@ -1468,7 +1531,7 @@
                         // console.log('CORRECT');
                     // $rootScope.pageTitle = $sce.trustAsHtml('<input id="title_editing_input" type="text" value="' + msg.project_data.project_name + '" ><span id="title_editing_span">' + msg.project_data.project_name + '</span>') ;
                     $rootScope.pageTitle = msg.project_data.project_name;
-
+                    $scope.config.ratio = msg.project_data.ratio;
                     setAspectRatio(msg.project_data.ratio);
 
                     // $scope.config.videoSource = msg.project_data.result_video;
@@ -2029,6 +2092,8 @@
                             }, 300); */
                             break;
             }
+
+            $window.location.reload();
         });
 
         $scope.testCrop = function() {
@@ -2183,17 +2248,15 @@
         }
 
         var setAspectRatio = function (ratio) {
-            console.log('123');
             $scope.config.ratio = ratio;
             var dataRatio = {
                 aspectRatio: ratio, project_id: Number($scope.project_id)
             }
 
-
-             
             switch (ratio) {
                 
                 case '169':
+                    updateAllItem('media_files', 'crop_ratio', '169');
                     var item_data = filterJSON('media_files', $scope.main_item.id);
                     $scope.main_item.pathAspect = '';
                     if(item_data.ratio169 == null || typeof item_data.ratio169 == 'undefined') {  
@@ -2202,8 +2265,6 @@
                         $scope.main_item.pathAspect = item_data.ratio169;
                     }
 
-
-                    console.log($scope.video_config);
                     $scope.video_config.sources = [
                         { src: $sce.trustAsResourceUrl($scope.main_item.pathAspect), type: "video/mp4" }
                     ];
@@ -2221,6 +2282,7 @@
                     break;
 
                 case '11':
+                    updateAllItem('media_files', 'crop_ratio', '11');
                     var item_data = filterJSON('media_files', $scope.main_item.id);
                     $scope.main_item.pathAspect = '';
                     if(item_data.ratio11 == null || typeof item_data.ratio11 == 'undefined') {
@@ -2228,7 +2290,7 @@
                     } else {
                         $scope.main_item.pathAspect = item_data.ratio11;
                     }
-                    
+                    console.log($scope.main_item.pathAspect);
                     $scope.video_config.sources = [
                         { src: $sce.trustAsResourceUrl($scope.main_item.pathAspect), type: "video/mp4" }
                     ];
@@ -2247,6 +2309,7 @@
                     break;
 
                 case '916':
+                    updateAllItem('media_files', 'crop_ratio', '916');
                     var item_data = filterJSON('media_files', $scope.main_item.id);
                     $scope.main_item.pathAspect = '';
                     if(item_data.ratio916 == null || typeof item_data.ratio916 == 'undefined') {

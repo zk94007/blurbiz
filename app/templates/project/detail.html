@@ -313,9 +313,9 @@ body,html,#wrapper,#content-wrapper,.page-content,.project_detail{
     <span ng-if="!reposition && !player" class="time-spent" style="text-align: right; padding-bottom: 50px; z-index: 5; pointer-events:none;">{{totalTimeDuration}}<br>Video Duration</span>
         <div ng-if="video_loading" class="video_loading-container" style="z-index:99; text-align:center;">
             <div class="pre-loader"> <img src="/img/icons/pre-loader.png" alt=""> </div>
-            <h3 style="z-index:999; padding-left:-30px !important; color:#009EDC;" ng-if="loadingData != ''">{{ loadingData }}<span class="loader__dot">.</span><span class="loader__dot">.</span><span class="loader__dot">.</span></h3>
+            <h3 style="z-index:999; padding-left:-30px !important; color:#009EDC; opacity: inherit; position: relative;" ng-if="loadingData != ''">{{ loadingData }}<span class="loader__dot">.</span><span class="loader__dot">.</span><span class="loader__dot">.</span></h3>
             <!-- <h4 style="z-index:999; padding-left:-30px !important; color:#009EDC;">{{loadingPer}}%</h4> -->
-            <div class="progress" ng-if="loadingData != ''">
+            <div class="progress" style="opacity: inherit; z-index:99; position: relative;" ng-if="loadingData != ''">
                 <div class="progress-bar" role="progressbar" aria-valuenow="{{loadingPer}}" aria-valuemin="0" aria-valuemax="100" style="background-color:#009EDC; width:{{loadingPer}}%">
                   {{loadingPer}}%
                 </div>
@@ -425,11 +425,8 @@ body,html,#wrapper,#content-wrapper,.page-content,.project_detail{
                         <videogular ng-hide="config.isCropping" ng-if="isVideo(config.videoSource)" id="primary-video" vg-change-source="vgChangeSource($source)" vg-can-play="vgCanPlay()"
                             vg-player-ready="onPlayerReady($API)" vg-update-state="vgUpdateState($state)" preload="auto" vg-update-time="vgUpdateTime($currentTime, $duration)"
                             vg-theme="video_config.theme" style="width: {{config.width}}; height: {{ config.height }}; margin : {{config.top}} {{config.right}} {{config.bottom}} {{config.left}};">
-                            <vg-media ng-if="afterreposition == 1" class="reposition-video" vg-src="video_config.sources" >
+                            <vg-media class="reposition-video" vg-src="video_config.sources" >
                             </vg-media>
-                            <vg-media ng-if="afterreposition == 0" class="reposition-video" vg-src="video_config.sources">
-                            </vg-media>
-                            
                                 <vg-controls ng-if="player">  
                                  <vg-play-pause-button></vg-play-pause-button> 
                                   <vg-time-display>{{ currentTime | date:'mm:ss' : 'UTC' }}</vg-time-display>  
@@ -452,7 +449,7 @@ body,html,#wrapper,#content-wrapper,.page-content,.project_detail{
                         </videogular>
                         
                          <!-- <div ng-if="!config.isCropping">  -->
-                            <img ng-if="isImage(main_item.path)" id="primary-image" class="representative" ng-src="{{ main_item.pathAspect }}" ng-click="" ng-class="{'img-edit': isImage(config.videoSource)}" ng-hide="config.isCropping" style="width: {{config.width}} !important; height: {{ config.height }} !important; margin : {{config.top}} {{config.right}} {{config.bottom}} {{config.left}};"> <!-- object-fit:cover; -->
+                        <img ng-if="isImage(main_item.path)" id="primary-image" class="representative" ng-src="{{ main_item.pathAspect }}" ng-click="" ng-class="{'img-edit': isImage(config.videoSource)}" ng-hide="config.isCropping" style="width: {{config.width}} !important; height: {{ config.height }} !important; margin : {{config.top}} {{config.right}} {{config.bottom}} {{config.left}};"> <!-- object-fit:cover; -->
                             
                          <!-- </div>  -->
                     </div>                    
@@ -1004,8 +1001,6 @@ user-select: none;
 #search .rz-bar-wrapper .rz-bar, #search .rz-bar-wrapper .rz-pointer {
     margin-left: 10px !important;
 }
-
-.rz-activ
 
 .rz-limit {
     visibility: hidden !important;

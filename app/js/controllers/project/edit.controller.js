@@ -49,6 +49,8 @@
             setObject(key, json);
         }
 
+        localStorage.removeItem('main_item');
+
         /*  $scope.getCurrentUser();  */
         
         $scope.upload_percent = 0;
