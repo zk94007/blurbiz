@@ -4,40 +4,104 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>BlurBiz</title>
+  <title>Blurbiz</title>
   <!-- STYLES -->
   <!-- build:css lib/css/main.min.css -->
-  <link rel="stylesheet" type="text/css" href="components/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="components/font-awesome/css/font-awesome.min.css">
-  <link rel="stylesheet" type="text/css" href="components/rdash-ui/dist/css/rdash.min.css">
+
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,600,700" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="components/bootstrap/dist/css/bootstrap.min.css">  
+  <link rel="stylesheet" type="text/css" href="node_modules/font-awesome/css/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="components/video.js/dist/video-js.min.css">
+  <link type="text/css" rel="stylesheet" href="components/angular-flash-alert/dist/angular-flash.min.css" />
+  <link type="text/css" rel="stylesheet" href="components/angular-ui-select/dist/select.min.css" />
+  <link type="text/css" rel="stylesheet" href="components/angularjs-slider/dist/rzslider.min.css" />
+  <link type="text/css" rel="stylesheet" href="components/nya-bootstrap-select/dist/css/nya-bs-select.min.css" />
+  <link type="text/css" rel="stylesheet" href="components/angular-timezone-selector/dist/angular-timezone-selector.min.css" />
+  <link type="text/css" rel="stylesheet" href="components/cropper/dist/cropper.min.css" />
+  <link type="text/css" rel="stylesheet" href="components/Croppie/croppie.css" />
+
   <link rel="stylesheet" type="text/css" href="css/main.css">
   <link rel="stylesheet" type="text/css" href="css/drag.css">
-  <link rel="stylesheet" type="text/css" href="css/hover.css">
   <link rel="stylesheet" type="text/css" href="css/droplet.css">
-  <link rel="stylesheet" type="text/css" href="css/video.css">
-
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="stylesheet" type="text/css" href="css/project.detail.css">
+  <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
   <!-- endbuild -->
-  <!-- SCRIPTS -->
+ <script type="text/javascript" src="https://js.stripe.com/v1"></script>
+</head>
+<body>
+  <div ui-view>
+
+  </div><!-- End Page Wrapper -->
+   <!-- SCRIPTS -->
   <!-- build:js lib/js/main.min.js -->
+  <script type="text/javascript" src="js/config.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   <script type="text/javascript" src="components/angular/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.4.2/Sortable.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script> 
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script> 
+ <script src="//ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
+ <script src="node_modules/angular-base64/angular-base64.js"></script>
+ 
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ng-dialog/0.6.4/js/ngDialog.min.js"></script>
-  <script src="node_modules/socket.io-client/socket.io.js"></script>
+  <script src="node_modules/socket.io-client/dist/socket.io.js"></script>
   <script src="node_modules/socket.io-stream/socket.io-stream.js"></script>
   <script src="node_modules/angular-google-picker/dist/google-picker.min.js"></script>
-
+  <script src="node_modules/bootstrap-ui-datetime-picker/dist/datetime-picker.min.js"></script>
+  <script src="node_modules/angular-socialshare/dist/angular-socialshare.min.js"></script>
+  
+  <script type="text/javascript" src="components/angularjs-slider/dist/rzslider.js"></script>
+  <script type="text/javascript" src="components/ng-img-crop-full-extended/compile/minified/ng-img-crop.js"></script>
   <script type="text/javascript" src="components/angular-socket-io/socket.js"></script>
+  <script type="text/javascript" src="components/angular-ui-select/dist/select.min.js"></script>
+  <script type="text/javascript" src="components/moment/moment.js"></script>
+  <script type="text/javascript" src="node_modules//moment-timezone/builds/moment-timezone-with-data.js"></script>
+  <script type="text/javascript" src="components/underscore/underscore-min.js"></script>
   <script type="text/javascript" src="components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
   <script type="text/javascript" src="components/angular-cookies/angular-cookies.min.js"></script>
+  <script type="text/javascript" src="components/angular-sanitize/angular-sanitize.min.js"></script>
+  <script type="text/javascript" src="components/nya-bootstrap-select/dist/js/nya-bs-select.js"></script>
+  <script type="text/javascript" src="components/angularUtils-pagination/dirPagination.js"></script>
   <script type="text/javascript" src="components/angular-ui-router/release/angular-ui-router.min.js"></script>
   <script type="text/javascript" src="components/ng-droplet/dist/ng-droplet.min.js"></script>
   <script type="text/javascript" src="components/ng-file-upload/ng-file-upload-shim.min.js"></script>
   <script type="text/javascript" src="components/ng-file-upload/ng-file-upload.min.js"></script>
   <script type="text/javascript" src="components/video.js/dist/video.js"></script>
+  <script type="text/javascript" src="components/vjs-video/dist/vjs-video.js"></script>
+  <script src="components/videogular/videogular.js"></script>
+  <script src="components/videogular-controls/vg-controls.js"></script>
+  <script src="components/videogular-overlay-play/vg-overlay-play.js"></script>
+  <script src="components/videogular-poster/vg-poster.js"></script>
+  <script src="components/videogular-buffering/vg-buffering.js"></script>
+  <script type="text/javascript" src="components/videojs-youtube/dist/Youtube.min.js"></script>
+  <script type="text/javascript" src="components/angular-flash-alert/dist/angular-flash.min.js"></script>
+  <script type="text/javascript" src="components/angular-facebook/lib/angular-facebook.js"></script>
+  <script type="text/javascript" src="components/oauth-js/dist/oauth.min.js"></script>
+  <script type="text/javascript" src="components/ngDropbox/dropbox.js"></script>
+  <!-- <script type="text/javascript" src="components/cropper/dist/cropper.min.js"></script> -->
+  <script type="text/javascript" src="components/Croppie/croppie.js"></script>
   
-  <script src="http://apis.google.com/js/client.js"></script>
-  <script src="http://apis.google.com/js/api.js"></script>
+  <!-- <script type="text/javascript" src="components/lodash/dist/lodash.min.js"></script> -->
+  <script type="text/javascript" src="components/chosen/chosen.jquery.min.js"></script>
+  <script type="text/javascript" src="components/angular-chosen-js/angular-chosen.js"></script>
+  <script type="text/javascript" src="components/jstzdetect/jstz.min.js"></script>
+  <script type="text/javascript" src="components/dom-to-image/dist/dom-to-image.min.js"></script>
+
+    <!-- <script type="text/javascript" src="components/angular-timezone-selector/dist/angular-timezone-selector.min.js"></script> -->
+
+  <script src="https://apis.google.com/js/client.js"></script>
+  <script src="https://apis.google.com/js/api.js"></script>
+  <script src="https://cdn.jsdelivr.net/satellizer/0.15.5/satellizer.min.js"></script>
+  <script type="text/javascript" src="js/vendor/timepicker-position.js"></script>
+  <script type="text/javascript" src="js/vendor/socket.io-file-client-adapted.js"></script>
+  <script type="text/javascript" src="js/vendor/timepicker.js"></script>
+  <script type="text/javascript" src="js/vendor/timepicker-tpl.js"></script>
+  <script type="text/javascript" src="js/vendor/ps-input-time.js"></script>
+  <script type="text/javascript" src="js/vendor/sdk.js"></script>
+  <script type="text/javascript" src="js/vendor/canvas2image.js"></script>
+  <script type="text/javascript" src="js/vendor/html2canvas.js"></script>
+  <!-- <script type="text/javascript" src="js/vendor/jstz.min.js"></script> -->
 
   <!-- <script type="text/javascript" src="//api.filepicker.io/v2/filepicker.js"></script> -->
   
@@ -50,31 +114,83 @@
   <!-- Box API -->
   <script type="text/javascript" src="https://app.box.com/js/static/select.js"></script>
   <!-- Google Drive API -->
+
+  <script type="text/javascript" src="js/public_functions.js"></script>
   <script type="text/javascript" src="js/module.js"></script>
   <script type="text/javascript" src="js/routes.js"></script>
 
+  <!-- Facebook API--> 
+  <script>
+  // window.fbAsyncInit = function() {
+  //   FB.init({
+  //     appId      : '1696648550655713',
+  //     xfbml      : true,
+  //     version    : 'v2.7'
+  //   });
+  // };
+
+  // (function(d, s, id){
+  //    var js, fjs = d.getElementsByTagName(s)[0];
+  //    if (d.getElementById(id)) {return;}
+  //    js = d.createElement(s); js.id = id;
+  //    js.src = "//connect.facebook.net/en_US/sdk.js";
+  //    fjs.parentNode.insertBefore(js, fjs);
+  //  }(document, 'script', 'facebook-jssdk'));
+  var fileUploader;
+  </script>
   <script type="text/javascript" src="js/filters/trustUrl.js"></script>
+  <script type="text/javascript" src="js/filters/limitLength.js"></script>
+  <script type="text/javascript" src="js/filters/dateDistort.js"></script>
   <script type="text/javascript" src="js/services/dropbox.provider.js"></script>
   <script type="text/javascript" src="js/services/socket.service.js"></script>
+  <script type="text/javascript" src="js/services/media.service.js"></script>
   <script type="text/javascript" src="js/services/user.service.js"></script>
-  <script type="text/javascript" src="js/services/project.service.js"></script>
+  <script type="text/javascript" src="js/services/socialconnect.service.js"></script>
   <script type="text/javascript" src="js/services/upload.service.js"></script>
   <script type="text/javascript" src="js/services/flash.service.js"></script>
   <script type="text/javascript" src="js/services/local.storage.service.js"></script>
+  <script type="text/javascript" src="js/services/session.storage.service.js"></script>
+  <script type="text/javascript" src="js/services/historyManager.service.js"></script>
+  <script type="text/javascript" src="js/services/share.service.js"></script>
+  <script type="text/javascript" src="js/services/box.service.js"></script>
+  <script type="text/javascript" src="js/services/serviceConnectionState.service.js"></script>
+  <script type="text/javascript" src="js/services/session.service.js"></script>
 
+  <script type="text/javascript" src="js/controllers/admin/userModal.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/admin/dashboard.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/admin/admin.planModal.controller.js"></script> 
   <script type="text/javascript" src="js/controllers/auth/auth.controller.js"></script>
   <script type="text/javascript" src="js/controllers/auth/confirmate.email.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/auth/password.reset.controller.js"></script>
   <script type="text/javascript" src="js/controllers/auth/wait.confirmate.email.controller.js"></script>
 
   <script type="text/javascript" src="js/controllers/general/confirm.modal.controller.js"></script>
 
   <script type="text/javascript" src="js/controllers/project/edit.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/project/detail.controller.js"></script>
   <script type="text/javascript" src="js/controllers/project/index.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/project/schedule.controller.js"></script>
   <script type="text/javascript" src="js/controllers/project/modal.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/project/youtubeClipperModal.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/project/shareModal.controller.js"></script>  
+  <script type="text/javascript" src="js/controllers/project/facebookPagesModal.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/social/socialModal.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/social/shareConfirmModal.controller.js"></script>
   <script type="text/javascript" src="js/controllers/master-ctrl.js"></script>
-  <script type="text/javascript" src="js/controllers/alert-ctrl.js"></script>
-
+  <script type="text/javascript" src="js/controllers/settings/Timezone.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/settings/MyAccount.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/settings/AccountPhotoEdit.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/settings/Connections.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/settings/Credentials.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/settings/Integrations.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/settings/Plans.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/project/planModal.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/settings/Billing.controller.js"></script>
+  <script type="text/javascript" src="js/controllers/project/updatePaymentMethodModal.controller.js"></script>  
   <script type="text/javascript" src="js/directives/confirm-modal.js"></script>
+  <script type="text/javascript" src="js/directives/focus-me.js"></script>
+  <script type="text/javascript" src="js/directives/compile.js"></script>
+  <script type="text/javascript" src="js/directives/ng-sortable.js"></script>
   <script type="text/javascript" src="js/directives/enter-key.js"></script>
   <script type="text/javascript" src="js/directives/err-src.js"></script>
   <script type="text/javascript" src="js/directives/loading.js"></script>
@@ -86,10 +202,34 @@
   <script type="text/javascript" src="js/directives/dropbox-picker.js"></script>
   <script type="text/javascript" src="js/directives/box-picker.js"></script>
   <script type="text/javascript" src="js/directives/custom-link-invoker.js"></script>
-</head>
-<body>
-  <div ui-view>
+  <script type="text/javascript" src="js/directives/schedule-list.js"></script>
+  <script type="text/javascript" src="js/directives/timer-input.js"></script>
+  <script type="text/javascript" src="js/directives/text-editor.js"></script>
 
-  </div><!-- End Page Wrapper -->
+  <script type="text/javascript" src="js/directives/colorpicker/ckolorpicker-factory.js"></script>
+  <script type="text/javascript" src="js/directives/colorpicker/ckolorpicker-hex-input-directive.js"></script>
+  <script type="text/javascript" src="js/directives/colorpicker/ckolorpicker-input-directive.js"></script>
+  <script type="text/javascript" src="js/directives/colorpicker/ckolorpicker-wheel-directive.js"></script>
+  
+  <!-- Hotjar Tracking Code for https://app.blurbiz.net -->
+  <script>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:533718,hjsv:5};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');
+  </script>
+
+  <!-- start Mixpanel -->
+  <script type="text/javascript">
+    (function(e,a){if(!a.__SV){var b=window;try{var c,l,i,j=b.location,g=j.hash;c=function(a,b){return(l=a.match(RegExp(b+"=([^&]*)")))?l[1]:null};g&&c(g,"state")&&(i=JSON.parse(decodeURIComponent(c(g,"state"))),"mpeditor"===i.action&&(b.sessionStorage.setItem("_mpcehash",g),history.replaceState(i.desiredHash||"",e.title,j.pathname+j.search)))}catch(m){}var k,h;window.mixpanel=a;a._i=[];a.init=function(b,c,f){function e(b,a){var c=a.split(".");2==c.length&&(b=b[c[0]],a=c[1]);b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,
+    0)))}}var d=a;"undefined"!==typeof f?d=a[f]=[]:f="mixpanel";d.people=d.people||[];d.toString=function(b){var a="mixpanel";"mixpanel"!==f&&(a+="."+f);b||(a+=" (stub)");return a};d.people.toString=function(){return d.toString(1)+".people (stub)"};k="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+    for(h=0;h<k.length;h++)e(d,k[h]);a._i.push([b,c,f])};a.__SV=1.2;b=e.createElement("script");b.type="text/javascript";b.async=!0;b.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";c=e.getElementsByTagName("script")[0];c.parentNode.insertBefore(b,c)}})(document,window.mixpanel||[]);
+    mixpanel.init("9fa94cea8782641c8cab3a9317177b9d");
+  </script><!-- end Mixpanel -->
+
 </body>
 </html>

@@ -4,7 +4,8 @@ angular
 		return {
 			restrict: "A",
 			scope: {
-				isEditing: "="
+				isEditing: "=",
+				isFrom: "@"
 			},
 			link: function(scope, element) {
 
@@ -29,6 +30,7 @@ angular
 						e.stopPropagation();
 						scope.$apply(function() {
 							scope.isEditing = true;
+
 						});
 					} else {
 						scope.$apply(function() {

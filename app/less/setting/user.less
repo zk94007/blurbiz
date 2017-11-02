@@ -1,0 +1,122 @@
+.profile-setting {
+	ul.nav-tabs {
+		padding: 12px 15px 0;
+
+		.uib-tab {
+			> div {
+				background-color: transparent;
+				color: @color-blue-light-h;
+			}
+
+			&.active, &:hover, &:focus, &:active {
+				> div {
+					color: @color-green;
+					font-weight: bold;
+					border-bottom: 1px solid @color-white;
+				}
+			}
+		}
+	}
+
+	.uib-tab-content {
+		position: relative;
+		padding: 25px 15px;
+
+		.form-label {
+			.font(normal, 14px, 1, @color-gray-m);
+		}
+
+		.profile-holder {
+			position: absolute;
+			top: 0;
+			left: 0;
+			padding: 25px 15px;
+			width: 300px;
+			height: 320px;
+
+			img {
+				width: 100%;
+				border-radius: 50%;
+			}
+
+			.profile-overlay {
+				position: absolute;
+				top: 25px;
+				left: 15px;
+				right: 15px;
+				bottom: 25px;
+				cursor: pointer;
+				text-align: center;
+				background-color: transparent;
+				transition: all ease 0.5s;
+
+				span {
+					position: absolute;
+					bottom: -30px;
+					left: 0;
+					right: 0;
+					transition: all ease 0.5s;
+					.font(normal, 20px, 30px, @color-white);
+				}
+
+				&:hover {
+					background-color: rgba(0, 0, 0, 0.3);
+
+					span {
+						bottom: 0;
+					}
+				}
+			}
+		}
+
+		.profile-detail {
+			padding-left: 300px;
+
+			md-input-container {
+				display: block;
+			}
+
+			md-select {
+				margin-bottom: 24px;
+			}
+		}
+
+		.integration-wrapper {
+			text-align: center;
+			width: 160px;
+			border: 1px solid @color-gray-l;
+			border-radius: 4px;
+			margin-right: 25px;
+			display: inline-block;
+			vertical-align: top;
+
+			.integration-icon {
+				width: 50px;
+				height: 50px;
+				margin: 15px auto 10px;
+
+				img {
+					width: 100%;
+				}
+			}
+
+			.integration-explanation {
+				padding: 10px 15px;
+
+				h5 {
+					.font(600, 16px, 1, @color-blue-light-h);
+				}
+
+				small {
+					.font(normal, 12px, 1, @color-gray-m);
+				}
+			}
+
+			.integration-button {
+				button {
+					width: 100%;
+				}
+			}
+		}
+	}
+}

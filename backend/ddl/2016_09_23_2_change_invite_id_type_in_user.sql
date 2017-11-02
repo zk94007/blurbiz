@@ -1,0 +1,1 @@
+alter table public.user alter column invite_id type character varying(255);

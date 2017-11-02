@@ -1,0 +1,1 @@
+ALTER TABLE public.user ADD COLUMN integrations_and_connections character varying;

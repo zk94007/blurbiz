@@ -1,0 +1,171 @@
+<script type="text/ng-template" id="group-template.html">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a href tabindex="0" class="accordion-toggle" ng-click="toggleOpen()" uib-accordion-transclude="heading">
+                <span uib-accordion-header ng-class="{'text-muted': isDisabled}">
+                    {{heading}}
+                </span>
+                </a>
+            </h4>
+        </div>
+        <div class="panel-collapse collapse" uib-collapse="!isOpen">
+            <div class="panel-body" style="text-align: right" ng-transclude></div>
+        </div>
+    </div>
+</script>
+<div class="list-wrapper">
+    <uib-accordion>
+        <div uib-accordion-group class="panel-default" is-open="showTasks" template-url="group-template.html">
+            <uib-accordion-heading>
+                <span class="schedule-mark" ng-class="{'minimized': !showTasks}"></span>
+                <span class="schedule-type" ng-style="{'color': color}">{{title}}</span>
+            </uib-accordion-heading>
+            <!--Schedule List-->
+            <div class="post-row post-row-line eqi-container" ng-mouseover="hoverEdit = true" ng-mouseleave="hoverEdit = false" dir-paginate="item in filteredTasks = (tasks | filter:filterObj | orderBy: 'scheduled_start_date':orderByDateReverse) | itemsPerPage: 5" pagination-id="title" >
+                <div class="column-color" ng-style="{'background': color}"></div>
+                <div class="column-title">
+                    {{item.title}}
+                </div>
+                <div class="column-platform">
+                    <i class="fa fa-{{item.target_social_network}} fa-lg"></i>
+                </div>
+                <div class="column-user">
+                    <a href data-toggle="tooltip" data-placement="right" title="{{ item.user_name }}" ><img ng-src="{{ item.user_photo }}" class="img-circle" err-src="img/avatar.jpg" style="width: 40px; height: 40px;"></a>
+                </div>
+                <div class="column-description">
+                    {{item.description}}
+                </div>
+                <div class="column-date">
+                    <b>{{item.scheduled_start_date | dateDistort | date : 'EEE' }}</b>
+                    {{item.scheduled_start_date | dateDistort | date : 'dd MMM' }},
+                    <span class="post-time">{{item.scheduled_start_date | dateDistort | date : 'h:mm a' }}</span>
+                </div>
+                <div class="hover-buttons" ng-show="hoverEdit">
+                    <div ng-click="deleteTask({taskId: item.id})" class="hover-item">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                        <span>Delete</span>
+                    </div>
+                    <div ng-click="editTask({task: item})" class="hover-item">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                        <span>Edit</span>
+                    </div>
+                    <div ng-click="shareTaskNow({task: item})" class="hover-item" ng-if="title == 'Scheduled'">
+                        <i class="fa fa-share" aria-hidden="true"></i>
+                        <span>Share Now</span>
+                    </div>
+                    <div ng-click="shareTaskNow({task: item})" class="hover-item" ng-if="title == 'Published'">
+                        <i class="fa fa-share" aria-hidden="true"></i>
+                        <span>Reshare</span>
+                    </div>
+                </div>
+                <div class="column-type">
+                    <img class="post-icon" ng-if="isImage(item.img_path)" ng-src="{{ item.img_path }}" err-src="img/empty.png" />
+                    <video ng-if="isVideo(item.img_path)" class="video-js video-js-list" controls preload="auto" height="30" vjs-video vjs-media="{'sources': [{ 'src': item.img_path, 'type': 'video/mp4' }]}"></video>
+                </div>
+            </div>
+            <p ng-hide="filteredTasks.length" class="text-center">No Data Found</p>
+            <div class="row post-row-paginator">
+                <dir-pagination-controls pagination-id="title"></dir-pagination-controls>
+            </div>
+        </div>
+    </uib-accordion>
+    <div class="post-row-title eqi-container">
+        <div class="column-title">
+        </div>
+        <div class="column-platform">
+            <span uib-dropdown>
+                <a href uib-dropdown-toggle>
+                    <span> Platform <small>&#9660;</small></span>
+                </a>
+                <!-- <ul class="dropdown-menu text-left" uib-dropdown-menu aria-labelledby="simple-dropdown">
+                    <li>
+                        <a href ng-click="setFilter('target_social_network', '')">
+                            <span>All Platforms</span>
+                        </a>
+                    </li>
+                     <li ng-repeat="platform in platforms" ng-class="{'chosen': filterObj.target_social_network == platform}">
+                        <a href ng-click="setFilter('target_social_network', platform)" >
+                            <i class="fa fa-{{platform}} fa-lg"></i>
+                            <span>{{platform}}</span>                        
+                        </a>
+                    </li> 
+                </ul> -->
+            </span>
+        </div>
+        <div class="column-user">
+            <span uib-dropdown>
+                <a href  uib-dropdown-toggle>
+                    <span>User <small>&#9660;</small></span>
+                </a>
+                <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+                    <li>
+                        <a ng-click="setFilter('user_id', '')" href><span>All users</span></a>
+                    </li>
+                    <li ng-repeat="user in users" ng-class="{'chosen': filterObj.user_id == user.id}">
+                        <a href ng-click="setFilter('user_id', user.id)">
+                            <i>
+                                <img ng-src="{{ user.photo }}" class="img-circle" err-src="img/avatar.jpg" style="width: 20px; height: 20px;">
+                            </i>
+                            <span>{{ user.name }}</span>
+                        </a>
+                    </li>
+                </ul>
+            </span>
+        </div>
+        <div class="column-description">
+            Description
+        </div>
+        <div class="column-date">
+            <span uib-dropdown>
+                <a href uib-dropdown-toggle>
+                    <span>Date <small>&#9660;</small></span>
+                </a>
+                <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+                    <li ng-class="{'chosen' : orderByDateReverse}">
+                        <a ng-click="setOrderByDateReverse(true)" href><span>Newest to Oldest</span></a>
+                    </li>
+                    <li ng-class="{'chosen' : !orderByDateReverse}">
+                        <a ng-click="setOrderByDateReverse(false)" href><span>Oldest to Newest</span></a>
+                    </li>
+                </ul>
+            </span>
+
+        </div>
+        <div class="column-type">
+            <span uib-dropdown class="pull-right">
+                <a href uib-dropdown-toggle>
+                    <span>Type <small>&#9660;</small></span>
+                </a>
+                <ul class="dropdown-menu" uib-dropdown-menu >
+                    <li>
+                        <a href ng-click="setFilter('fileType', '')">
+                            <span>All File Type</span>
+                        </a>
+                    </li>
+
+                    <li ng-class="{'chosen': filterObj.fileType == 'video'}">
+                        <a href ng-click="setFilter('fileType', 'video')">
+                            <i class="glyphicon glyphicon-film"></i>
+                            <span>Video</span>
+                        </a>
+                    </li>
+
+                    <li ng-class="{'chosen': filterObj.fileType == 'image'}">
+                        <a href ng-click="setFilter('fileType', 'image')">
+                            <i class="glyphicon glyphicon-picture"></i>
+                            <span>Image</span>
+                        </a>
+                    </li>
+
+                    <li ng-class="{'chosen': filterObj.fileType == 'gif'}">
+                        <a href ng-click="setFilter('fileType', 'gif')">
+                            <i class="glyphicon glyphicon-film"></i>
+                            <span>GIF</span>
+                        </a>
+                    </li>
+                </ul>
+            </span>
+        </div>
+    </div>
+</div>

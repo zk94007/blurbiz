@@ -11,19 +11,34 @@
     "postinstall": "bower install"
   },
   "dependencies": {
+    "angular-base64": "^2.0.5",
+    "angular-bootstrap": "^0.12.2",
     "angular-google-picker": "^0.2.2",
+    "angular-socialshare": "^2.2.7",
+    "angular-trix": "^1.0.2",
     "bcryptjs": "^2.1.0",
     "body-parser": "^1.13.2",
+    "bootstrap-ui-datetime-picker": "^2.4.3",
+    "bower": "^1.8.0",
+    "box-node-sdk": "^1.0.0",
+    "colorsys": "1.0.9",
     "cookie-parser": "^1.4.3",
+    "cropper": "^3.0.0",
     "ejs": "^2.3.3",
     "express": "^4.13.0",
     "express-jwt": "^3.0.1",
     "express-session": "^1.11.3",
+    "font-awesome": "^4.6.3",
     "googleapis": "^12.4.0",
+    "gulp": "^3.9.1",
+    "gulp-less": "^3.1.0",
     "jsonwebtoken": "^5.0.2",
+    "less": "^2.7.1",
     "lodash": "^3.10.0",
+    "moment-timezone": "^0.5.5",
     "mongodb": "^2.1.16",
     "mongoskin": "^2.1.0",
+    "ng-croppie": "^1.0.0",
     "ng-dialog": "^0.6.4",
     "path": "^0.12.7",
     "q": "^1.4.1",
@@ -33,5 +48,6 @@
     "socket.io-client": "^1.4.8",
     "socket.io-stream": "^0.9.0"
   },
-  "license": "MIT"
+  "license": "Proprietary and Confidential",
+  "copyright": "Blurbiz Team - All Rights Reserved, Unauthorized copying of this project via any medium is strictly prohibited"
 }

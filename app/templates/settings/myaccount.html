@@ -1,0 +1,42 @@
+<div class="profile-setting">
+    <uib-tabset>
+        <uib-tab  ui-sref="myaccount" ui-sref-active="active" heading="My account"></uib-tab>
+        <uib-tab ui-sref="integrations" ui-sref-active="active" active="false" heading="Integrations"></uib-tab>
+        <uib-tab ui-sref="plans" ui-sref-active="active" active="false" heading="Plans"></uib-tab>
+        <uib-tab ui-sref="billing" ui-sref-active="active" active="false" heading="Billing"></uib-tab>
+    </uib-tabset>
+
+    <div class="uib-tab-content">
+        <form novalidate ng-submit="userInfoUpdate()">
+            <flash-message></flash-message>
+            <div class="profile-holder">
+                <img style="margin-bottom: 5px; width: 100%;" ng-src="{{ user.photo }}" err-src="/img/avatar.jpg" class="img-responsive" alt="Profile image">
+                <div class="profile-overlay" ngf-select="openAccountPhotoEdit($file)">
+                    <span>Change Picture</span>
+                </div>
+            </div>
+            <div class="profile-detail">                        
+                <md-input-container>
+                    <label>Name:</label>
+                    <input ng-model="user.name">
+                </md-input-container>
+                <md-input-container>
+                    <label>Company:</label>
+                    <input ng-model="user.team_name">
+                     <!-- <md-select name="company" ng-model="user.team_id">
+                       <md-option ng-value="team.id" ng-repeat="team in teams">{{ team.name }}</md-option>
+                    </md-select>  -->
+                </md-input-container>
+                <md-input-container>
+                    <label>Email:</label>
+                    <input type="email" ng-model="user.email">
+                </md-input-container>
+                 <md-input-container>
+                    <label>Password:</label>
+                    <input type="password" ng-model="user.password">
+                </md-input-container>
+                <button type="submit" class="btn btn-custom btn-green btn-md">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>

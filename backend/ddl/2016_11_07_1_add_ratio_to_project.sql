@@ -1,0 +1,1 @@
+ALTER TABLE public.project ADD COLUMN ratio character varying NOT NULL DEFAULT '916';

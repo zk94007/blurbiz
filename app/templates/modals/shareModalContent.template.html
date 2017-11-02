@@ -1,0 +1,132 @@
+<div class="modal-header">
+    <span class="btn-close" ng-click="cancel()"></span>
+    <div class="btn-group social-buttons">
+        <div ng-show="project.user.snapchat" class="btn btn-social" ng-model="currentShare" uib-btn-radio="'snapchat'" ng-click="openShareModal('snapchat')">
+            <i class="fa fa-snapchat-ghost fa-lg" aria-hidden="true"></i>
+            <span>SnapChat</span>
+        </div>
+        <div ng-show="project.user.instagram" class="btn btn-social" ng-model="currentShare" uib-btn-radio="'instagram'" ng-click="openShareModal('instagram')">
+            <i class="fa fa-instagram fa-lg" aria-hidden="true"></i>
+            <span>Instagram</span>
+        </div>
+        <div ng-show="project.user.facebook" class="btn btn-social" ng-model="currentShare" uib-btn-radio="'facebook'" ng-click="openShareModal('facebook')">
+            <i class="fa fa-facebook fa-lg" aria-hidden="true"></i>
+            <span>Facebook</span>
+        </div>
+        <div ng-show="project.user.twitter" class="btn btn-social" ng-model="currentShare" uib-btn-radio="'twitter'" ng-click="openShareModal('twitter')">
+            <i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
+            <span>Twitter</span>
+        </div>
+        <div ng-show="project.user.pinterest" class="btn btn-social" ng-model="currentShare" uib-btn-radio="'pinterest'" ng-click="openShareModal('pinterest')">
+            <i class="fa fa-pinterest fa-lg" aria-hidden="true"></i>
+            <span>Pinterest</span>
+        </div>
+    </div>
+</div>
+<div class="modal-body">
+    <div class="form-wrapper">
+        <div class="side-image-wrapper">
+            <div class="img-wrapper">
+                <img ng-if="isImage(project.media)" class="representative" ng-src="{{ project.media }}" err-src="img/empty.png" />
+
+                <video ng-if="isVideo(project.media)" vjs-video class="video-js" controls preload="auto" vjs-media="video" height="140">
+                </video>
+            </div>
+        </div>
+        <div class="main-form-content">
+            <input type="text" readonly class="form-control" placeholder="Title" ng-model="project.title" ng-if="project.title != null"/>
+            <input type="text" readonly class="form-control" placeholder="Title" ng-model="sharedItem.title" ng-if="project.title == null"/>
+            <textarea id="edit-post-desc" class="form-control" rows="10" ng-change="changeDesc(project.share)" placeholder="Write your description" ng-model="sharedItem.description"></textarea>
+            <div class="control">
+                <div class="edit-own-board" ng-if="project.share == 'snapchat'"></div>
+                <div class="edit-own-board" ng-if="project.share == 'instagram'" ng-init="changeDesc(project.share)">
+                    <b>Characters: </b>
+                    <span>{{validateData[project.share].currentCharacters}}</span>
+                    <span>/{{validateData[project.share].characters}}</span>
+                    <b>Tags: </b>
+                    <span>{{validateData[project.share].currentTags}}</span>
+                    <span>/{{validateData[project.share].tags}}</span>
+                </div>
+                <div class="edit-own-board" ng-if="project.share == 'facebook'">
+                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
+                </div>
+                <div class="edit-own-board" ng-if="project.share == 'twitter'"  ng-init="changeDesc(project.share)">
+                    <span id="edit-board-tw-ch">{{validateData[project.share].currentCharacters}}</span>
+                </div>
+                <div class="edit-own-board" ng-if="project.share == 'pinterest'">
+                    <img src="/img/icons/pin-gray.png" class="pin_icon">
+                    <img ng-if="selected_pinterest_board" class="board_icon" ng-src="{{(selected_pinterest_board.image['60x60'].url)?selected_pinterest_board.image['60x60'].url:'img/empty.png'}}">
+                    <button uib-popover-template="pinterestPopover.templateUrl" class="btn pinterest_btn" popover-is-open="pinterestPopover.is_open" popover-placement="bottom" popover-title="" type="button">
+                        <span>
+                            {{(selected_pinterest_board && selected_pinterest_board.name)?selected_pinterest_board.name:'Select a board'}}
+                            <i class="glyphicon glyphicon-triangle-bottom"></i>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="time-control">
+        <div class="input-group datepicker-container">
+            <input class="form-control" 
+                   uib-datepicker-popup="MMM dd, yyyy" 
+                   ng-model="sharedItem.date" 
+                   is-open="isCalenderOpen" 
+                   ng-required="true" 
+                   close-text="Close" 
+                   datepicker-options="{showWeeks: 'false'}" 
+                   ng-click="isCalenderOpen=true; isCalendarEnabled=true" 
+                   ng-class="{'input-disabled': !isCalendarEnabled}" 
+                   readonly />
+            <!-- <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="isCalenderOpen=true"><i class="fa fa-calendar"></i></button>
+            </span> -->
+        </div>
+        <div class="input-group timepicker-container">
+            <!-- <input class="form-control" is-open="isTimerOpen" ng-model="sharedItem.time" uib-datepicker-popup="h:mm a" close-on-selection="true" enable-date="false" /> -->
+
+            <input ps-input-time 
+                   sy-timepicker-popup="h:mm a" 
+                   class="form-control" 
+                   ng-model="sharedItem.time" 
+                   show-meridian="true" 
+                   show-seconds="false" 
+                   is-open="isTimerOpen" 
+                   ng-click="isTimeEnabled=true" 
+                   ng-class="{'input-disabled': !isTimeEnabled}" 
+                   readonly />
+            <!-- <span class="input-group-btn">
+                <button type="button" class="btn btn-default"><i class="fa fa-clock-o"></i></button>
+            </span> -->
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <div class="clearfix">
+        <button class="btn btn-custom btn-white with-border btn-md pull-left" type="button" ng-click="editContent()">
+            <i class="fa fa-camera" aria-hidden="true"></i>
+            <span>Edit Content</span>
+        </button>
+        <button class="btn btn-custom btn-green btn-md" ng-if="!datetimeChanged" ng-click="ok()">Share Now</button>
+        <button class="btn btn-custom btn-green btn-md" ng-if="datetimeChanged" ng-click="ok()">Schedule Post</button>
+    </div>
+</div>
+<script type="text/ng-template" id="pinterestPopoverTemplate.html">
+    <div class="popover_pinterest">
+        <input class="form-control" ng-model="search.name" placeholder="Search">
+        <span class="glyphicon glyphicon-search pull-right search_pinterest" aria-hidden="true"></span>
+        <ul class="nav navbar-nav">
+            <li ng-repeat="board in pinterestPopover.boards | filter:search:strict" class="col-sm-12" ng-click="select_pinterest_board(board)">
+                <a><img src="{{(board.image['60x60'].url)?board.image['60x60'].url:'img/empty.png'}}">{{board.name}}</a>
+            </li>
+        </ul>
+    </div>
+    <div class="popover_pinterest form-group row">
+        <div class="col-sm-9">
+            <input class="form-control" ng-model="pinterestPopover.newboard" placeholder="New board Name">
+        </div>
+        <button type="button" class="btn btn-custom btn-green btn-md pull-right pinterest_btn_create" ng-click="create_pinterest_board(pinterestPopover.newboard)">Create</button>
+    </div>
+</script>

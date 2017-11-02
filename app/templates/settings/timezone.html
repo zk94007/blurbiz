@@ -1,0 +1,39 @@
+<div class="profile-setting">
+    <uib-tabset>
+        <uib-tab ui-sref="connections" ui-sref-active="active" active="false" heading="Social Networks"></uib-tab>
+        <uib-tab ui-sref="timezone" ui-sref-active="active" heading="Time zone"></uib-tab>
+    </uib-tabset>
+
+    <div class="uib-tab-content">
+        <form>
+            <div class="form-group">
+                <label class="form-label">Your country:</label>
+                <select chosen
+                        option="timezone.timeZones"
+                        ng-model="timezone.country"
+                        ng-options="country for (country, tzs) in timezone.timeZones">
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Your time zone:</label>
+                <select chosen
+                        options="timezone.country"
+                        ng-model="timezone.newTimeZone"
+                        ng-options="tz as text for (tz, text) in timezone.country">
+                </select>
+            </div>
+
+            <flash-message></flash-message>
+
+            <div ng-show="timezone.error" class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                Please select a time zone from the list
+            </div>
+
+            <button ng-click="timezone.onUpdateTimeZone()" class="btn btn-custom btn-green btn-md">Save</button>
+
+        </form>
+    </div>
+</div>

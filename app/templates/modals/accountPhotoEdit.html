@@ -1,0 +1,95 @@
+<style>
+    .cropArea {
+        max-height: 400px;
+        text-align: center;
+        display: inline-flex;
+    }
+
+    .resultArea img {
+        border: 1px solid grey;
+        border-radius: 50%;
+        width: 100%;
+    }
+
+    img-crop {
+        width: 350px;
+        height: 350px;
+        display: block
+    }
+
+    img-crop.fixed-height {
+        height: 100%;
+        position: relative;
+    }
+
+    img-crop.fixed-height canvas {
+        display: block;
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    img-crop.full-width {
+        text-align: center
+    }
+
+    img-crop.full-width canvas {
+        display: inline
+    }
+
+    img-crop canvas {
+        outline: 0;
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+        margin-top: 0 !important;
+        margin-left: 0 !important;
+    }
+
+    img-crop .loading {
+        width: 100%;
+        font-size: 16px;
+        font-weight: 700;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        display: -webkit-flex;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        -webkit-align-items: center;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -webkit-justify-content: center;
+        color: #fff;
+        background-color: rgba(0, 0, 0, .75)
+    }
+
+    img-crop .loading .fixed-height {
+        height: 100%;
+        position: absolute
+    }
+
+</style>
+
+<div class="modal-content">
+    <div class="modal-header header-custom ng-scope">
+        <span class="btn-close" ng-click="accountPhotoEdit.cancel()"></span>
+        <h3 class="modal-title">Crop Your Photo</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="cropArea col-xs-8">
+                <img-crop image="accountPhotoEdit.myImage" area-type="square" chargement="'Loading'"
+                          result-image="accountPhotoEdit.myCroppedImage"></img-crop>
+            </div>
+       
+            <div class="resultArea col-xs-4">
+                <img ng-src="{{accountPhotoEdit.myCroppedImage}}"/>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button ng-click="accountPhotoEdit.cancel()" type="button" class="btn btn-custom btn-white with-border btn-md">Cancel</button>
+        <button ng-click="accountPhotoEdit.savePhoto()" type="button" class="btn btn-custom btn-green btn-md">Save Profile Photo</button>
+    </div>
+</div>

@@ -23,7 +23,7 @@ function ConfirmateEmailController($scope, $cookies, LocalStorageService, $state
   $scope.confirmate_email();
 
   socket.on('confirmate_email_response', function (msg) {
-    //debugger;
+    //
     console.log('confirmate_email_response: ' + JSON.stringify(msg));
     if (msg == null) {
       console.log('ERROR: msg is null');

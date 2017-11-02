@@ -1,0 +1,21 @@
+<div class="modal-body">
+    <div class="fb_content" ng-cloak>
+        <div class="fb_image">
+            <img ng-src="/img/{{share}}.png" style="border: none;" />
+        </div>
+        <div class="fb_heading">
+            Continue as {{ username }}
+        </div>
+        <div class="fb_text">
+            <p>Blurbiz will receive the following info:</p>
+            <p>your public profile, email address, Timeline posts and photos.</p>
+        </div>
+        <div class="fb_footer">
+            This doesn't let the app post to {{ share }} 
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default" ng-click="cancel()">Cancel</button>
+            <button class="btn btn-success" ng-click="ok()">Ok</button>
+        </div> 
+    </div>
+</div>

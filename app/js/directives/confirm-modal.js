@@ -9,6 +9,7 @@ angular
                     animation: true,
                     templateUrl: 'templates/confirmModal.html',
                     controller: 'ConfirmModalController',
+                    size: 'sm',
                     resolve: {
                         content: function() {
                             return attrs.confirmMessage

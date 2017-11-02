@@ -1,0 +1,32 @@
+<style>
+	.warning-circle{
+	    width: 30px;
+	    height: 30px;
+	    background-color: #e67000;
+	    top: -15px;
+	    right: -15px;
+	    position: absolute;
+	    border-radius: 30px;
+	    padding: 8px;
+	    color: #fff;
+	}
+	.warning-ok{
+		background-color: #e67000;
+	}
+	.warning-footer{
+	    border-top: 0px !important;
+	}
+	.warning-content{
+		font-size: large;
+   		padding: 10% 20% 0px 20%;
+	}
+</style>
+<div class="modal-content">
+	<span class="glyphicon glyphicon-remove warning-circle" ng-click="ok()"></span>
+    <div class="modal-body warning-content">
+        {{content}}
+    </div>
+    <div class="modal-footer warning-footer">
+       <button class="btn btn-warning warning-ok" ng-click="ok()">Okay</button>
+    </div> 
+</div>

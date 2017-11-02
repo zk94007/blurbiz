@@ -1,0 +1,18 @@
+<div class="modal-body content-shower">
+	<h2>{{url.title}}</h2>
+	<video ng-if="isVideo(url.path)"
+	    id="vid1"
+	    class="video-js vjs-default-skin"
+	    controls
+	    autoplay
+	    width="100%" height="480"
+	    vjs-setup="options"
+	    vjs-video
+	>
+	</video>
+	<img class="representative" ng-if="isImage(url.path)"
+		ng-src="{{url.path}}" />
+</div>
+<div class="modal-footer">
+    <button class="btn btn-warning" ng-click="ok()">Done</button>
+</div>

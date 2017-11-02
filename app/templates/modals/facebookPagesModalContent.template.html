@@ -1,0 +1,36 @@
+<div class="modal-header">
+    <span class="btn-close" ng-click="cancel()"></span>
+    <h3 class="modal-title">Select Page or Profile</h3>
+</div>
+<div class="modal-body facebook-profile">
+    <div ng-hide="profile && pages.length" class="text-center">
+        <img ng-src="{{ waitImg }}" />
+    </div>
+    <div ng-show="profile && pages.length">
+        <label>Connect to your Facebook Profile</label>
+
+        <div ng-if="profile" ng-class="profile.selected ? 'fb-page-active' : ''" class="fb-page-item" ng-click="selectPage(profile)">
+            <img class="fb-page-img" src="{{profile.picture}}">
+            <div class="fb-page-data">
+                <div class="fb-page-title">{{profile.name}}</div>
+            </div>
+            <span class="fb-selected-icon glyphicon glyphicon-ok"></span>
+        </div>
+
+        <label class="has-border">
+            Connect your facebook page
+        </label>
+
+        <div ng-repeat="page in pages" ng-class="page.selected ? 'fb-page-active' : ''" class="fb-page-item has-border" ng-click="selectPage(page)">
+            <img class="fb-page-img" src="{{page.picture}}">
+            <div class="fb-page-data">
+                <div class="fb-page-title">{{page.name}}</div>
+                <div class="fb-page-desc">{{page.category}}</div>
+            </div>
+            <span class="fb-selected-icon glyphicon glyphicon-ok"></span>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-custom btn-green btn-md" ng-click="connect()">Connect</button>
+</div>

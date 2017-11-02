@@ -1,0 +1,1 @@
+alter table public.user ADD COLUMN created_at timestamp with time zone NOT NULL default now();

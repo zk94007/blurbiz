@@ -1,0 +1,336 @@
+.list-view {
+	margin-top: 41px;
+
+	.post-icon {
+        height: 40px;
+        width: 40px;
+    }
+
+    @media (max-width: @screen-sm-max) {
+        .post-icon {
+            width: 100%;
+            height: 100%;
+            margin-bottom: 20px;
+        }
+
+        .post-description {
+            display: none !important;
+        }
+    }
+
+	.list-wrapper {
+		position: relative;
+
+		.accordion-toggle {
+			text-decoration: none;
+			outline: none;
+		}
+
+		.post-row-paginator {
+			text-align: center;
+		}
+
+		span[uib-accordion-header] {
+			margin-left: -24px;
+
+    		.schedule-mark {
+    			width: 15px;
+			    display: inline-block;
+			    height: 15px;
+			    background-color: @color-blue-light-h;
+			    border-radius: 50%;
+			    position: relative;
+
+			    &:before, &:after {
+			    	content: '';
+			    	width: 11px;
+			    	height: 1px;
+			    	background-color: @color-white;
+			    	position: absolute;
+			    	top: 7px;
+			    	left: 2px;
+			    	transition: all ease 0.5s;
+			    }
+
+			    &.minimized {
+			    	&:before {
+			    		transform: rotate(270deg);
+			    	}
+
+			    	&:after {
+			    		transform: rotate(180deg);
+			    	}
+			    }
+    		}
+
+    		.schedule-type {
+    			position: relative;
+    			z-index: 10;
+    			font-size: 18px;
+    			font-weight: bold;
+    		}
+    	}
+
+    	span[uib-dropdown] {
+    		ul.dropdown-menu {
+    			padding: 10px 0;
+			    margin-top: 5px;
+				box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
+
+    			> li {
+    				padding: 0 15px;
+
+    				&:first-child {
+						margin-bottom: 5px;
+					}
+
+    				&:hover {
+    					background-color: @color-white-m;
+    				}
+
+    				&.chosen {
+    					background-color: @color-gray-light-m;
+
+    					> a {
+	    					i {
+	    						color: @color-white;
+	    					}
+
+	    					> span {
+	    						color: @color-white;
+	    					}
+	    				}
+    				}
+
+    				> a {
+    					padding: 0;
+
+    					&:hover {
+    						background-color: transparent;
+    					}
+
+    					i {
+    						display: inline-block;
+						    width: 30px;
+						    padding: 8px 15px 8px 0;
+						    text-align: center;
+						    color: #666;
+    					}
+
+    					> span {
+    						font-size: 12px;
+    						color: @color-gray;
+    					}
+    				}
+    			}
+    		}
+    	}
+
+		.panel-default {
+			border: none;
+			border-radius: 0;
+			box-shadow: none;
+
+			.panel-heading {
+				background-color: transparent;
+				border: none;
+				border-radius: 0;
+			}
+
+			.panel-body {
+				// min-height: 387px;
+				padding: 0;
+				border: none;
+			}
+		}
+	}
+
+	dir-pagination-controls {
+		.pagination {
+			li {
+				display: inline-block;
+				margin-right: 5px;
+
+				&.active {
+					a {
+						color: @color-white;
+						background-color: @color-gray-light-h;
+					}
+				}
+
+				a {
+					position: relative;
+					padding: 5px;
+					width: 32px;
+					text-align: center;
+					border-radius: 3px !important;
+					border-color: @color-gray-light-h;
+					color: @color-gray-light-h;
+				}
+
+				&:last-child {
+					margin-right: 0;
+
+					a {
+						font-size: 0;
+
+						&:before {
+							content: '▶';
+							font-size: 14px;
+						}
+					}
+				}
+
+				&:first-child {
+					a {
+						font-size: 0;
+
+						&:before {
+							font-size: 14px;
+							content: '◀';
+						}
+					}
+				}
+			}
+		}
+	}
+
+	.post-row-title {
+		position: absolute !important;
+		width: 100%;
+		top: 12px;
+		color: @color-blue-light-h;
+
+		&.eqi-container {
+	        display: flex;
+	        justify-content: space-between;
+	        padding-left: 10px;
+	        padding-right: 5px;
+	    }
+
+	    .dropdown-toggle {
+	    	color: @color-blue-light-h;
+	    	text-decoration: none;
+
+	    	span {
+	    		small {
+	    			font-size: 13px;
+	    		}
+	    	}
+	    }
+	}
+
+	.eqi-container {
+		justify-content: space-between;
+		padding-left: 5px;
+		padding-right: 5px;
+		position: relative;
+
+		> div {
+	        width: 100%;
+	        padding-left: 5px;
+	        padding-right: 5px;
+	        font-size: 14px;
+	    }
+	}
+
+    .post-row-line {
+    	text-align: left;
+    	position: relative;
+
+    	&.post-row {
+            display: flex;
+            align-items: center;
+            min-height: 50px;
+            padding-top: 0;
+            margin-bottom: 2px !important;
+    	}
+
+    	.column-color {
+    		position: absolute;
+    		height: ~"calc(100% + 2px)";
+    		width: 6px;
+    		left: -10px;
+    		top: -1px;
+    		padding: 0;
+    	}
+
+    	.hover-buttons {
+	        background: white;
+	        position: absolute;
+	        top: 0;
+	        right: 60px;
+	        padding: 0 10px;
+	        width: auto;
+	        color: @color-blue-light-h;
+	        line-height: 48px;
+	        box-shadow: -5px 0 5px 0 rgba(0, 0, 0, 0.2);
+
+	        .hover-item {
+	        	display: inline-block;
+	        	padding: 0 10px;
+	        	border-radius: 4px;
+	        	height: 30px;
+	        	line-height: 30px;
+	        	transition: all ease 0.5s;
+
+	        	i {
+	        		font-size: 18px;
+	        		vertical-align: middle;
+	        		line-height: 20px;
+	        	}
+
+	        	span {
+	        		font-size: 13px;
+	        	}
+
+	        	&:hover {
+	        		color: @color-white;
+	        		background-color: @color-blue-light-h;
+	        	}
+	        }
+	    }
+	}
+
+	.column-title {
+        min-width: 100px;
+        max-width: 250px;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .column-platform {
+        min-width: 100px;
+        max-width: 100px;
+        text-align: center;
+    }
+
+    .column-user {
+        min-width: 80px;
+        max-width: 80px;
+        text-align: center;
+    }
+
+    .column-description {
+    	color: @color-blue-light-h;
+        min-width: 100px;
+        word-wrap: break-word;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical; 
+    }
+
+    .column-date {
+        min-width: 160px;
+
+        .post-time {
+        	color: @color-cyan;
+        }
+    }
+
+    .column-type {
+        min-width: 60px;
+        max-width: 60px;
+    }    	
+}

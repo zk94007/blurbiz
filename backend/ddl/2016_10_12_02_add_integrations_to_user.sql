@@ -1,0 +1,1 @@
+ALTER TABLE public.user ADD COLUMN integrations character varying;

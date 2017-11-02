@@ -5,7 +5,7 @@
         .module('Blurbiz')
         .factory('FlashService', Service);
 
-    function Service($rootScope) {
+    function Service($rootScope, Flash) {
         var service = {};
 
         service.Success = Success;
@@ -34,19 +34,23 @@
         }
 
         function Success(message, keepAfterLocationChange) {
-            $rootScope.flash = {
-                message: message,
-                type: 'success', 
-                keepAfterLocationChange: keepAfterLocationChange
-            };
+            // $rootScope.flash = {
+            //     message: message,
+            //     type: 'success', 
+            //     keepAfterLocationChange: keepAfterLocationChange
+            // };
+
+            Flash.create('success', message);
         }
 
         function Error(message, keepAfterLocationChange) {
-            $rootScope.flash = {
-                message: message,
-                type: 'danger',
-                keepAfterLocationChange: keepAfterLocationChange
-            };
+            // $rootScope.flash = {
+            //     message: message,
+            //     type: 'danger',
+            //     keepAfterLocationChange: keepAfterLocationChange
+            // };
+
+            Flash.create('danger', message);
         }
     }
 

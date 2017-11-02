@@ -14,8 +14,11 @@ CREATE TABLE public."user"
   password character varying(255),
   name character varying(255),
   company character varying(255),
+  photo character varying(255),
   is_confirmed boolean DEFAULT false,
-  last_login_date timestamp without time zone,
+  last_login_date timestamp,
+  timezone character varying(255),
+  photo_id integer,
   CONSTRAINT user_pkey PRIMARY KEY (id),
   CONSTRAINT user_email_key UNIQUE (email)
 )

@@ -11,13 +11,14 @@ CREATE TABLE public.task
 (
   id integer NOT NULL DEFAULT nextval('task_id_seq'::regclass),
   project_id integer,
-  scheduled_start_date timestamp without time zone,
+  scheduled_start_date timestamp,
   is_finished boolean DEFAULT false,
   is_in_progress boolean DEFAULT false,
-  start_date timestamp without time zone,
+  start_date timestamp,
   target_social_network character varying(255),
   title character varying(255),
   description character varying(255),
+  user_id integer,
   CONSTRAINT task_pkey PRIMARY KEY (id),
   FOREIGN KEY (project_id) REFERENCES "project" (id) ON UPDATE NO ACTION ON DELETE NO ACTION
 )

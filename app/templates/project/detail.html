@@ -1,0 +1,1257 @@
+<style>
+    .project_detail {
+        padding: 0px;
+    }
+    .navbar-default {
+        background-color: #1F2C3C;
+        border-color: #1F2C3C;
+    }
+    .navbar {
+        border-radius: 0px;
+        min-height: 0px;
+    }
+
+    .navbar-nav-custom {
+        margin: 8px;
+    }
+
+    .btn.btn-done, .btn.btn-preview, .btn.btn-replace, .btn.btn-reposition {
+        font-size: 15px;
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+    }
+
+    .btn-done {
+        background-color: #4A90E2 !important;
+        color: #B1B9C2 !important;
+    }
+    .btn-preview {
+        background-color: #7ED321 !important;
+        color: #fff !important;
+    }
+    .btn-reposition {
+        background-color: #2FB698 !important;
+        color: #fff !important;
+    }
+    .btn-replace {
+        background-color:#9B9B9B !important;
+        color: #B1B9C2 !important;
+    }
+    .marginTenRight {
+        margin-right: 10px !important;
+    }
+
+.video-editor {
+    width: 100%;
+    height: 50px;
+    display: block;
+    position: absolute;
+    z-index: 3;
+    bottom: 0;
+}
+body{
+    overflow-x:hidden;
+}
+body,html,#wrapper,#content-wrapper,.page-content,.project_detail{
+    height: 100%;
+}
+#video-canvas{
+    height: calc(100% - 150px);
+    height: -webkit-calc(100% - 150px);
+    display: table;
+}
+
+.video-canvas{
+        height: calc(100vh - 129px);
+        height: -webkit-calc(100vh - 129px);
+        display: table-cell;
+        vertical-align: middle;
+}
+
+</style>
+
+ <style>
+  @-webkit-keyframes rotate {
+    0% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(359deg);
+              transform: rotate(359deg);
+    }
+  }
+
+  @keyframes rotate {
+    0% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(359deg);
+              transform: rotate(359deg);
+    }
+  }
+
+  .pre-loader {
+    -webkit-animation: rotate 2s infinite linear;
+            animation: rotate 2s infinite linear;
+    width: 100px;
+    height: 100px;
+    display: inline-block;  
+    -webkit-transform-origin: 48px 52px;
+            transform-origin: 48px 52px;
+    position: relative;
+    z-index: 9;
+  }
+  .pre-loader img {
+    max-width: 100%;
+  }
+  .video_loading-container {
+    position: absolute;
+    top: calc(50% - 50px);
+    left: calc(50% - 200px);
+    width: 400px;
+  }
+  .video_loading-container::before {
+    content: "";
+    position: fixed;
+    height: 99999px;
+    width: 100%;
+    background: rgba(0,0,0,0.6);
+    display: block;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+  </style>
+<div class="col-xs-12 projects-container project_detail" ng-keydown="keydown($event)" ng-keyup="keyup($event)" tabindex="1">
+    <div ng-show="video_loading"></div>
+    <!-- <div ng-show="video_loading" class="progress row">
+         <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" ng-style="{'width': progress_percent}">
+            {{progress_percent}} <span ng-if="progress_text.length">({{ progress_text }})</span>
+        </div> 
+    </div> -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+           <!--  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button> -->
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav-custom">
+                <!-- <li ng-if="!reposition && !player" class="pull-left" uib-dropdown><a class="btn btn-replace" ng-class="{'disabled': config.isCropping || !main_item}" uib-dropdown-toggle ng-click="replace_project_video()"><i class="fa fa-retweet" aria-hidden="true"></i> Replace</a>
+                    <ul class="dropdown-menu" uib-dropdown-menu>
+                        <li>
+                            <a href ngf-select="replaceWithUploadedFiles($files)" multiple="multiple" class="menu-item">
+                                <img class="icon" src="img/icons/cloud-computing.png">
+                                <span>Computer</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li> -->
+                <li ng-if="!reposition && !player"><a ng-click="startCrop()" class="btn btn-reposition">Reposition <img class="reposition_icon" src="/img/icons/reposition.png"></a></li>
+                <li ng-if="!reposition && !player" class="pull-right marginTenRight"><a class="btn btn-done" ng-click="completed()">Done</a></li>
+                <li ng-if="!reposition && !player" class="pull-right marginTenRight"><a class="btn btn-preview" ng-click="preview()"><i class="fa fa-eye" aria-hidden="true"></i> Preview</a></li>
+                <li ng-if="reposition" class="pull-right marginTenRight"><a class="btn btn-done" ng-click="cancel()">Close</a></li>
+                
+                <li ng-if="player" class="pull-right marginTenRight"><a ng-click="cancel()"><i style="color: #fff;" class="fa fa-times" aria-hidden="true"></i></a></li>
+                <li ng-if="player" class="pull-right marginTenRight" uib-dropdown>
+                    <a class="menu-item dropdown-toggle" href="#" uib-dropdown-toggle>
+                        <div class="icon-holder">
+                            <img src="img/icons/icon-share-green.png" />
+                        </div>
+                        <span style="color: #B1B9C2 !important;">Share</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right menu-social" uib-dropdown-menu>
+                        <li ng-show="$parent.user.snapchat">                   
+                            <a href="" ng-click="openShareModal('snapchat')" class="dropdown-sharelink" >
+                                <img class="dropdown-sharelink-img" src="img/icons/snapchat-btn.png">
+                                <span> Send to Snapchat</span>
+                            </a>
+                        </li>
+                        <li ng-show="$parent.user.facebook">      
+                            <a href=""  ng-click="openShareModal('facebook')" class="dropdown-sharelink">
+                                <img class="dropdown-sharelink-img" src="img/icons/facebook-btn.png">
+                                <span> Share to Facebook</span>
+                            </a>      
+                        </li>
+                        <li ng-show="$parent.user.twitter">   
+                            <a href=""  ng-click="openShareModal('twitter')"  class="dropdown-sharelink">
+                                <img class="dropdown-sharelink-img" src="img/icons/twitter-btn.png">                    
+                                <span> Send to Twitter</span>
+                            </a>      
+                        </li>
+                        <li ng-show="$parent.user.instagram">   
+                            <a href=""  ng-click="openShareModal('instagram')"  class="dropdown-sharelink">
+                                <img class="dropdown-sharelink-img" src="img/icons/instagram-btn.png">                    
+                                <span> Send to Instagram</span>
+                            </a>                     
+                        </li>
+                        <li ng-show="$parent.user.pinterest">
+                            <a href="" ng-click="openShareModal('pinterest')" class="dropdown-sharelink" >
+                                <img class="dropdown-sharelink-img" width="35" height="35" src="img/icons/pinterest-btn.png">
+                                <span> Pin to Pinterest</span>
+                            </a>
+                        </li>
+                        <li class="divider"></li>                       
+                        <li>
+                            <a href="" ng-click="openShareModal('twitter')"  class="dropdown-sharelink">
+                                <img class="dropdown-sharelink-img" src="img/icons/schedule-btn.png">
+                                <span> Schedule Post</span>
+                            </a>           
+                        </li>                            
+                    </ul>
+                </li>
+                <li ng-if="player" class="pull-right marginTenRight"><a target="_self" download="{{'project_' + project_id + '_video.mp4'}}" href="{{ downloadVideo }}" class="menu-item">
+                    <div class="icon-holder">
+                        <img src="img/icons/arrow-down-line.png" />
+                    </div>
+                    <span style="color: #B1B9C2 !important;">Download</span>
+                </a></li>
+
+            </ul>
+            <div class="row">
+        
+    </div>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+    <!-- <ul class="nav navbar-nav navbar-right top-navbar">
+        <li class="link" uib-dropdown>
+            <a class="center" ng-class="{'disabled': config.isCropping || !main_item}" uib-dropdown-toggle>Replace</a>
+            <ul class="dropdown-menu" uib-dropdown-menu>
+                <li>
+                    <a href ngf-select="replaceWithUploadedFiles($files)" multiple="multiple" class="menu-item">
+                        <img class="icon" src="img/icons/cloud-computing.png">
+                        <span>Computer</span>
+                    </a>
+                </li> -->
+                <!-- <li>
+                    <a href id="dropbox_first" ng-show="connectionStates.dropbox" drop-box-picker db-picker-files="dpfiles" class="menu-item">
+                        <img class="icon" src="img/icons/dropbox.png">
+                        <span>Dropbox</span>
+                    </a>
+                    <a href id="dropbox_second" ng-hide="connectionStates.dropbox" ng-click="showConnectToService('dropbox')" class="menu-item">
+                        <img class="icon" src="img/icons/dropbox.png">
+                        <span>Dropbox</span>
+                    </a>
+                </li>
+                <li>
+                    <a href id="google_drive_first" ng-show="connectionStates.google_drive" lk-google-picker on-picked="onGoogleFilePicked(docs)"
+                        on-loaded="onGoogleFileLoaded()" on-cancel="onGoogleFileCancel()" class="menu-item">
+                        <img class="icon" src="img/icons/drive.png">
+                        <span>Google Drive</span>
+                    </a>
+                    <a href id="google_drive_second" ng-hide="connectionStates.google_drive" ng-click="showConnectToService('google_drive')"
+                        class="menu-item">
+                        <img class="icon" src="img/icons/drive.png">
+                        <span>Google Drive</span>
+                    </a>
+                </li>
+                <li>
+                    <a href id="box_first" ng-show="connectionStates.box" box-picker box-picker-files="boxfiles" class="menu-item icon-big">
+                        <img class="icon" src="img/icons/box.png">
+                        <span>Box</span>
+                    </a>
+                    <a href id="box_second" ng-hide="connectionStates.box" ng-click="showConnectToService('box')" class="menu-item icon-big">
+                        <img class="icon" src="img/icons/box.png">
+                        <span>Box</span>
+                    </a>
+                </li>
+                <li>
+                    <a href id="instagram_first" ng-show="connectionStates.instagram2" ng-click="instagram()" class="menu-item">
+                        <img class="icon" src="img/icons/instagram.png">
+                        <span>Instagram</span>
+                    </a>
+                    <a href id="instagram_second" ng-hide="connectionStates.instagram2" ng-click="showConnectToService('instagram2')" class="menu-item">
+                        <img class="icon" src="img/icons/instagram.png">
+                        <span>Instagram</span>
+                    </a>
+                </li> -->
+            <!-- </ul>
+        </li>
+        <li class="link" uib-dropdown is-open="timer.isopen" auto-close="outsideClick">
+            <a class="center" ng-class="{'disabled': config.isCropping}" ng-disabled="config.isCropping" uib-dropdown-toggle>Timer</a>
+            <div uib-dropdown-menu>
+                <div class="text-center timer-container">
+                    <div>
+                        <h4><img src="img/icons/stopclock_white.png" class="spanic" /> Timer</h4>
+                        <small>Automatically move to next frame</small>
+                    </div>
+                    <div class="form-group time-length-wrapper">
+                        <label class="small">After seconds</label>
+                        <input timer-input type="number" min="1" max="60" class="form-control" ng-model="currentTimer">
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li class="link"><a ng-click="replace_project_video()" class="center" ng-class="{'disabled': config.isCropping}">Play</a></li>
+        <li class="link"><a ng-click="cancel()" class="center">Done</a></li>
+    </ul> -->
+    <!-- <div class="col-xs-12 text-center" ng-show="config.isLoadedVideo" ng-hide="config.isCropping"> -->
+        <!-- <span ng-click="startCrop()" class="cursor-pointer">Reposition
+            <img class="reposition_icon" src="/img/icons/reposition.png">
+        </span> -->
+        <!-- <span ng-if="!player" class="zoomer">
+            <i class="fa fa-minus zoom" ng-click="zoomIn()" aria-hidden="true"></i>
+            <span class="zoom">{{config.currentZoom}}%</span>
+        <i class="fa fa-plus zoom" ng-click="zoomOut()" aria-hidden="true"></i> &nbsp;&nbsp; -->
+        <!-- <i class="fa fa-crop zoom" ng-click="cropVideo()" aria-hidden="true"></i> -->
+        <!-- </span> -->
+    <!-- </div> -->
+
+    <span ng-if="!reposition && !player" class="time-spent" style="text-align: right; padding-bottom: 50px; z-index: 5; pointer-events:none;">{{totalTimeDuration}}<br>Video Duration</span>
+        <div ng-if="video_loading" class="video_loading-container" style="z-index:99; text-align:center;">
+            <div class="pre-loader"> <img src="/img/icons/pre-loader.png" alt=""> </div>
+            <h3 style="z-index:999; padding-left:-30px !important; color:#009EDC;" ng-if="loadingData != ''">{{ loadingData }}<span class="loader__dot">.</span><span class="loader__dot">.</span><span class="loader__dot">.</span></h3>
+            <!-- <h4 style="z-index:999; padding-left:-30px !important; color:#009EDC;">{{loadingPer}}%</h4> -->
+            <div class="progress" ng-if="loadingData != ''">
+                <div class="progress-bar" role="progressbar" aria-valuenow="{{loadingPer}}" aria-valuemin="0" aria-valuemax="100" style="background-color:#009EDC; width:{{loadingPer}}%">
+                  {{loadingPer}}%
+                </div>
+              </div>
+            <!-- <div class="cssload-container">
+                <div class="cssload-progress cssload-float cssload-shadow">
+                    <div class="cssload-progress-item"></div>
+                </div>
+            </div> -->
+        </div>  
+    <div class="col-xs-12" id="video-canvas">
+        <div class="video-canvas">
+        <!-- <div ng-if="config.isCropping" class="crop-popup-container">-->
+        <div ng-if="config.isCropping && config.cropstep == 1" class="crop-popup-container">
+            <div class="left-holder">
+                <span class="zoom-title">Zoom</span>
+                <!-- <rzslider rz-slider-model="zoomslider.value" rz-slider-options="zoomslider.options"></rzslider> -->
+            </div>
+            <div class="right-holder text-right">
+                <button class="btn" ng-if="!isImage(main_item.path)" ng-click="cropVideo()">&nbsp; Done &nbsp;</button> 
+                <button class="btn" ng-if="isImage(main_item.path)" ng-click="testCrop()">&nbsp; Done &nbsp;</button>
+            </div>
+            <!-- <div class="right-holder text-right">
+                <button class="btn" ng-click="config.cropstep=2">&nbsp; Next &nbsp;</button>
+            </div> -->
+            <div class="clearfix"></div>
+        </div>
+        <div ng-if="config.isCropping && config.cropstep == 2" class="crop-popup-container">
+            <div class="left-holder">
+                <rzslider rz-slider-model="zoomslider2.value" rz-slider-options="zoomslider2.options"></rzslider>
+            </div>
+            <div class="right-holder text-right"> 
+                <button class="btn" ng-click="testCrop()">&nbsp; Done &nbsp;</button>
+                
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <flash-message></flash-message>
+        <div ng-if="!player" class="videogular-container video-crop">
+            
+            <!--            <canvas id="canvas" class="crop-container videogular-container" ng-show="config.isCropping"></canvas>-->
+            
+            <div class="main_item_centerior horizontal-vertical-center">
+                <div class="img-wrapper">
+                    <div id="text-editor-playground" 
+                        class="text-editor-playground" 
+                        ng-click="textEditor.clearSelection()" 
+                        ng-mousemove="textEditor.mouseMove($event)" 
+                        ng-keydown="textEditor.keydown($event)"
+                        ng-mouseup="textEditor.mouseUp($event)" style="outline: none; position:inherit;">
+
+                        <div ng-repeat="medium in media" ng-class="{ 'hidden_overlays': !checkIfMainItem(medium) }">
+                            
+                            <!-- <div ng-repeat="textOverlay in medium.texts" ng-show="medium == main_item"> -->
+                            <div ng-if="!player && !reposition" ng-repeat="textOverlay in medium.texts" class="text">
+                                <!-- <div class='unselectable' ng-if="textOverlay != textEditor.isEditMode" style="position: absolute; top: {{textOverlay.Top }}px; left: {{textOverlay.Left}}px; width: {{textOverlay.width}}px; height: {{textOverlay.height}}px;" 
+                                    ng-mousedown="textEditor.mouseDown(textOverlay, $event)" 
+                                    ng-mouseup="textEditor.mouseUp($event)" 
+                                    ng-dblclick="textEditor.setEditable(textOverlay,$event)"
+                                    ng-bind-html="textOverlay.html" 
+                                    >
+                                </div> -->
+                                <div ng-if="medium.id == main_item.id">
+                                     <!-- <style ng-if="config.ratio == '169'">
+                                        #text_overlay_{{textOverlay.id}} div div div font img, #text_overlay_{{textOverlay.id}} div div div img {
+                                            /* max-height: 100px !important; */
+                                            /* width: 100px !important; */
+                                        }
+                                    </style>
+                                    <style ng-if="config.ratio == '11'">
+                                        #text_overlay_{{textOverlay.id}} div div div font img, #text_overlay_{{textOverlay.id}} div div div img {
+                                            /* max-height: 52px !important; */
+                                             width: 56% !important; 
+                                            
+                                        }
+                                    </style>
+                                    <style ng-if="config.ratio == '916'">
+                                        #text_overlay_{{textOverlay.id}} div div div font img, #text_overlay_{{textOverlay.id}} div div div img {
+                                            /* max-height: 52px !important; */
+                                             width: 31% !important; 
+                                        }
+                                    </style>  -->
+                                <div class="text_overlay" id="text_overlay_{{textOverlay.id}}" ng-if="!reposition"
+                                 meditor ng-model="textOverlay.content" maxtimer="{{medium.slider.max}}" playground="#text-editor-playground" overlay="textOverlay" zoom-ratio="{{config.currentZoom}}" on-blur="textEditor.updateTextOverlay(overlay)"
+                                 on-delete="textEditor.deleteTextOverlay(overlay)" ng-mouseup="textEditor.updateTextOverlay(textOverlay)" 
+                                 style="position: absolute; z-index: 9999; width: {{textOverlay.o_width}}px; transform: translate({{textOverlay.o_left}}px, {{textOverlay.o_top }}px) rotate({{-textOverlay.o_degree}}deg);" 
+                                    ng-click="textEditor.clearSelectionPrevent($event)" >
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+
+                         <div id="crop-container" class="croppie-container" style="background: black;" ng-show="config.isCropping">
+                            <!-- <img id="cropedImage"  alt="">  -->
+                            <style>
+                                #crop-container .cr-slider-wrap
+                                {
+                                    margin-top: -440px;
+                                    position: absolute;
+                                    width: 239px !important;
+                                    margin-left: 179px;
+                                }
+                            </style>
+                        </div> 
+
+                        <videogular ng-hide="config.isCropping" ng-if="isVideo(config.videoSource)" id="primary-video" vg-change-source="vgChangeSource($source)" vg-can-play="vgCanPlay()"
+                            vg-player-ready="onPlayerReady($API)" vg-update-state="vgUpdateState($state)" preload="auto" vg-update-time="vgUpdateTime($currentTime, $duration)"
+                            vg-theme="video_config.theme" style="width: {{config.width}}; height: {{ config.height }}; margin : {{config.top}} {{config.right}} {{config.bottom}} {{config.left}};">
+                            <vg-media ng-if="afterreposition == 1" class="reposition-video" vg-src="video_config.sources" >
+                            </vg-media>
+                            <vg-media ng-if="afterreposition == 0" class="reposition-video" vg-src="video_config.sources">
+                            </vg-media>
+                            
+                                <vg-controls ng-if="player">  
+                                 <vg-play-pause-button></vg-play-pause-button> 
+                                  <vg-time-display>{{ currentTime | date:'mm:ss' : 'UTC' }}</vg-time-display>  
+                                  <vg-scrub-bar>
+                                    <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                                </vg-scrub-bar>  
+                                 <vg-time-display>{{ timeLeft | date:'mm:ss' : 'UTC' }}</vg-time-display> 
+                                
+                                 <vg-volume>
+                                    <vg-mute-button></vg-mute-button>
+                                    <vg-volume-bar></vg-volume-bar>
+                                </vg-volume> 
+                                 <vg-fullscreen-button></vg-fullscreen-button> 
+                              </vg-controls>      
+
+                             <vg-overlay-play ng-if="player"></vg-overlay-play> 
+                             <vg-buffering></vg-buffering>
+                             <!-- <style>.rz-bar-wrapper { width: {{rzSliderBarPer.width}} !important; }</style> -->
+                             
+                        </videogular>
+                        
+                         <!-- <div ng-if="!config.isCropping">  -->
+                            <img ng-if="isImage(main_item.path)" id="primary-image" class="representative" ng-src="{{ main_item.pathAspect }}" ng-click="" ng-class="{'img-edit': isImage(config.videoSource)}" ng-hide="config.isCropping" style="width: {{config.width}} !important; height: {{ config.height }} !important; margin : {{config.top}} {{config.right}} {{config.bottom}} {{config.left}};"> <!-- object-fit:cover; -->
+                            
+                         <!-- </div>  -->
+                    </div>                    
+                    
+                    <!-- <video ng-if="isVideo(main_item.path)" class="video-js" controls preload="auto" height="180" vjs-video vjs-media="{'sources': [{ 'src': main_item.path, 'type': 'video/mp4' }]}">
+                    </video> -->
+                    
+                </div>
+                
+            </div>
+            
+        </div>
+        
+        <div ng-if="!player && !reposition" class="videogular-container" style="height:40px; margin-bottom: 15px; background-color:#1B2126 !important;">
+            <div class="col-sm-2" ng-if="!isImage(main_item.path)"><i id="videoPlayer" class="fa fa-play fa-4" aria-hidden="true" style="font-size: 30px; margin: 2px 10px 0 10px; padding:3px 15px 3px 19px; border-radius:6px; background-color: #323D46" ng-click="playVideo()"></i></div>
+            <div class="col-sm-8">
+                <style>
+                    .videoSeekTime {
+                        visibility: visible !important;
+                        z-index: 999;
+                        color: #fff;
+                        margin-left:35px;
+                        margin-top: 8px;
+                        position: absolute;
+                    }
+                </style>
+                <!-- <div class="videoSeekTime" >{{minRangeSlider.minValue/10}}</div> -->
+                <rzslider ng-if="!isImage(main_item.path)" class="controls-container" rz-slider-model="minRangeSlider.min" rz-slider-high="minRangeSlider.max" rz-slider-options="minRangeSlider.options"></rzslider></div>   
+            <div class="col-sm-2" ng-if="!isImage(main_item.path)"><label style="margin: 10px 0 0 0;">{{main_item.videoDuration}}</label></div>
+            <div class="col-sm-4"  ng-if="isImage(main_item.path)">
+                <rzslider id="search" rz-slider-model="minSlider.value"  
+                        rz-slider-options="minSlider.options"></rzslider>
+                <span class="form-control-feedback" style="border-radius:25px; background-color: #323D46;">{{minSlider.value}}s</span>
+                <!-- <div class="search-form">
+                    <div class="form-group has-feedback">
+                         
+                        
+                    </div>
+                </div> -->
+            </div>
+        </div>
+
+        <div ng-if="player" class="videogular-container video-crop">
+            <div class="main_item_centerior horizontal-vertical-center">
+                <div class="img-wrapper">
+                        
+                        <videogular ng-hide="config.isCropping" id="primary-video" vg-change-source="vgChangeSource($API)" vg-can-play="vgCanPlay()"
+                            vg-player-ready="onPlayerReady($API)" vg-update-state="vgUpdateState($state)" vg-update-time="vgUpdateTime($currentTime, $duration)"
+                            vg-theme="video_config.theme" style="width: 100%; height: 100%;">
+                            <vg-media vg-src="downloadVideoSrc">
+                            </vg-media>
+                                <vg-controls>  
+                                 <vg-play-pause-button></vg-play-pause-button> 
+                                  <vg-time-display>{{ currentTime | date:'mm:ss' : 'UTC' }}</vg-time-display>  
+                                  <vg-scrub-bar>
+                                    <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                                </vg-scrub-bar>  
+                                 <vg-time-display>{{ timeLeft | date:'mm:ss' : 'UTC' }}</vg-time-display> 
+                                 <vg-volume>
+                                    <vg-mute-button></vg-mute-button>
+                                    <vg-volume-bar></vg-volume-bar>
+                                </vg-volume> 
+                                 <vg-fullscreen-button></vg-fullscreen-button> 
+                              </vg-controls>      
+                             <vg-overlay-play></vg-overlay-play> 
+                             <vg-buffering></vg-buffering> 
+                        </videogular>
+                        
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+     
+    <div ng-if="!player" ng-cloak class="col-xs-12 tabs" style="padding-left:15px; padding-right: 15px;" ng-hide="config.isCropping">
+        <md-content>
+            <div class="row navbar-right views">
+                <span ng-click="setAspectRatio('916')" ng-class="['ratio', 'ratio-9-16', {active: config.ratio=='916'}]">9:16</span>
+                <span ng-click="setAspectRatio('11')" ng-class="['ratio', 'ratio-1-1', {active: config.ratio=='11'}]">1:1</span>
+                <span ng-click="setAspectRatio('169')" ng-class="['ratio', 'ratio-16-9', {active: config.ratio=='169'}]">16:9</span>
+                <!-- <span class="glyphicon glyphicon-remove"></span> -->
+            </div>
+            <style>
+                .text_overlay div span font img, .text_overlay div span img {
+                     max-height: 52px !important;
+                     max-width: 52px !important; 
+                } 
+            </style>
+            <md-tabs md-dynamic-height class="md-accent">
+                <md-tab label="Editing Canvas">
+                    <md-content class="editCanvas_tab">
+                        <div class="row">
+                            <div class="chooser-container">
+                                <div class="text_div">
+                                    <span>Text</span>
+                                    <hr/>
+                                    <div class="row">
+                                        <div ng-repeat="medium in media" ng-class="{ 'hidden_overlays': !checkIfMainItem(medium) }">
+                                            <div ng-repeat="textOverlay in medium.texts" class="text">
+                                                <div ng-if="medium.id == main_item.id">
+                                                   
+                                                <div  class="text_overlay overlay_{{textOverlay.id}}" id="text_overlay_{{textOverlay.id}}" >
+                                                    
+                                                    <div ng-if="textOverlay.overlay_type != 'png'" class="col-sm-4 text-center cursor-pointer" style="padding: 5px; min-height:52px; max-height: 52px;"><span class="col-sm-11" style="border: dashed 1px; background: #1F2C3C; color:#fff; margin:0px; padding:0px; min-height:52px; word-break: break-all;overflow: hidden; text-overflow: ellipsis; width: 70px; height: 50px;" ng-bind-html="textOverlay.content"></span>
+                                                        <a ng-click="deleteOverlay(textOverlay)"><i class="icon-class fa fa-times" aria-hidden="true"></i></a>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4 text-center cursor-pointer" style="padding: 5px; min-height:52px;"><span class="col-sm-11" style="border: dashed 1px; background: #1F2C3C; color:#fff; margin:0px; padding:0px; min-height:52px;"><a style="color: #fff; margin-top: 3px;" ng-click="insertNewTextOverlay('body')"><i class="fa fa-font"></i><p style="text-align:center;">Add Text</p></a></span></div>
+                                        <div class="col-sm-4 text-center cursor-pointer" style="padding: 5px; min-height:52px;"><span class="col-sm-11" style="border: dashed 1px; background: #1F2C3C; color:#fff; margin:0px; padding:0px; min-height:52px;"></span></div>
+                                        <!-- <div class="col-sm-4 text-center cursor-pointer"><img src="/img/icons/header.png" ng-click="insertNewTextOverlay('header')"><br>Header</div> -->
+                                        <!-- <div class="col-sm-4 text-center cursor-pointer"><img src="/img/icons/body.png" ng-click="insertNewTextOverlay('body')"><br>Body</div> -->
+                                        <!-- <div class="col-sm-4 text-center cursor-pointer"><img src="/img/icons/footer.png" ng-click="insertNewTextOverlay('footer')"><br>Footer</div> -->
+                                    </div>
+                                </div>
+                                <div class="text_div">
+                                    <span>Uploads</span>
+                                    <hr/>
+                                    <div class="row">
+                                        <div ng-repeat="medium in media" ng-class="{ 'hidden_overlays': !checkIfMainItem(medium) }">
+                                            <div ng-repeat="textOverlay in medium.texts" class="text">
+                                                <div ng-if="medium.id == main_item.id">
+                                                   
+                                                <div  class="text_overlay overlay_{{textOverlay.id}}" id="text_overlay_{{textOverlay.id}}" >
+                                                    
+                                                    <div ng-if="textOverlay.overlay_type == 'png'" class="col-sm-4 text-center cursor-pointer" style="padding: 5px; min-height:52px; max-height: 52px;"><span class="col-sm-11" style="border: dashed 1px; background: #1F2C3C; color:#fff; margin:0px; padding:0px; min-height:52px;" ng-bind-html="textOverlay.content"></span>
+                                                        <a ng-click="deleteOverlay(textOverlay)"><i class="icon-class fa fa-times" aria-hidden="true"></i></a>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4 text-center cursor-pointer" style="padding: 5px; " >
+                                            <!-- <span class="col-sm-11" style="border: dashed 1px; background: #1F2C3C; color:#fff; margin:0px; padding:0px; min-height:52px;"><a style="color: #fff; margin-top: 3px;" ngf-select="uploadPngFiles($files)"><i class="fa fa-plus"></i><p style="text-align:center;">Add</p></a></span></div>
+                                        <div class="col-sm-4 text-center cursor-pointer" style="padding: 5px; min-height:52px;"><span class="col-sm-11" style="border: dashed 1px; background: #1F2C3C; color:#fff; margin:0px; padding:0px; min-height:52px;"></span> -->
+                                            <span class="col-sm-11" 
+                                                    style="border: dashed 1px; background: #1F2C3C; color:#fff; margin:0px; padding:0px; min-height:52px;">
+
+                                                    <a style="color: #fff; margin-top: 3px;"                                                 ngf-select="uploadPngFiles($files)" class="show" >
+
+                                                       <i class="fa fa-plus"></i>
+
+                                                       <p id="overlay_image_add_button_id" style="text-align:center;">Add</p>
+
+                                                    </a>
+                                                    <p id="overlay_image_loading_id" class="hide" style="padding-top: 7px;"><i class='fa fa-spinner fa-spin ' style="font-size: 30px;" ></i></p>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                 <!-- <div class="layer_div">
+                                    <span>Text</span>
+                                    <hr/>
+                                    <div class="layer_btn" ng-click="showLayer=true" ng-show="!showLayer">Insert Image, Logo or Graphics</div>
+                                    <div ng-show="showLayer" class="row">
+                                        <div class="col-sm-4 text-center cursor-pointer"><img src="/img/icons/layer_show.png"><br>Show</div>
+                                        <div class="col-sm-4 text-center cursor-pointer"><img src="/img/icons/layer_replace.png"><br>Replace</div>
+                                        <div class="col-sm-4 text-center cursor-pointer" ng-click="showLayer=false"><img src="/img/icons/layer_remove.png"><br>Remove</div>
+                                    </div><br>
+                                    <div ng-show="showLayer">
+                                        <div>Opacity : {{opacity}}%</div>
+                                        <md-slider-container>
+                                            <md-slider flex ng-model="opacity" min="0" max="100" aria-label="opacity" id="opacity-slider" />
+                                        </md-slider-container>
+                                        <div>Radius : {{radius}}%</div>
+                                        <md-slider-container ng-show="showLayer">
+                                            <md-slider flex ng-model="radius" min="0" max="100" aria-label="radius" id="radius-slider" />
+                                        </md-slider-container>
+                                    </div>
+                                </div>  -->
+                            </div>
+                            <div ng-sortable="sortConfig" class="media-items-container" ng-show="showProjects">
+                                <div class="media-item" ng-repeat="m in media" ng-mouseover="hoverEdit = true" ng-mouseleave="hoverEdit = false">
+                                    <div class="project-container text-center fixed-size-item-responsive" ng-class="{'selected': m.id == main_item.id}">
+                                        <div class="hovereffect horizontal-vertical-center project-image-container" ng-click="setMainItemAs(m)">
+                                            <div class="img-wrapper">
+                                                <!-- <div ng-show="m.path">
+                                                    <video class="video-js" controls preload="auto" height="180" vjs-video vjs-media="{'sources': [{ 'src': m.path, 'type': 'video/mp4' }]}">
+                                                    </video>
+                                                </div> -->
+                                                <div>
+
+
+                                                    <img ng-if="isImage(m.path)" class="representative" ng-src="{{ m.path }}" ng-click=""> <!-- style="object-fit: contain;" -->
+
+                                                    <!-- <img ng-if="isVideo(m.path)" class="representative" ng-src="{{ m.representative }}" err-src="img/empty.png" ng-click=""> -->
+
+                                                    <video ng-if="isVideo(m.path)" ng-attr-id="{{ getUuid(m.path) }}" class="video-js" controls preload="auto" height="180" vjs-video
+                                                        vjs-media="{'sources': [{ 'src': m.path, 'type': 'video/mp4' }]}" ng-click="downloadPath(m.path)">
+                                                    </video>
+                                                </div>
+                                            </div>
+                                            <div class="delete-duplication-container" ng-show="hoverEdit">
+                                                <span class="fa fa-trash" aria-hidden="true" ng-click="deleteMedia(m)"></span>
+                                                <span class="fa fa-clone" aria-hidden="true" ng-click="cloneMedia(m)"></span>
+
+                                            </div>
+                                        </div>
+                                        <!-- <div class="media-footer">
+                                             <rzslider ng-if="isVideo(m.path)" rz-slider-model="m.slider.min" rz-slider-high="m.slider.max" rz-slider-options="m.slider.options"></rzslider> 
+                                            <div ng-if="isImage(m.path)" class="timer-wrapper">
+                                                <a class="pull-right timer" ng-click="timerInvoke($event, m)"><img class="timer spanic" src="/img/icons/stopclock_white.png" /></a>
+                                            </div>
+                                        </div> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </md-content>
+                </md-tab>
+                 <!-- <md-tab label="Animation">
+                    <md-content>
+                        <ul class="nav navbar-nav animation_div">
+                            <li class="link" ng-class="{'active': selectedAnim==1||!selectedAnim}" ng-click="selectedAnim=1">
+                                <div class="text-center">Normal<br><span class="glyphicon glyphicon-remove normal_icon"></span></div>
+                            </li>
+                            <li class="link" ng-class="{'active': selectedAnim==2}" ng-click="selectedAnim=2">
+                                <div class="text-center">Fade<br><img src="/img/icons/fade.png"></div>
+                            </li>
+                            <li class="link" ng-class="{'active': selectedAnim==3}" ng-click="selectedAnim=3">
+                                <div class="text-center">Push Left<br><img src="/img/icons/arrow.png"></div>
+                            </li>
+                            <li class="link" ng-class="{'active': selectedAnim==4}" ng-click="selectedAnim=4">
+                                <div class="text-center">Push Right<br><img class="arrow_right" src="/img/icons/arrow.png"></div>
+                            </li>
+                            <li class="link" ng-class="{'active': selectedAnim==5}" ng-click="selectedAnim=5">
+                                <div class="text-center">Slide Left<br><img src="/img/icons/arrow.png"></div>
+                            </li>
+                            <li class="link" ng-class="{'active': selectedAnim==6}" ng-click="selectedAnim=6">
+                                <div class="text-center">Slide Right<br><img class="arrow_right" src="/img/icons/arrow.png"></div>
+                            </li>
+                            <li class="link" ng-class="{'active': selectedAnim==7}" ng-click="selectedAnim=7">
+                                <div class="text-center">Slide Up<br><img class="arrow_up" src="/img/icons/arrow.png"></div>
+                            </li>
+                            <li class="link" ng-class="{'active': selectedAnim==8}" ng-click="selectedAnim=8">
+                                <div class="text-center">Slide Down<br><img class="arrow_down" src="/img/icons/arrow.png"></div>
+                            </li>
+                        </ul>
+                    </md-content>
+                </md-tab>  -->
+            </md-tabs>
+        </md-content>
+    </div>
+</div>
+
+<style type="text/css">
+    .selected-editor {
+        border-style: dotted;
+        border-width: 0.5px;
+        border-color: dodgerblue;
+        background-color: black;
+    }
+
+    .plain-input {
+          background: transparent;
+        border: none;
+    }
+
+    .unselectable {
+        -webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+-o-user-select: none;
+user-select: none;
+    }
+   
+</style>
+<script>
+    $(document).ready(function(){
+        $('.controls-container.rzslider span:nth-child(7)').mousedown(function() {
+            alert('Test');
+        });
+    });
+</script>
+<style type="text/css">
+    .videogular-container {
+        width: 100%;
+        height: 320px;
+        margin: auto;
+         /* margin-bottom: 15px;  */
+        text-align: center;
+    }
+    
+    .rzslider {
+        margin: 17px 0 0 0;
+    }
+
+    /* .rzslider .rz-bubble {
+         visibility: hidden !important; 
+    } */
+
+    .controls-container.rzslider span:nth-child(2){
+        visibility:visible !important;
+    }
+
+    .controls-container.rzslider span:nth-child(5){
+        visibility:hidden !important;
+    }
+
+    .controls-container.rzslider span:nth-child(6){
+        visibility:hidden !important;
+    }
+    .controls-container.rzslider span:nth-child(9){
+        visibility:hidden !important;
+    }
+    .controls-container.rzslider span:nth-child(7){
+        /* visibility: visible !important; */
+        bottom: -13px !important;
+        margin-right: -81px;
+        color: #1B2126;
+        float: left;
+        z-index: 2;
+        font-size: 18px;
+        width: 69px;
+        text-align: right;
+        padding-left: 53px;
+        letter-spacing: -1px;
+    }
+    
+    /* .controls-container.rzslider span:nth-child(7):before{
+        content: attr(title);
+        /// position: absolute; /
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        right: 0px;
+        color: #1B2126;
+        font-size: 20px;
+
+    } */
+    .controls-container.rzslider  span:nth-child(8){
+        /* visibility: visible !important; */
+        bottom: -13px !important;
+        margin-right: -81px;
+        color: #1B2126;
+        float: left;
+        z-index: 2;
+        font-size: 18px;
+        width: 69px;
+        text-align: right;
+        padding-left: 53px;
+        letter-spacing: -1px;
+    }
+    /* .controls-container.rzslider  span:nth-child(8)::before{
+        content: '01:00:00';
+        color: #1B2126;
+        font-size: 20px;
+    } */
+    vg-overlay-play {
+        left: 0px;
+    }
+    
+    .rzslider .rz-pointer {
+        top: -14px;
+        z-index: 3;
+        width: 16px;
+        height: 32px;
+        cursor: pointer;
+        background-color: #fff;
+         -webkit-border-radius: 0px;
+        -moz-border-radius: 0px;
+        border-radius: 0px; 
+    }
+
+    #search .rz-bar-wrapper .rz-bar {
+        top: 16px;
+        z-index: 3;
+        width: 150px;
+        height: 4px;
+        cursor: pointer;
+        background-color: #fff;
+         -webkit-border-radius: 0px;
+        -moz-border-radius: 0px;
+        border-radius: 0px; 
+    }
+    
+    #search .rz-pointer{
+        top : -7px;
+        z-index: 3;
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        background-color: #fff;
+        border-radius: 7px;
+    }
+    .controls-container.rzslider .rz-pointer:after {
+        display: none !important;
+    }
+    .rzslider .rz-pointer:after, .rzslider .rz-pointer:hover:after, .rzslider .rz-pointer.rz-active:after {
+        position: absolute;
+        top: -6px;
+        /* left: 6px; */
+        width: 15px;
+        height: 15px;
+        background: #000;
+        -webkit-border-radius: 14px;
+        -moz-border-radius: 14px;
+        border-radius: 14px;
+        content: '';
+    }
+
+    .rzslider .rz-bar-wrapper {
+        left: 0;
+        z-index: 1;
+        width: 100%;
+        height: 32px;
+        padding-top: 2px;
+        margin-top: -16px;
+        box-sizing: border-box;
+    }
+
+    .rzslider .rz-bar {
+        left: 0;
+        z-index: 1;
+        width: 100%;
+        height: 32px;
+        background: #d8e0f3;
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
+        border-radius: 2px;
+    }
+
+    .videogular-container > * {
+        height: 100%;
+    }
+    
+    @media (min-width: 1200px) {
+        .videogular-container {
+            width: 711.11px;
+            height: 400px;
+        }
+        .img-edit {
+            max-height: 400px;
+        }
+    }
+    
+    @media (min-width: 992px) and (max-width: 1199px) {
+        .videogular-container {
+            width: 940px;
+            height: 528.75px;
+        }
+        .img-edit {
+            max-height: 528.75px;
+        }
+    }
+    
+    @media (min-width: 768px) and (max-width: 991px) {
+        .videogular-container {
+            width: 728px;
+            height: 409.5px;
+        }
+        .img-edit {
+            max-height: 409.5px;
+        }
+    }
+
+    @media (min-width: 320px) and (max-width: 767px){
+        .btn.btn-done, .btn.btn-preview, .btn.btn-replace, .btn.btn-reposition {
+            font-size: 13px;
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+        }
+        .project_detail .views{
+            position: static;
+            margin: 15px 7px;
+        }
+        .col-sm-4 {
+            float: left;
+            max-height: inherit;
+        }
+        .col-sm-4 .col-sm-11{
+            float: left;
+            height: inherit;
+            font-size: 12px;
+            min-width: 50px;
+        }
+        .project_detail .tabs md-content .media-items-container{
+            width: 100% !important;
+            padding: 0px 15px;
+            display: block;
+        }
+        .project_detail .tabs md-content .chooser-container{
+            width: 100%;
+        }
+        .project_detail .tabs md-content .media-items-container .media-item {
+            float: left; 
+            margin-right: 5px;
+            margin-bottom: 10px;
+            padding: 0;
+            margin-left: 5px;
+            /* margin: 0 auto; */
+            width: 46%;
+        }
+        .project_detail .tabs md-content .media-items-container .media-item .project-container > .project-image-container {
+            position: relative;
+            /* height: auto; */
+            min-height: 88px;
+        }
+        
+        .videogular-container .col-sm-2{
+            width: 20%;
+            float: left;
+            padding: 0px;
+        }
+        .videogular-container .col-sm-8{
+            width: 60%;
+            float: left;
+        }
+        
+    }
+
+
+
+</style>
+
+<style>
+.search-form .form-group {
+    margin-top: 4px;
+    float: right !important;
+    transition: all 0.35s, border-radius 0s;
+    width: 32px;
+    height: 32px;
+    background-color: #323D46;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    border-radius: 25px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    /* border: 1px solid #ccc; */
+}
+.search-form .form-group:hover .rzslider {
+    padding-right: 20px;
+    border: 0 none;
+    background: transparent;
+    box-shadow: none;
+    /* display:block; */
+    visibility: visible;
+}
+#search .rz-bar-wrapper {
+    width: 80%;
+}
+
+#search .rz-limit, #search .rz-vislow {
+    visibility: hidden !important;
+}
+
+#search .rz-bar-wrapper .rz-bar, #search .rz-bar-wrapper .rz-pointer {
+    margin-left: 10px !important;
+}
+
+.rz-activ
+
+.rz-limit {
+    visibility: hidden !important;
+}
+
+.search-form .form-group .rzslider {
+    /* display: none; */
+    visibility: hidden;
+} 
+
+.rz-activ {
+    visibility: visible !important;
+    display: block !important;
+}
+
+/* .search-form .form-group input.form-control:-moz-placeholder {
+   Firefox 18- 
+  display: none;
+} */
+/* .search-form .form-group input.form-control::-moz-placeholder {
+   Firefox 19+ 
+  display: none;
+}
+.search-form .form-group input.form-control:-ms-input-placeholder {
+  display: none;
+} */
+ .search-form .form-group:hover,
+.search-form .form-group.hover {
+  width: 100%;
+  border-radius: 25px 25px 25px 25px;
+} 
+.search-form .form-group span.form-control-feedback {
+  position: absolute;
+  top: -1px;
+  right: -2px;
+  z-index: 2;
+  display: block;
+  width: 34px;
+  height: 34px;
+  line-height: 34px;
+  text-align: center;
+  color: #fff;
+  left: initial;
+  font-size: 14px;
+}
+
+#search .rz-pointer .rz-active:after, #search .rz-pointer:hover:after, #search .rz-pointer:after{
+    display: none !important;
+}
+</style>
+
+<style>
+    .icon-class {
+        position: absolute;
+        margin-left: -12px;
+        margin-top: -10px;
+        background-color: brown;
+        border-radius: 45px;
+        padding: 3px;
+    }
+</style>
+
+<style>
+.cssload-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+.cssload-container:before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 50%;
+	z-index: -1;
+	transition: top 1.38s linear 3.57s;
+		-o-transition: top 1.38s linear 3.57s;
+		-ms-transition: top 1.38s linear 3.57s;
+		-webkit-transition: top 1.38s linear 3.57s;
+		-moz-transition: top 1.38s linear 3.57s;
+}
+.cssload-container:after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 50%;
+	z-index: -1;
+	transition: bottom 1.38s linear 3.57s;
+		-o-transition: bottom 1.38s linear 3.57s;
+		-ms-transition: bottom 1.38s linear 3.57s;
+		-webkit-transition: bottom 1.38s linear 3.57s;
+		-moz-transition: bottom 1.38s linear 3.57s;
+}
+.cssload-container.done:before {
+	top: -50%;
+}
+.cssload-container.done:after {
+	bottom: -50%;
+}
+
+.cssload-progress {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+    z-index: 99;
+	transform: translateX(-50%) translateY(-50%);
+		-o-transform: translateX(-50%) translateY(-50%);
+		-ms-transform: translateX(-50%) translateY(-50%);
+		-webkit-transform: translateX(-50%) translateY(-50%);
+		-moz-transform: translateX(-50%) translateY(-50%);
+	transform-origin: center;
+		-o-transform-origin: center;
+		-ms-transform-origin: center;
+		-webkit-transform-origin: center;
+		-moz-transform-origin: center;
+}
+.cssload-progress .cssload-progress-item {
+	text-align: center;
+	width: 97px;
+	height: 97px;
+	line-height: 97px;
+	border: 3px solid #009EDC;
+	border-radius: 50%;
+}
+.cssload-progress .cssload-progress-item:before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 50%;
+	margin-top: -3px;
+	margin-left: 0px;
+	width: 44px;
+	height: 44px;
+	border-top: solid 10px #009EDC;
+	border-right: solid 10px #009EDC;
+	border-top-right-radius: 100%;
+	transform-origin: left bottom;
+		-o-transform-origin: left bottom;
+		-ms-transform-origin: left bottom;
+		-webkit-transform-origin: left bottom;
+		-moz-transform-origin: left bottom;
+	animation: spin 3.45s linear infinite;
+		-o-animation: spin 3.45s linear infinite;
+		-ms-animation: spin 3.45s linear infinite;
+		-webkit-animation: spin 3.45s linear infinite;
+		-moz-animation: spin 3.45s linear infinite;
+}
+.cssload-progress.cssload-float .cssload-progress-item:before {
+	border-top-width: 2px;
+	margin-top: 0px;
+	height: 49px;
+}
+.cssload-progress.cssload-float.cssload-shadow:before {
+	border-top-width: 2px;
+	margin-top: -40px;
+	height: 49px;
+}
+@keyframes blink {50% { color: transparent }}
+.loader__dot { animation: 1500ms blink infinite }
+.loader__dot:nth-child(2) { animation-delay: 500ms }
+.loader__dot:nth-child(3) { animation-delay: 1000ms }
+/* .cssload-progress.cssload-shadow:before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin: -42px 0 0 12px;
+	width: 44px;
+	height: 44px;
+	border-top: solid 10px rgb(221,221,221);
+	border-right: solid 10px rgb(221,221,221);
+	border-top-right-radius: 100%;
+	z-index: -1;
+	transform-origin: left bottom;
+		-o-transform-origin: left bottom;
+		-ms-transform-origin: left bottom;
+		-webkit-transform-origin: left bottom;
+		-moz-transform-origin: left bottom;
+	animation: spin 3.45s linear infinite;
+		-o-animation: spin 3.45s linear infinite;
+		-ms-animation: spin 3.45s linear infinite;
+		-webkit-animation: spin 3.45s linear infinite;
+		-moz-animation: spin 3.45s linear infinite;
+} */
+/* .cssload-progress.cssload-shadow:after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 97px;
+	height: 97px;
+	color: rgb(221,221,221);
+	text-align: center;
+	line-height: 97px;
+	border: 2px solid rgb(221,221,221);
+	margin: -39px 0 0 -39px;
+	z-index: -1;
+	border-radius: 50%;
+		-o-border-radius: 50%;
+		-ms-border-radius: 50%;
+		-webkit-border-radius: 50%;
+		-moz-border-radius: 50%;
+	transform-origin: center;
+		-o-transform-origin: center;
+		-ms-transform-origin: center;
+		-webkit-transform-origin: center;
+		-moz-transform-origin: center;
+} */
+
+
+@keyframes spin {
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+@-o-keyframes spin {
+	100% {
+		-o-transform: rotate(360deg);
+	}
+}
+
+@-ms-keyframes spin {
+	100% {
+		-ms-transform: rotate(360deg);
+	}
+}
+
+@-webkit-keyframes spin {
+	100% {
+		-webkit-transform: rotate(360deg);
+	}
+}
+
+@-moz-keyframes spin {
+	100% {
+		-moz-transform: rotate(360deg);
+	}
+}
+
+.project_detail .tabs md-content .media-items-container .media-item {
+    min-width: 255px;
+}
+</style>

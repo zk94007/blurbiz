@@ -1,0 +1,1 @@
+ALTER TABLE public.media_file ADD COLUMN deleted boolean DEFAULT false;

@@ -1,0 +1,1 @@
+alter table public.user ADD COLUMN team_id integer;

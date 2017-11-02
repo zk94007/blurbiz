@@ -1,0 +1,56 @@
+<div class="pg-login">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="http://blurbiz.io/">BLURBIZ</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a target="_blank" href="http://blurbiz.io/support">Support?</a>
+                    </li>
+                    <li><a ui-sref="register" class="btn btn-nav">New User</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <form class="form-signin" ng-submit="login()">
+        <h2>Login</h2>
+
+        <div class="form-group ">
+            <label for="email">Email Address</label>
+            <input type="text" name="email" id="email" ng-model="email" class="form-control" />
+            <div class="form-border"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" ng-model="password" class="form-control" />
+            <div class="form-border"></div>
+        </div>
+
+        <div class="btn-holder">
+            <button type="submit" class="btn btn-custom btn-login btn-white">Login</button>
+        </div>
+
+        <div class="form-option clearfix">
+            <label class="chk-remember"><input type="checkbox" value="">Remember me</label>
+            <a class="lnk-lost" ui-sref="forgot-password">Lost my Password</a>
+        </div>
+
+        <div ng-if="message.error" class="alert alert-danger">{{ message.error }}</div>
+        <div ng-if="message.success" class="alert alert-success">{{ message.success }}</div>
+
+    </form>
+</div>

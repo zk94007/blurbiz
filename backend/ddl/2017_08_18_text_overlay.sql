@@ -1,0 +1,1 @@
+ALTER TABLE public.text_overlay ADD COLUMN overlay_type character varying(255);

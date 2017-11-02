@@ -1,76 +1,113 @@
-<div class="row">
-  <div class="col-lg-6">
-    <rd-widget>
-      <rd-widget-header icon="fa-tasks" title="Servers">
-        <a href="#">Manage</a>
-      </rd-widget-header>
-      <rd-widget-body classes="medium no-padding">
-        <div class="table-responsive">
-          <table class="table">
-            <tbody>
-              <tr><td>RDVMPC001</td><td>238.103.133.37</td><td><span class="text-success"><i class="fa fa-check"></i></span></td></tr>
-              <tr><td>RDVMPC002</td><td>68.66.63.170</td><td><span class="text-success"><i class="fa fa-check"></i></span></td></tr>
-              <tr><td>RDVMPC003</td><td>76.117.212.33</td><td><span tooltip="Server Down!" class="text-danger"><i class="fa fa-warning"></i></span></td></tr>
-              <tr><td>RDPHPC001</td><td>91.88.224.5</td><td><span class="text-success"><i class="fa fa-check"></i></span></td></tr>
-              <tr><td>RDESX001</td><td>197.188.15.93</td><td><span class="text-success"><i class="fa fa-check"></i></span></td></tr>
-              <tr><td>RDESX002</td><td>168.85.154.251</td><td><span class="text-success"><i class="fa fa-check"></i></span></td></tr>
-              <tr><td>RDESX003</td><td>209.25.191.61</td><td><span tooltip="Server Down!" class="text-danger"><i class="fa fa-warning"></i></span></td></tr>
-              <tr><td>RDESX004</td><td>252.37.192.235</td><td><span class="text-success"><i class="fa fa-check"></i></span></td></tr>
-              <tr><td>RDTerminal01</td><td>139.71.18.207</td><td><span class="text-success"><i class="fa fa-check"></i></span></td></tr>
-              <tr><td>RDTerminal02</td><td>136.80.122.212</td><td><span tooltip="Could not connect!" class="text-warning"><i class="fa fa-flash"></i></span></td></tr>
-              <tr><td>RDDomainCont01</td><td>196.80.245.33</td><td><span class="text-success"><i class="fa fa-check"></i></span></td></tr>
-            </tbody>
-          </table>
-        </div>      
-      </rd-widget-body>
-      <rd-widget-footer>
-        <ul class="pagination pagination-sm pull-right">
-          <li><a href="#">&laquo;</a></li>
-          <li><a href="#">1</a></li>
-          <li><a href="#">2</a></li>
-          <li><a href="#">3</a></li>
-          <li><a href="#">4</a></li>
-          <li><a href="#">5</a></li>
-          <li><a href="#">&raquo;</a></li>
-        </ul>
-        <div class="clearfix"></div>
-      </rd-widget-footer>
-    </rd-widget>
-  </div>
-  <div class="col-lg-6">
-    <rd-widget>
-      <rd-widget-header icon="fa-tasks" title="Striped Servers">
-        <a href="#">Manage</a>
-      </rd-widget-header>
-      <rd-widget-body classes="medium no-padding">
-        <div class="table-responsive">
-          <table class="table table-striped">
-            <tbody>
-              <tr><td>RDVMPC001</td><td>238.103.133.37</td><td><span class="text-success"><i class="fa fa-check"></i></span></td></tr>
-              <tr><td>RDVMPC002</td><td>68.66.63.170</td><td><span class="text-success"><i class="fa fa-check"></i></span></td></tr>
-              <tr><td>RDVMPC003</td><td>76.117.212.33</td><td><span tooltip="Server Down!" class="text-danger"><i class="fa fa-warning"></i></span></td></tr>
-              <tr><td>RDPHPC001</td><td>91.88.224.5</td><td><span class="text-success"><i class="fa fa-check"></i></span></td></tr>
-              <tr><td>RDESX001</td><td>197.188.15.93</td><td><span class="text-success"><i class="fa fa-check"></i></span></td></tr>
-              <tr><td>RDESX002</td><td>168.85.154.251</td><td><span class="text-success"><i class="fa fa-check"></i></span></td></tr>
-              <tr><td>RDESX003</td><td>209.25.191.61</td><td><span tooltip="Server Down!" class="text-danger"><i class="fa fa-warning"></i></span></td></tr>
-              <tr><td>RDESX004</td><td>252.37.192.235</td><td><span class="text-success"><i class="fa fa-check"></i></span></td></tr>
-              <tr><td>RDTerminal01</td><td>139.71.18.207</td><td><span class="text-success"><i class="fa fa-check"></i></span></td></tr>
-              <tr><td>RDTerminal02</td><td>136.80.122.212</td><td><span tooltip="Could not connect!" class="text-warning"><i class="fa fa-flash"></i></span></td></tr>
-              <tr><td>RDDomainCont01</td><td>196.80.245.33</td><td><span class="text-success"><i class="fa fa-check"></i></span></td></tr>
-            </tbody>
-          </table>
+<div class="pg-schedule" ng-if="showTask == 0">
+    <div class="text-center">
+        <div>
+            <img class="representative" ng-src="/img/icons/blurbiz_create_project.png" style="margin: 0 auto; width: 207px; height: 190px;">
+            <h4>You have no scheduled posts</h4>
+            <p>Click here to "<a href="#/project/all">Create Project</a>" to start scheduling your first post</p>
         </div>
-      </rd-widget-body>
-      <rd-widget-footer>
-        <ul class="pagination pagination-sm pull-right">
-          <li><a href="#">&laquo;</a></li>
-          <li><a href="#">1</a></li>
-          <li><a href="#">2</a></li>
-          <li><a href="#">3</a></li>
-          <li><a href="#">&raquo;</a></li>
-        </ul>
-        <div class="clearfix"></div>
-      </rd-widget-footer>
-    </rd-widget>
-  </div>
+    </div>
+</div>
+<div class="pg-schedule" ng-if="showTask == 1">
+    <div class="switch-viewmode">
+        <span class="fa fa-th" ng-class="{'active': currentView=='icons'}" aria-hidden="true" ng-click="changeView('icons')"></span>
+        <span class="fa fa-th-list" ng-class="{'active': currentView=='list'}" aria-hidden="true" ng-click="changeView('list')"></span>
+    </div>
+    <div class="list-view" ng-if="(currentView == 'list')">
+        <schedule-list title="Scheduled" tasks="scheduledTasks" users="teamMembers" color="#f4e31c" edit-task="editTask(task)" delete-task="deleteTask(taskId)" share-task-now="shareTaskNow(task)"></schedule-list>
+        <br/>
+        <schedule-list title="Published" tasks="publishedTasks" users="teamMembers" color="#00d060" edit-task="editTask(task)" delete-task="deleteTask(taskId)" share-task-now="shareTaskNow(task)"></schedule-list>
+    </div>
+    <!-- GRID -->
+    <div class="icon-view" ng-if="(currentView == 'icons')">
+        <div class="calendar-control">
+            <span class="fa fa-angle-left calendar-nav" ng-click="changeSortDate('low')"></span>
+            <div class="date-range hidden-xs">{{getCalendarTextDate()}}</div>
+            <div class="date-range visible-xs">{{getCalendarShortTextDate()}}</div>
+            <span class="fa fa-angle-right calendar-nav" ng-click="changeSortDate('up')"></span>
+        </div>
+
+        <div class="weekdays-container">
+            <div ng-repeat="dayObj in sortDayData" class="icons-column">
+                <div class="icons-column-wrappper">
+                    <div class='icons-header big-width' ng-class="{'icons-header-today': dayObj.isToday}">{{dayObj.dayText}}</div>
+                    <div class='icons-header small-width' ng-class="{'icons-header-today': dayObj.isToday}">{{dayObj.dayShortText}}</div>
+                    <div class='icons-header extra-small-width' ng-class="{'icons-header-today': dayObj.isToday}">{{dayObj.dayExtraShortText}}</div>
+                    <div class="post-row icons-item-cont" ng-repeat="item in dayObj.tasks | orderBy: '-scheduled_start_date':true | filter: filterByDate" ng-mouseover="hoverEdit = true" ng-mouseleave="hoverEdit = false">
+                        <div class="icons-img-cont ">
+                            <div class="icons-img-cont-inner">
+                                <div class="time-cont">{{item.scheduled_start_date | dateDistort | date : 'h:mm a'}}</div>
+                                <div class="img-content-wrapper">
+                                    <div class="img-wrapper-inner">
+                                        <div class="horizontal-vertical-center">
+                                            <div class="img-wrapper">
+                                                <img class="post-icon" ng-if="!item.img_path" src="img/empty.png" />
+                                                <img class="post-icon" ng-if="isImage(item.img_path)" ng-src="{{ item.img_path }}" err-src="img/empty.png" />
+                                                <video ng-if="isVideo(item.img_path)" class="video-js" controls preload="auto" height="100" vjs-video vjs-media="{'sources': [{ 'src': item.img_path, 'type': 'video/mp4' }]}"></video>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="icons-tool-container" ng-show="hoverEdit">
+                                    <div class="icons-tool-container-inner">
+                                        <span class="fa fa-trash icons-remove-post" aria-hidden="true" ng-click="deleteTask(item.id)"></span>
+                                        <div class="tool-btn btn-custom btn-outline" ng-click="editTask(item)">Edit</div>
+                                        <div class="tool-btn btn-custom btn-yellow" ng-if="item.is_finished" ng-click="shareTaskNow(item)">Reshare</div>
+                                        <div class="tool-btn btn-custom btn-green" ng-if="!item.is_finished" ng-click="shareTaskNow(item)">Share now</div>
+                                        <i class="fa fa-pencil-square-o tool-icon" aria-hidden="true" ng-click="editTask(item)"></i>
+                                        <i class="fa fa-share-alt tool-icon" aria-hidden="true" ng-click="shareTaskNow(item)" ng-class="{'tool-icon-yellow': !item.is_finished}"></i>
+
+                                        <div class="icons-circle"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="icons-detail">
+                            <div class="title"> {{item.title ? (item.title | limitLength:true: 15:'...') : '[No Title]'}} </div>
+                            <div class="description"> {{item.description ? (item.description | limitLength:true: 80:'...') : '[No Description]'}} </div>
+                        </div>
+                        <div class='icons-description-cont'>
+                            <i class="fa fa-{{item.target_social_network}} fa-lg"></i>
+                            <a href data-toggle="tooltip" data-placement="right" title="{{ item.user_name }}">
+                                <img ng-src="{{ item.user_photo }}" class="img-circle" err-src="img/avatar.jpg">
+                            </a>
+
+                            <span ng-if="item.is_finished" class="status-button status-pub">Published</span>
+                            <span ng-if="!item.is_finished" class="status-button status-sch">Scheluded</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/ng-template" id="confirmShare.html">
+        <div class="modal-body">
+            <span class="btn-close" ng-click="cancel()"></span>
+            <h3 class="modal-title" id="modal-title">Share Now?</h3>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-custom btn-white with-border btn-md" type="button" ng-click="cancel()">Cancel</button>
+            <button class="btn btn-custom btn-orange btn-md" type="button" ng-click="ok()">Share</button>
+        </div>
+    </script>
+    <script type="text/ng-template" id="confirmModal.html">
+        <div class="modal-body">
+            <span class="btn-close" ng-click="cancel()"></span>
+            <h3 class="modal-title" id="modal-title">Are you sure you want to delete scheduled post?</h3>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-custom btn-white with-border btn-md" type="button" ng-click="cancel()">Cancel</button>
+            <button class="btn btn-custom btn-orange btn-md" type="button" ng-click="ok()">Delete</button>
+        </div>
+    </script>
+    <script type="text/ng-template" id="successShare.html">
+        <div class="modal-body modal-notif text-center">
+            <span class="btn-close" ng-click="cancel()"></span>
+            <div class="icon-holder">
+                <img src="img/icons/icon-check-circle.png">
+            </div>
+            <h4 class="modal-title">Success</h4>
+            <span class="postsuccess-span">Your Post has been shared</span>
+            <button class="btn btn-custom btn-green btn-md" type="button" ng-click="cancel()">Okay</button>
+        </div>
+    </script>
 </div>

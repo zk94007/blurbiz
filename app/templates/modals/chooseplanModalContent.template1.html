@@ -1,0 +1,118 @@
+<div class="modal-header">
+    <span class="btn-close" ng-click="cancel()"></span>
+    <div class="btn-group social-buttons">
+        <div class="btn btn-social">            
+            <span class="modal-heading">Payment</span>
+        </div>
+    </div>  
+</div>
+
+<form id="payment-form">
+<div class="modal-body payment-modal">        
+        <div class="main-form-content">
+            <!-- Stripe Payment Form -->
+            <div id="stripe-form" class="page-content">
+                <div class="form-row">
+                  <div class="cc-text">Card Number</div>
+                  <input type="text" size="30" autocomplete="off" class="card-number" ng-model="formData.card_number" required/> 
+                </div>
+
+                <div class="form-row">
+                  <div class="cc-text">CVC</div>
+                  <input type="text" size="4" autocomplete="off" class="card-cvc" name="card_cvc" ng-model="formData.card_cvc" required/>
+                </div>
+
+                <div class="form-row">
+                  <div class="cc-text">Expiration (MM/YYYY)</div>
+                  <input type="text" size="2" minlength="2" maxlength="2" class="card-expiry-month" name="card_expiry_month" ng-model="formData.card_expiry_month" required/>
+                  <span> / </span>
+                  <input type="text" size="4" minlength="4" maxlength="4" class="card-expiry-year" name="card_expiry_year" ng-model="formData.card_expiry_year" required/>
+                </div>                
+            </div>            
+            <div id="errorMessage" class="alert alert-warning" style="display: none;"></div>
+            <!-- Stripe Test End -->
+        </div>
+</div>
+<div class="modal-footer">
+    <div class="clearfix">        
+        <button type="submit" class="btn make-btn" name="submit_button">Make Payment</button>
+    </div>
+</div>
+</form>
+
+<script type="text/javascript">
+var publicStripeApiKey = 'pk_test_sWfxiMCynr3Ou9WwwMdvUlp9';
+// var publicStripeApiKeyTesting = '...';
+Stripe.setPublishableKey(publicStripeApiKey);
+
+function stripeResponseHandler (status, response) {   
+  if (response.error) {
+    $('#errorMessage').text(response.error.message);
+    $('#errorMessage').slideDown(300);
+    $('#stripe-form .submit-button').removeAttr("disabled");
+    return;
+  }
+  
+  var form = $("#payment-form");
+  form.append("<input type='hidden' name='stripeToken' ng-model='formData.stripe_token' ng-value='" + response.id + "'/>");
+
+  angular.element($("#payment-form")).scope().doStripePayment(response.id);
+  
+}
+
+// http://stripe.com/docs/tutorials/forms
+$("#payment-form").submit(function(event) {
+  $('#errorMessage').hide();
+  // disable the submit button to prevent repeated clicks
+  $('.submit-button').attr("disabled", "disabled");
+
+  var amount = $('#cc-amount').val(); // amount you want to charge in cents
+  Stripe.createToken({
+    number: $('.card-number').val(),
+    cvc: $('.card-cvc').val(),
+    exp_month: $('.card-expiry-month').val(),
+    exp_year: $('.card-expiry-year').val()
+  }, amount, stripeResponseHandler);
+
+  // prevent the form from submitting with the default action
+  return false;
+});
+</script>
+
+<style type="text/css">
+    .modal-heading {
+      color: #fff !important;
+      font-size: 16px !important;
+      padding-left: 16px;
+  }
+  .payment-modal .form-row {
+      margin-bottom: 12px;
+  }
+
+  .payment-modal .cc-text {
+      font-weight: 600;
+  }
+  .payment-modal .modal-body.payment-modal {
+      padding: 21px;
+  }
+  .payment-modal input {
+      border: 1px solid #cccccc;
+      border-radius: 2px;
+      height: 34px;
+      margin-top: 3px;
+      min-width: 104px;
+      padding: 4px 10px;
+  }
+
+  .modal-footer {
+      text-align: left;
+  }
+
+  .btn.make-btn {
+      background-color: #00d060;
+      color: #fff;
+      padding: 12px 22px;
+      transition: all 0.5s ease 0s;
+      margin-bottom: 12px;
+  }
+</style>

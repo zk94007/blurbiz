@@ -1,0 +1,73 @@
+.pg-schedule {
+	padding: 15px;
+	position: relative;
+	background-color: @color-white;
+
+	.calendar-control{
+	  	text-align:center;
+	  	padding-right: 60px;
+	  	margin-bottom: 15px;
+
+	  	.calendar-nav{
+			cursor:pointer;
+			display: inline-block;
+			width: 26px;
+			height: 26px;
+			border-radius: 50%;
+			border: 1px solid @color-gray;
+			.font(bold, 20px, 24px, @color-gray);
+		    text-align: center;
+		    vertical-align: middle;
+		    outline: none;
+		}
+
+		.date-range {
+			.font(600, 15px, 18px, #2A2D33);
+			display: inline-block;
+			width: 30%;
+		}
+	}
+
+    .switch-viewmode {
+    	position: absolute;
+    	top: 15px;
+    	right: 15px;
+    	border: 1px solid @color-gray;
+    	border-radius: 2px;
+    	overflow: hidden;
+    	font-size: 0;
+
+    	span {
+    		color: @color-blue-light-h;
+    		padding: 7px;
+    		font-size: 14px;
+    		outline: none;
+    		transition: all ease 0.5s;
+
+    		&.active {
+    			color: @color-white;
+    			background-color: @color-gray-dark-l;
+    		}
+    	}
+    }
+
+	.post-row {
+	    cursor: pointer;
+	    border: 1px solid @color-gray-light-m;
+	    padding-top:10px;
+	    background-color: white;
+	    color:#4a4a4a;
+	    margin-bottom: 5px !important;
+        min-height: 74px;
+	}
+
+	.weekdays-container {
+        display: flex;
+        justify-content: space-between;
+        /*position: relative;*/
+
+        > div {
+            width: 100%;
+        }
+    }
+}

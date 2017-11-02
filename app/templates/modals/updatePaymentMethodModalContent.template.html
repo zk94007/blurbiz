@@ -1,0 +1,269 @@
+<!-- <div class="modal-header">
+    <span class="btn-close" ng-click="cancel()"></span>
+    <div class="btn-group social-buttons">
+        <div class="btn btn-social">            
+            <span class="modal-heading">Update Payment Method</span>
+        </div>
+    </div>  
+</div>
+<form id="update-payment-method-form">
+<div class="modal-body payment-modal">        
+        <div class="main-form-content">
+            <div id="stripe-form" class="page-content">              
+                <div class="form-row">
+                  <div class="cc-text">Card Number</div>
+                  <input type="text" size="30" autocomplete="off" class="card-number" ng-model="formData.card_number" required/>
+                </div>
+                <div class="form-row">
+                  <div class="cc-text">CVC</div>
+                  <input type="text" size="4" autocomplete="off" class="card-cvc" name="card_cvc" ng-model="formData.card_cvc" required/>
+                </div>
+                <div class="form-row">
+                  <div class="cc-text">Expiration (MM/YYYY)</div>
+                  <input type="text" size="2" minlength="2" maxlength="2" max="2" class="card-expiry-month" name="card_expiry_month" ng-model="formData.card_expiry_month" required/>
+                  <span> / </span>
+                  <input type="text" size="4" minlength="4" maxlength="4" max="4" class="card-expiry-year" name="card_expiry_year" ng-model="formData.card_expiry_year" required/>
+                </div>                
+            </div>            
+            <div id="errorMessage" class="alert alert-warning" style="display: none;"></div>
+
+        </div>
+</div>
+<div class="modal-footer">
+    <div class="clearfix">        
+        <button type="submit" class="btn make-btn" name="submit_button">Update</button>
+    </div>
+</div>
+</form> -->
+
+
+<div class="modal-header payment-modal-head">
+    <span class="btn-close" ng-click="cancel()"></span>
+</div>
+<form id="update-payment-method-form">
+<div class="modal-body payment-modal">
+        <div class="main-form-content">
+            <!-- Stripe Payment Form -->
+            <div id="stripe-form" class="page-content">
+
+                <div class="form-row">
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 input-iconset">
+                        <i class="fa fa-credit-card"></i>
+                        <input type="text" size="30" autocomplete="off" placeholder="Card Number" class="card-number" ng-model="formData.card_number" required/>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="form-row">
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 input-iconset">
+                        <i class="fa fa-lock"></i>
+                        <input type="text" size="4" autocomplete="off" placeholder="CVC" class="card-cvc" name="card_cvc" ng-model="formData.card_cvc" required/>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  
+                  <div class="row">
+
+                    <div class="col-xs-12 col-sm-6 col-md-6 input-iconset">
+                      <i class="fa fa-calendar-minus-o"></i>
+                      <input type="text" size="2" class="card-expiry-month" placeholder="MM" name="card_expiry_month" ng-model="formData.card_expiry_month" required/>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-6 col-md-6 input-iconset">
+                      <i class="fa fa-calendar-minus-o"></i>
+                      <input type="text" size="4" class="card-expiry-year" placeholder="YYYY" name="card_expiry_year" ng-model="formData.card_expiry_year" required/>
+                    </div>
+
+                  </div>
+
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 pull-right">
+                      <div class="secured-text"><i class="fa fa-lock"></i>Secured by Stripe</div>
+                    </div>
+                  </div> 
+
+                </div>
+            </div>
+            <!-- <p>{{myTxt}}</p> -->
+            <div id="error" class="hidden"></div>            
+            <!-- Stripe Test End -->
+        </div>
+</div>
+<div class="modal-footer">
+    <div class="Pay-btninner">        
+        <button type="submit" class="btn make-btn" name="submit_button">Update</button>
+    </div>
+</div>
+</form>
+
+<script type="text/javascript">
+var publicStripeApiKey = 'pk_test_sWfxiMCynr3Ou9WwwMdvUlp9';
+// var publicStripeApiKeyTesting = '...';
+Stripe.setPublishableKey(publicStripeApiKey);
+
+function stripeResponseHandler (status, response) {   
+  if (response.error) {
+    $('#errorMessage').text(response.error.message);
+    $('#errorMessage').slideDown(300);
+    $('#stripe-form .submit-button').removeAttr("disabled");
+    return;
+  }
+  
+  var form = $("#update-payment-method-form");
+  form.append("<input type='hidden' name='stripeToken' ng-model='formData.stripe_token' ng-value='" + response.id + "'/>");
+
+  angular.element($("#update-payment-method-form")).scope().updateStripePaymentMethod(response.id);
+  
+}
+
+// http://stripe.com/docs/tutorials/forms
+$("#update-payment-method-form").submit(function(event) {
+  $('#errorMessage').hide();
+  // disable the submit button to prevent repeated clicks
+  $('.submit-button').attr("disabled", "disabled");
+    console.log('data');
+  var amount = $('#cc-amount').val(); // amount you want to charge in cents
+  Stripe.createToken({
+    number: $('.card-number').val(),
+    cvc: $('.card-cvc').val(),
+    exp_month: $('.card-expiry-month').val(),
+    exp_year: $('.card-expiry-year').val()
+  }, amount, stripeResponseHandler);
+
+  // prevent the form from submitting with the default action
+  return false;
+});
+</script>
+
+
+<style type="text/css">
+    .modal-heading {
+      color: #fff !important;
+      font-size: 16px !important;
+      padding-left: 16px;
+  }
+  .payment-modal .form-row {
+      margin-bottom: 12px;
+  }
+
+
+  .payment-modal .modal-body.payment-modal {
+      padding: 21px;
+  }
+  .payment-modal input {
+      border: 1px solid #dfdfdf;
+      border-radius: 2px;
+      height: 43px;
+      margin-top: 3px;
+      width: 100%;
+      padding: 4px 40px;
+  }
+
+  .modal-footer {
+      text-align: left;
+  }
+
+.btn.make-btn {
+    background-color: #4a90e2;
+    color: #fff;
+    padding: 10px 22px;
+    transition: all 0.5s ease 0s;
+    margin-bottom: 12px;
+    width: 100%;
+    display: inline-block;
+    font-size: 20px;
+}
+
+.modal-header.payment-modal-head{
+  background: #ffffff !important;
+  border: none;
+}
+
+.modal-header.payment-modal-head h4{
+  text-align: center;
+  font-size: 22px;
+  color: #525252;
+  margin-top: 40px;
+}
+
+.input-iconset{
+  position: relative;
+}
+
+.input-iconset i {
+    position: absolute;
+    top: 14px;
+    font-size: 22px;
+    color: #bfbbbb;
+    left: 30px;
+}
+
+.input-iconset i.fa.fa-calendar-minus-o {
+    FONT-SIZE: 16PX;
+}
+
+.input-iconset i.fa.fa-credit-card {
+    font-size: 16px;
+    left: 26px;
+}
+
+.Pay-btninner{
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+}
+
+.modal-dialog .btn-close:before, .modal-dialog .btn-close:after {
+    height: 4px;
+    width: 16px;
+    background-color: #4a4a4a;
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 8px;
+}
+
+.modal-dialog .btn-close {
+    display: inline-block;
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    background-color: transparent;
+    border-radius: 50%;
+    top: 5px;
+    right: 5px;
+    transition: all ease 0.5s;
+    outline: none;
+    border: 1px solid #4a4a4a;
+}
+
+.modal-dialog .btn-close:hover {
+    background-color: transparent;
+}
+
+
+.secured-text, .secured-text:hover {
+    float: right;
+    font-size: 16px;
+    margin: 14px 0 0;
+    color: #4a4a4a;
+}
+
+.secured-text i {
+  padding-right: 6px;
+}
+
+.response_mod .modal-dialog {
+    max-width: 400px;
+}
+.modal-header.payment-modal-head{
+    min-height: 30px;
+    display: inline-block;
+}
+
+</style>

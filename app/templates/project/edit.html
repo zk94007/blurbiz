@@ -1,83 +1,130 @@
-
-<div class="projects-container">
-    <div class="row">
-        <div class="item dropdown" uib-dropdown>
-            <a class="btn btn-default dropdown-toggle" href="#" uib-dropdown-toggle>
-                <img class="icon" src="img/icons/add.png">Add Media Files
+<div class="project_edit projects-container">
+    <div class="projects-menu clearfix">
+        <div class="item dropdown pull-left" uib-dropdown>
+            <a class="btn btn-add btn-custom btn-white with-border dropdown-toggle" href="#" uib-dropdown-toggle>
+                <img class="icon" src="img/icons/icon-add-green.png">
+                <span>Add Media Files</span>
             </a>
-            <ul class="dropdown-menu horizontal">
+            <ul class="dropdown-menu media-menu">
                 <li class="link">
-                    <a ngf-select="uploadFiles($files)" multiple="multiple" class="center">
-                        <div>
-                            <img class="icon" src="img/icons/cloud-computing.png">
-                        </div>
-                        <div>
-                            <span>Computer</span>
-                        </div>
+                    <a href ngf-select="uploadFiles($files)" multiple="multiple" class="menu-item">
+                        <img class="icon" src="img/icons/cloud-computing.png">
+                        <span>Computer</span>
                     </a>
-                    <a drop-box-picker db-picker-files="dpfiles" class="center">
-                        <div>
-                            <img class="icon" src="img/icons/dropbox.png">
-                        </div>
-                        <div>
-                            <span>Dropbox</span>
-                        </div>
+                    <a href id="dropbox_first" ng-show="connectionStates.dropbox" drop-box-picker db-picker-files="dpfiles" class="menu-item">
+                        <img class="icon" src="img/icons/dropbox.png">
+                        <span>Dropbox</span>
                     </a>
-                    <a lk-google-picker on-picked="onGoogleFilePicked(docs)" on-loaded="onGoogleFileLoaded()" on-cancel="onGoogleFileCancel()" class="center">
-                        <div>
-                            <img class="icon" src="img/icons/drive.png">
-                        </div>
-                        <div>
-                            <span>Google Drive</span>
-                        </div>
+                    <a href id="dropbox_second" ng-hide="connectionStates.dropbox" ng-click="showConnectToService('dropbox')" class="menu-item">
+                        <img class="icon" src="img/icons/dropbox.png">
+                        <span>Dropbox</span>
                     </a>
-                    <a box-picker box-picker-files="boxfiles" class="center">
-                        <div>
-                            <img class="icon" src="img/icons/box.png">
-                        </div>
-                        <div>
-                            <span>Box</span>
-                        </div>
+
+                    <a href id="google_drive_first" ng-show="connectionStates.google_drive" lk-google-picker on-picked="onGoogleFilePicked(docs)" on-loaded="onGoogleFileLoaded()" on-cancel="onGoogleFileCancel()" class="menu-item">
+                        <img class="icon" src="img/icons/drive.png">
+                        <span>Google Drive</span>
                     </a>
-                    <a ng-click="instagram()"  class="center">
-                        <div>
-                            <img class="icon" src="img/icons/instagram.png">
-                        </div>
-                        <div>
-                            <span>Instagram</span>
-                        </div>
+                    <a href id="google_drive_second" ng-hide="connectionStates.google_drive" ng-click="showConnectToService('google_drive')" class="menu-item">
+                        <img class="icon" src="img/icons/drive.png">
+                        <span>Google Drive</span>
                     </a>
-                    <a custom-link-invoker is-editing="custom_link_editing" class="center">
-                        <div>
-                            <img class="icon" src="img/icons/url-link.png">
-                        </div>
-                        <div>
-                            <span>URL</span>
-                        </div>
+
+                    <a href id="box_first" ng-show="connectionStates.box" box-picker box-picker-files="boxfiles" class="menu-item icon-big">
+                        <img class="icon" src="img/icons/box.png">
+                        <span>Box</span>
+                    </a>
+                    <a href id="box_second" ng-hide="connectionStates.box" ng-click="showConnectToService('box')" class="menu-item icon-big">
+                        <img class="icon" src="img/icons/box.png">
+                        <span>Box</span>
+                    </a>
+
+
+                    <a href id="instagram_first" ng-show="connectionStates.instagram2" ng-click="instagram()"  class="menu-item">
+                        <img class="icon" src="img/icons/instagram.png">
+                        <span>Instagram</span>
+                    </a>
+                    <a href id="instagram_second" ng-hide="connectionStates.instagram2" ng-click="showConnectToService('instagram2')" class="menu-item">
+                        <img class="icon" src="img/icons/instagram.png">
+                        <span>Instagram</span>
+                    </a>
+                    <!-- <a href custom-link-invoker is-editing="custom_link_editing" ng-click="customFileType = 'youtube'" class="menu-item icon-big">
+                        <img class="icon" src="img/icons/youtube.png">
+                        <span>Youtube</span>
+                    </a> -->
+                    <a href custom-link-invoker is-editing="custom_link_editing" ng-click="customFileType = 'custom'" class="menu-item">
+                        <img class="icon" src="img/icons/url-link.png">
+                        <span>URL</span>
                     </a>
                 </li>
                 <li custom-link-invoker is-editing="custom_link_editing" class="link" ng-show="custom_link_editing">
-                    <div class="custom-link-wrapper">
-                        <form ng-submit="saveCustomFile()">
-                            <input class="custom-link-box" type="text" ng-model="url" placeholder="Paste URL" />
+                    <div class="custom-link-wrapper" ng-class="{'bg-youtube': customFileType == 'youtube'}">
+                        <form ng-submit="saveCustomFile(customFileType)">
+                            <input class="custom-link-box"  type="text" ng-model="url" placeholder="Paste URL" />
                         </form>
                     </div>
                 </li>
             </ul>
         </div>
-        <div class="pull-right">
-            <a href="#" class="btn btn-link center">
-                <img class="icon" src="img/icons/down-arrow-on-horizontal-line.png" />
+        <div class="pull-right menu-right">
+            <a target="_self" download="{{'project_' + project_id + '_video.mp4'}}" ng-href="{{ result_video }}" class="menu-item">
+                <div class="icon-holder">
+                    <img src="img/icons/arrow-down-line.png" />
+                </div>
                 <span>Download</span>
             </a>
-            <a href="#" class="btn btn-link center">
-                <img class="icon" src="img/icons/media-play-symbol.png" />
+            <a href ng-click="showVideoModal()" class="menu-item">
+                <div class="icon-holder">
+                    <img src="img/icons/icon-play.png" />
+                </div>
                 <span>Play</span>
-            </a>
-            <a href="#" class="btn btn-link center">
-                <img class="icon" src="img/icons/share-option.png" />
-                <span>Share</span>
-            </a>
+            </a>           
+            <span class="btn-group" uib-dropdown>
+                <a class="menu-item dropdown-toggle" href="#" uib-dropdown-toggle>
+                    <div class="icon-holder">
+                        <img src="img/icons/icon-share-green.png" />
+                    </div>
+                    <span>Share</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-right menu-social" uib-dropdown-menu>
+                    <li ng-show="$parent.user.snapchat">                   
+                        <a href="" ng-click="openShareModal('snapchat')" class="dropdown-sharelink" >
+                            <img class="dropdown-sharelink-img" src="img/icons/snapchat-btn.png">
+                            <span> Send to Snapchat</span>
+                        </a>
+                    </li>
+                    <li ng-show="$parent.user.facebook">      
+                         <a href=""  ng-click="openShareModal('facebook')" class="dropdown-sharelink">
+                            <img class="dropdown-sharelink-img" src="img/icons/facebook-btn.png">
+                            <span> Share to Facebook</span>
+                        </a>      
+                     </li>
+                    <li ng-show="$parent.user.twitter">   
+                         <a href=""  ng-click="openShareModal('twitter')"  class="dropdown-sharelink">
+                            <img class="dropdown-sharelink-img" src="img/icons/twitter-btn.png">                    
+                            <span> Send to Twitter</span>
+                        </a>      
+                     </li>
+                    <li ng-show="$parent.user.instagram">   
+                         <a href=""  ng-click="openShareModal('instagram')"  class="dropdown-sharelink">
+                            <img class="dropdown-sharelink-img" src="img/icons/instagram-btn.png">                    
+                            <span> Send to Instagram</span>
+                        </a>                     
+                    </li>
+                    <li ng-show="$parent.user.pinterest">
+                        <a href="" ng-click="openShareModal('pinterest')" class="dropdown-sharelink" >
+                            <img class="dropdown-sharelink-img" src="img/icons/pinterest-btn.png">
+                            <span> Pin to Pinterest</span>
+                        </a>
+                    </li>
+                    <li class="divider"></li>                       
+                    <li>
+                        <a href="" ng-click="openShareModal('twitter')"  class="dropdown-sharelink">
+                            <img class="dropdown-sharelink-img" src="img/icons/schedule-btn.png">
+                            <span> Schedule Post</span>
+                        </a>           
+                    </li>                            
+                </ul>
+            </span>
         </div>
     </div>
     
@@ -88,50 +135,53 @@
     </div>  -->
 
     <div drag-drop-uploader ng-cloak>
-        <div class="row" ng-show="showProjects">
-            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="m in media">
-                <div class="project-container text-center">
-                    <div class="hovereffect">
-                        <img ng-if="isImage(m.path)" class="representative" ng-src="{{ m.path }}">
+        <div ng-sortable="sortConfig" class="media-items-container" ng-show="showProjects">
+            <div class="media-item media-cell" ng-repeat="m in media">
+                <div class="project-container project-cell text-center fixed-size-item-responsive">
+                    <div class="hovereffect horizontal-vertical-center">
+                        <div class="img-wrapper">
+                            <img ng-if="isImage(m.path)" class="representative" ng-src="{{ m.path }}">
 
-                        <video ng-if="isVideo(m.path)" ng-attr-id="{{ getUuid(m.path) }}"  class="video-js" controls preload="auto">
-                            <source ng-src="{{ m.path | trustUrl}}">
-                            <p class="vjs-no-js">
-                            To view this video please enable JavaScript, and consider upgrading to a web browser that
-              <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-                            </p>
-                        </video>
+                            <video ng-if="isVideo(m.path)" ng-attr-id="{{ getUuid(m.path) }}"  class="video-js" controls preload="auto" height="180" vjs-video vjs-media="{'sources': [{ 'src': m.path, 'type': 'video/mp4' }]}">
+                                
+                            </video>
+                        </div>
 
-                        <div class="img-cover" ng-attr-data-for="{{ getUuid(m.path) }}">
-                            <div class="hover-btn-delete">
-                                <button type="button" class="close" confirm-really-do="deleteImage(m.path)" confirm-message="Are you sure you want to delete this file?">
-                                    <span aria-hidden="true">×</span>
-                                    <span class="sr-only">Close</span>
-                                </button>
-                            </div>
-                            <div ng-if="isVideo(m.path)" class="hover-btn-play">
-                                <a ng-click="playVideo(getUuid(m.path))" class="btn-play">
-                                    <img class="icon" src="img/icons/play-button-white.png"/>
+                        <div class="img-cover project-overlay" ng-hide="isFake(m.path)" ng-attr-data-for="{{ getUuid(m.path) }}">
+                            <a class="menu-delete" confirm-really-do="deleteImage(m.path)" confirm-message="Are you sure you want to delete this file?">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                            
+                            <div class="menu-play-video" ng-if="isVideo(m.path)">
+                                <a ng-click="playVideo(getUuid(m.path))">
+                                    <img src="img/icons/play-button-white.png"/>
                                 </a>
                             </div>
+                            
+                            <a class="btn menu-edit btn-custom btn-outline btn-md" ui-sref="project.detail({id: project_id, media_id: m.id })" style="margin-top: 70px;">Edit</a>
                         </div>
                     </div>
-
-                    <h4>{{ m.name }}</h4>
-                    <p>{{ m.resolution }}</p>
+                    <!-- {{ m.order_in_project }} -->
+                    <div class="media-item-footer">
+                        <div ng-if="isFake(m.path)" class="progress" style="margin-bottom: 0px;">
+                                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" ng-style="{'width': upload_percent}">
+                                    {{upload_percent}}
+                                </div> 
+                            </div>
+                        <h4 class="project-title">{{ m.name | limitLength:true:15:' ...' }}</h4>
+                        <p class="project-desc">{{ m.resolution }}</p>
+                    </div>
                 </div>
             </div>
             
         </div>  
 
-        <div class="row" ng-hide="showProjects">
-            <div class="col-xs-12">
-                <div class="text-center">
-                    <div>
-                        <img class="representative" ng-src="/img/icons/empty_images.png">
-                        <h4>Drop your media files here!</h4>
-                        <p>Or Upload from Dropbox, Google Drive, Box & Instagram!</p>
-                    </div>
+        <div ng-hide="showProjects">
+            <div class="text-center">
+                <div>
+                    <img class="representative" ng-src="/img/icons/blurbiz_drag-and-drop.png" style="margin: 0 auto; width: 207px; height: 190px;">
+                    <h4>Drop your media files here!</h4>
+                    <p>Or Upload from Dropbox, Google Drive, Box & Instagram!</p>
                 </div>
             </div>
         </div>
@@ -139,35 +189,25 @@
 
 <!--<div id="holder"></div><p id="upload" class="hidden"><label>Drag & drop not supported, but you can still upload via this input field:<br><input type="file"></label></p><p id="filereader">File API & FileReader API not supported</p><p id="formdata">XHR2's FormData is not supported</p><p id="progress">XHR2's upload progress isn't supported</p><p>Upload progress: <progress id="uploadprogress" min="0" max="100" value="0">0</progress></p>-->
 
+<i ng-if="loading" class="fa fa-spinner fa-pulse fa-4x fa-fw loader"></i>
+    
 <style>
     /*#holder { border: 10px dashed #ccc; width: 300px; min-height: 300px; margin: 20px auto;}*/
     #holder.hover { border: 10px dashed #0c0; }
     #holder.hover .img-cover { display: none; }
-    #holder img { display: block; margin: 10px auto; }
-    #holder p { margin: 10px; font-size: 14px; }
+    #holder img.representative { display: block; }
     progress { width: 100%; }
     progress:after { content: '%'; }
     .fail { background: #c00; padding: 2px; color: #fff; }
     .hidden { display: none !important;}
     
+    .loader{
+        top: 20%;
+        left: 40%;
+        position: absolute;
+    }
+    
 </style>
-
-
     
 </div>
 
-<script type="text/ng-template" id="instagramModal.html">
-    <div class="modal-header">
-        <h3 class="modal-title" id="modal-title">Instagram Images</h3>
-    </div>
-    <div class="modal-body" id="modal-body">
-        <ul>
-            <li ng-click="upload(image)" ng-repeat="image in data">
-                <img src="{{ image.images.thumbnail.url }}" />
-            </li>
-        </ul>
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
-    </div>
-</script>

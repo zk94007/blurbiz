@@ -1,0 +1,78 @@
+<div class="profile-setting">
+    <uib-tabset>
+        <uib-tab ui-sref="connections" ui-sref-active="active" heading="Social Networks"></uib-tab>
+        <uib-tab ui-sref="timezone" ui-sref-active="active" active="false" heading="Time zone"></uib-tab>
+    </uib-tabset>
+
+    <div class="uib-tab-content">
+        <div ng-show="$parent.user.facebook" class="integration-wrapper">
+            <div class="integration-icon">
+                <img src="img/icons/icon-facebook.png">
+            </div>
+            <div class="integration-explanation">
+                <h5 class="integration-title">Facebook</h5>
+                <small>Share your videos on Facebook.</small>
+            </div>
+            <div class="integration-button">
+                <button ng-click="connections.connectToSocial('facebook')" ng-if="!connections.connectionStates.facebook" class="btn btn-green btn-custom btn-sm">Connect</button>
+                <button ng-click="connections.disconnectFromSocial('facebook')" ng-if="connections.connectionStates.facebook" class="btn btn-orange btn-custom btn-sm">Disconnect</button>
+            </div>
+        </div>
+
+        <div ng-show="$parent.user.twitter" class="integration-wrapper">
+            <div class="integration-icon">
+                <img src="img/icons/twitter.png">
+            </div>
+            <div class="integration-explanation">
+                <h5 class="integration-title">Twitter</h5>
+                <small>Share your videos on Twitter.</small>
+            </div>
+            <div class="integration-button">
+                <button ng-click="connections.connectToSocial('twitter')" ng-if="!connections.connectionStates.twitter" class="btn btn-green btn-custom btn-sm">Connect</button>
+                <button ng-click="connections.disconnectFromSocial('twitter')" ng-if="connections.connectionStates.twitter" class="btn btn-orange btn-custom btn-sm">Disconnect</button>
+            </div>
+        </div>
+
+        <div ng-show="$parent.user.instagram" class="integration-wrapper">
+            <div class="integration-icon">
+                <img src="img/icons/instagram.png">
+            </div>
+            <div class="integration-explanation">
+                <h5 class="integration-title">Instagram</h5>
+                <small>Share your videos on Instagram.</small>
+            </div>
+            <div class="integration-button">
+                <button ng-click="connections.connectToSocial('instagram')" ng-if="!connections.connectionStates.instagram" class="btn btn-green btn-custom btn-sm">Connect</button>
+                <button ng-click="connections.disconnectFromSocial('instagram')" ng-if="connections.connectionStates.instagram" class="btn btn-orange btn-custom btn-sm">Disconnect</button>
+            </div>
+        </div>
+
+        <div ng-show="$parent.user.snapchat" class="integration-wrapper">
+            <div class="integration-icon">
+                <img src="img/icons/snapchat.png">
+            </div>
+            <div class="integration-explanation">
+                <h5 class="integration-title">Snapchat</h5>
+                <small>Share your videos on Snapchat.</small>
+            </div>
+            <div class="integration-button">
+                <button ng-click="connections.connectToSocial('snapchat')" ng-if="!connections.connectionStates.snapchat" class="btn btn-green btn-custom btn-sm">Connect</button>
+                <button ng-click="connections.disconnectFromSocial('snapchat')" ng-if="connections.connectionStates.snapchat" class="btn btn-orange btn-custom btn-sm">Disconnect</button>
+            </div>
+        </div>
+        
+        <div ng-show="$parent.user.pinterest" class="integration-wrapper">
+            <div class="integration-icon">
+                <img src="img/icons/pinterest-btn.png">
+            </div>
+            <div class="integration-explanation">
+                <h5 class="integration-title">Pinterest</h5>
+                <small>Share your videos on Pinterest.</small>
+            </div>
+            <div class="integration-button">
+                <button ng-click="connections.connectToSocial('pinterest')" ng-if="!connections.connectionStates.pinterest" class="btn btn-green btn-custom btn-sm">Connect</button>
+                <button ng-click="connections.disconnectFromSocial('pinterest')" ng-if="connections.connectionStates.pinterest" class="btn btn-orange btn-custom btn-sm">Disconnect</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -2,10 +2,22 @@
     'use strict';
 
     /**
+     * authProvider configuration for the Blurbiz.project module.
+     */
+    angular.module('Blurbiz.project').config(function($authProvider, FacebookProvider, DropboxProvider) {
+        
+        FacebookProvider.init(config.social.facebook.app_id);
+        DropboxProvider.config(config.social.dropbox.app_key, 'http://' + config.env.frontend  + '/components/ngDropbox/callback.html');
+    });
+
+    /**
      * Route configuration for the Blurbiz module.
      */
-    angular.module('Blurbiz').config(['$stateProvider', '$urlRouterProvider',
-        function($stateProvider, $urlRouterProvider) {
+    angular.module('Blurbiz').config(['$stateProvider', '$urlRouterProvider', 'FlashProvider',
+        function($stateProvider, $urlRouterProvider, FlashProvider) {
+
+            FlashProvider.setTimeout(3000);
+            FlashProvider.setShowClose(true);
 
             // For unmatched routes
             $urlRouterProvider.otherwise('/login');
@@ -14,22 +26,32 @@
             $stateProvider
                 .state('login', {
                     url: '/login',
-                    templateUrl: 'templates/login.html',
+                    templateUrl: 'templates/auth/login.html',
                     controller: 'AuthController'
                 })
                 .state('register', {
                     url: '/signup', 
-                    templateUrl: 'templates/signup.html',
+                    templateUrl: 'templates/auth/signup.html',
                     controller: 'AuthController'
+                })
+                .state('forgot-password', {
+                    url: '/password/forgot',
+                    templateUrl: 'templates/auth/forgot.html',
+                    controller: 'AuthController'
+                })
+                .state('reset-password', {
+                    url: '/password/reset/{reset_code}',
+                    templateUrl: 'templates/auth/reset.html',
+                    controller: 'PasswordResetController'
                 })
                 .state('wait-confirm', {
                     url: '/wait-confirm',
-                    templateUrl: 'templates/wait-confirm.html',
+                    templateUrl: 'templates/auth/wait-confirm.html',
                     controller: 'WaitConfirmateEmailController'
                 })
                 .state('confirm', {
                     url: '/confirm/{email_code}',
-                    templateUrl: 'templates/confirm.html',
+                    templateUrl: 'templates/auth/confirm.html',
                     controller: 'ConfirmateEmailController'
                 })
                 .state('index', {
@@ -60,12 +82,32 @@
                         title: ''
                     }
                 })
+                .state('project.detail', {
+                    url: '/edit/:id?media_id&access_token',
+                    templateUrl: 'templates/project/detail.html',
+                    controller: 'Project.DetailController',
+                    reloadOnSearch: false,
+                    data: {
+                        title: ''
+                    }
+                })
                 .state('tables', {
                     url: '/tables',
                     parent: 'index',
                     templateUrl: 'templates/tables.html',
+                    controller: 'Project.ScheduleController',
                     data: {
                         title: 'Schedule'
+                    }
+                })
+                .state('admin', {
+                    url: '/admin',
+                    parent: 'index',
+                    templateUrl: 'templates/admin/dashboard.html',
+                    controller: 'Admin.DashboardController',
+                    data: {
+                        title: 'Admin',
+                        isAdmin: true
                     }
                 })
                 .state('instagram_token', {
@@ -80,31 +122,101 @@
 
                     }
                 })
+                .state('timezone', {
+                    url: '/settings/timezone',
+                    parent: 'index',
+                    templateUrl: 'templates/settings/timezone.html',
+                    controller: 'TimezoneController',
+                    controllerAs: "timezone",
+                    data: {
+                        title: 'Timezone'
+                    }
+                })
+                .state('myaccount', {
+                    url: '/settings/myaccount',
+                    parent: 'index',
+                    templateUrl: 'templates/settings/myaccount.html',
+                    controller: 'MyAccountController',
+                    controllerAs: "myaccount",
+                    data: {
+                        title: 'My account'
+                    }
+                })
+                .state('connections', {
+                    url: '/settings/connections',
+                    parent: 'index',
+                    templateUrl: 'templates/settings/connections.html',
+                    controller: 'ConnectionsController',
+                    controllerAs: "connections",
+                    data: {
+                        title: 'Connect to Social Networks'
+                    }
+                })
+                .state('integrations', {
+                    url: '/settings/integrations',
+                    parent: 'index',
+                    templateUrl: 'templates/settings/integrations.html',
+                    controller: 'IntegrationsController',
+                    controllerAs: "integrations",
+                    data: {
+                        title: 'Integration'
+                    }
+                })
+                .state('plans', {
+                    url: '/settings/plans',
+                    parent: 'index',
+                    templateUrl: 'templates/settings/plans.html',
+                    controller: 'PlansController',
+                    controllerAs: "plans",
+                    data: {
+                        title: 'Plans'
+                    }
+                })
+                .state('billing', {
+                    url: '/settings/billing',
+                    parent: 'index',
+                    templateUrl: 'templates/settings/billing.html',
+                    controller: 'BillingController',
+                    controllerAs: "billing",
+                    data: {
+                        title: 'Billing'
+                    }
+                })
+                .state('invite', {
+                    url: '/invite/:idInvite',
+                    templateUrl: 'templates/auth/signup_invite.html',
+                    controller: 'AuthController',
+
+                })                
         }
     ])
+    .config(['$httpProvider', function($httpProvider) {    
+        $httpProvider.defaults.useXDomain = true; 
+        delete $httpProvider.defaults.headers.common['X-Requested-With']; 
+    }])
     .config(['DropBoxSettingsProvider', function(DropBoxSettingsProvider) {
         DropBoxSettingsProvider.configure({
             multiselect: true,
-            // box_clientId: 'ol9shnikyhmp0eag26fp6tdq02l3bgqv',
-            box_clientId: 'vkf7vdl1p0156bdr8qskkag869exln71',
-            extensions: [ '.gif','.png','.jpg', 'jpeg'],//dropbox file 
+            box_clientId: config.social.box.client_id,
+            extensions: [ '.gif','.png','.jpg', 'jpeg', 'mp4'],//dropbox file 
             box_linkType: 'direct'
         });
     }])
     .config(['lkGoogleSettingsProvider', function(lkGoogleSettingsProvider) {
         lkGoogleSettingsProvider.configure({
-            apiKey   : 'AIzaSyAqBcpJG3DFVEfgHGdSHlCj_zW-GbMTByk',
-            clientId : '944689281546-s3o8lk1e093a3mjetpfgj9hic7r5saae.apps.googleusercontent.com',
+            apiKey   : config.social.googleDrive.api_key,
+            clientId : config.social.googleDrive.client_id,
             scopes   : ['https://www.googleapis.com/auth/drive'],
         });
     }])
-    .run(['$rootScope', '$state', 'LocalStorageService', function($rootScope, $state, LocalStorageService) {
+    .run(['$rootScope', '$state', 'LocalStorageService', 'SessionService', 'SessionStorageService', function($rootScope, $state, LocalStorageService, SessionService, SessionStorageService) {
           $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams, options){
-
+                $rootScope.title_editing = false;
+                $rootScope.isBared = false;
                 // redirect to login page if user not loggedin
                 var token = LocalStorageService.getToken();
-                var publicPages = ['login', 'register'];
+                var publicPages = ['login', 'register', 'invite', 'forgot-password', 'reset-password'];
                 var restrictedPage = publicPages.indexOf(toState.name) === -1;
 
                 if (restrictedPage && (token === undefined || token === null)){
@@ -118,7 +230,10 @@
                   'login',
                   'register',
                   'confirm',
-                  'wait-confirm'
+                  'wait-confirm',
+                  'invite',
+                  'forgot-password',
+                  'reset-password'
                 ];
                 var userEmailisConfirmed = LocalStorageService.get('is_confirmed');
                 userEmailisConfirmed = (userEmailisConfirmed !== undefined && userEmailisConfirmed !== null) ? JSON.parse(userEmailisConfirmed) : false;
@@ -126,61 +241,16 @@
                     event.preventDefault();
                     $state.go('wait-confirm')
                 }
+
+                SessionService.checkAccess(event, toState, toParams, fromState, fromParams);
           });
+
+          $rootScope.$on('$stateChangeSuccess', 
+            function(event, toState, toParams, fromState, fromParams) {
+                if(toState.data)
+                    $rootScope.pageTitle = toState.data.title;
+                SessionStorageService.clear();
+            })
       }
       ]);
-    // .run(['$http', '$rootScope', '$window', '$cookieStore', 'UserService', function($http, $rootScope, $window, $cookieStore, UserService) {
-    //     // add JWT token as default auth header
-    //     $http.defaults.headers.common['Authorization'] = 'Bearer ' + $window.jwtToken;
-
-    //     // update active tab on state change
-    //     $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
-    //         $rootScope.pageTitle = toState.data.pageTitle;
-    //     });
-
-    //     /**
-    //      * Sidebar Toggle & Cookie Control
-    //      */
-    //     var mobileView = 992;
-
-    //     UserService.GetCurrent().then(function(user) {
-    //         $rootScope.user = user;
-    //     });
-
-    //     $rootScope.getWidth = function() {
-    //         return window.innerWidth;
-    //     };
-
-    //     $rootScope.$watch($rootScope.getWidth, function(newValue, oldValue) {
-    //         if (newValue >= mobileView) {
-    //             if (angular.isDefined($cookieStore.get('toggle'))) {
-    //                 $rootScope.toggle = ! $cookieStore.get('toggle') ? false : true;
-    //             } else {
-    //                 $rootScope.toggle = true;
-    //             }
-    //         } else {
-    //             $rootScope.toggle = false;
-    //         }
-
-    //     });
-
-    //     $rootScope.toggleSidebar = function() {
-    //         $rootScope.toggle = !$rootScope.toggle;
-    //         $cookieStore.put('toggle', $rootScope.toggle);
-    //     };
-
-    //     window.onresize = function() {
-    //         $rootScope.$apply();
-    //     };
-    // }]);    
-
-    // manually bootstrap angular after the JWT token is retrieved from the server
-    // $(function () {
-    //     // get JWT token from server
-    //     $.get('/app/token', function (token) {
-    //         window.jwtToken = token;
-
-    //         angular.bootstrap(document, ['Blurbiz']);
-    //     });
-    // });
 })();

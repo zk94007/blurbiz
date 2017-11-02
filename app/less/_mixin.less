@@ -1,0 +1,38 @@
+.font(@weight, @size, @line-height, @color) {
+	font-weight: @weight;
+	font-size: @size;
+	line-height: @line-height;
+	color: @color;
+}
+
+.background(@url, @position) {
+	background-image: url(@url);
+	background-repeat: no-repeat;
+	background-position: @position;
+}
+
+.button(@color, @bcolor, @hover-bcolor) {
+	background-color: @bcolor;
+	color: @color;
+	transition: all ease 0.5s;
+
+	&:hover, &:active {
+		background-color: @hover-bcolor;
+	}
+}
+
+.placeholder(@rules) {
+
+    &::-webkit-input-placeholder {
+        @rules();
+    }
+    &:-moz-placeholder {
+        @rules();
+    }
+    &::-moz-placeholder {
+        @rules();
+    }
+    &:-ms-input-placeholder {
+        @rules();
+    }
+}

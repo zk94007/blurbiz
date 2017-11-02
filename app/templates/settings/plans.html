@@ -1,0 +1,149 @@
+<style type="text/css">
+
+    .plan-label, .plan-price{
+        line-height: 35px;
+        width: 100%;
+        float: left;
+    }
+    .plan-price{
+        text-align: center;
+        font-weight: bold;
+        font-size: 18px;
+        color: royalblue;
+        margin-top: 40px;
+    }
+    .plan-name-label{
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;        
+    }
+
+    .setting-plan-style .panel-heading {
+        background: #fff;
+    }
+
+    .setting-plan-style .panel-body .plan-label span:first-child{
+        font-weight: 600;
+        color: #606060;
+    }
+
+    .setting-plan-style .panel-body .plan-label {
+        display: inline-block;
+        width: 100%;
+        border: 1px solid #ddd;
+        border-left: none;
+        border-right: none;
+        border-top: none;
+        padding: 10px 20px;
+    }
+
+    .setting-plan-style  .panel-body {
+        display: inline-block;
+        padding: 0;
+        width: 100%;
+    }
+
+    .setting-plan-style  .panel-body .plan-price .plan-label{
+        border: none;
+    }
+
+    .btn.choose-graybtn{
+        background-color: #9b9b9b;
+        font-size: 16px;
+        font-weight: normal;
+        padding: 15px 30px;
+        color: #fff;
+    }
+
+    .btn.choose-greenbtn{
+        background-color: #50e3c2;
+        font-size: 16px;
+        font-weight: normal;
+        padding: 15px 30px;
+        color: #fff;
+    }
+
+    .choose-btn{
+        margin-bottom: 40px;
+    }
+
+    .plan-mnth{
+        color: #5da3e6;
+        font-weight: normal !important;
+    }
+
+    .free-plan{
+        font-size: 28px;
+        color: #5da3e6 !important;
+        font-weight: normal;
+    }
+
+    .plan-price-amnt{
+        font-size: 32px;
+        color: #5da3e6 !important;
+        font-weight: normal !important;
+    }
+    .loader{
+        top: 50% !important;
+        left: 50%;
+        position: absolute;
+    }
+</style>
+<i ng-if="loading" class="fa fa-spinner fa-pulse fa-4x fa-fw loader"></i>
+<div class="profile-setting">
+    <uib-tabset>
+        <uib-tab  ui-sref="myaccount" ui-sref-active="active" active="false" heading="My account"></uib-tab>
+        <uib-tab ui-sref="integrations" ui-sref-active="active" active="false" heading="Integrations"></uib-tab>
+        <uib-tab ui-sref="plans" ui-sref-active="active" heading="Plans"></uib-tab>
+        <uib-tab ui-sref="billing" ui-sref-active="active" active="false" heading="Billing"></uib-tab>
+    </uib-tabset>
+    <div class="uib-tab-content">
+        <div class="plan-area setting-plan-style">
+            <div class="col-md-3" ng-repeat="subscriptionPlan in subscriptionPlans | orderBy:'id'">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="plan-name-label">{{ subscriptionPlan.plan_name }}</div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="plan-label">
+                            <span class="pull-left">Number Of Projects</span>
+                            <span class="pull-right">{{ subscriptionPlan.number_of_projects }}</span>
+                        </div>
+                        <div class="plan-label">
+                            <span class="pull-left">Time limit per video</span>
+                            <span class="pull-right">{{ subscriptionPlan.time_limit_per_video_in_seconds }}</span>
+                        </div>
+                        <div class="plan-label">
+                            <span class="pull-left">Number of users</span>
+                            <span class="pull-right">{{ subscriptionPlan.number_of_user }}</span>
+                        </div>
+                        <div class="plan-label">
+                            <span ng-show="subscriptionPlan.number_of_days_free_trial != ''" class="pull-left">Number of days free trial</span>
+                            <span ng-show="subscriptionPlan.number_of_days_free_trial == ''">&nbsp;</span>
+                            <span class="pull-right" ng-show="subscriptionPlan.number_of_days_free_trial != 0">{{ subscriptionPlan.number_of_days_free_trial }}</span>
+                        </div>
+                        <div class="plan-price" ng-show="subscriptionPlan.plan_price != 0.00">
+                            <div class="plan-label">
+                                <span class="text-center plan-price-amnt">{{ subscriptionPlan.plan_price | currency }}</span>
+                                <span class="plan-mnth">Month</span>
+                            </div>
+                        </div>
+
+                        <div class="plan-price" ng-show="subscriptionPlan.plan_price == 0.00">
+                            <div class="plan-label">
+                                <span class="text-center"><span class="plan-price-amnt">Free</span> <span class="plan-mnth">{{ subscriptionPlan.number_of_days_free_trial }} Days </span> </span>
+                            </div>
+                        </div>
+
+                        <div class="plan-price choose-btn">
+                            <button ng-show="subscriptionPlan.id!=1" type="button" class="btn btn-custom {{subscriptionPlan.id != subscriptionPlan.user_plan_id ? 'choose-greenbtn' : 'choose-graybtn'}} btn-md" ng-click="choosePlan({planId:subscriptionPlan.id, price:subscriptionPlan.plan_price})" ng-disabled="subscriptionPlan.id == subscriptionPlan.user_plan_id">{{subscriptionPlan.id != subscriptionPlan.user_plan_id ? "Choose Plan" : "Current Plan"}}</button>
+                            <button ng-show="subscriptionPlan.id==1" type="button" class="btn btn-custom {{subscriptionPlan.id != subscriptionPlan.user_plan_id ? 'choose-greenbtn' : 'choose-graybtn'}} btn-md" ng-click="choosePlan({planId:subscriptionPlan.id, price:subscriptionPlan.plan_price})" ng-disabled="subscriptionPlan.id == subscriptionPlan.user_plan_id">{{subscriptionPlan.id != subscriptionPlan.user_plan_id ? "Choose Plan" : "Current Plan"}}</button>
+
+                        </div>
+                    </div>
+                    
+                </div>                      
+            </div>
+        </div>
+    </div>
+</div>

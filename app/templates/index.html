@@ -1,64 +1,100 @@
-<div id="wrapper" ng-class="{'open': toggle, 'toggled-2': !toggle}" ng-cloak>
+<style>
+    ul.personal-menu li.link a {
+        width: 100%;
+    }
+    #page-title .icon {
+        display: none;
+    }
+    .hoveric .icon {
+        display: none;
+    }
+    #page-title.hoveric:hover .icon {
+        display: inline-block;
+    }
+    li a{
+        cursor: pointer;
+    }
+</style>
 
+<div id="wrapper" ng-class="{'open': toggle, 'toggled-2': !toggle, 'bared': isBared}" ng-cloak>
     <!-- Sidebar -->
-    <div id="sidebar-wrapper">
-      <ul class="sidebar">
-        <li class="sidebar-main">
-          <a ng-click="toggleSidebar()">
-            <span class="menu-icon glyphicon glyphicon-transfer"></span>
-            Blurbiz
-          </a>
-        </li>
-        <li ui-sref-active="active" class="sidebar-list">
-          <a ui-sref="project.index"><span class="menu-icon fa fa-tachometer"></span> Home </a>
-        </li>
-        <li ui-sref-active="active" class="sidebar-list">
-          <a ui-sref="tables"> <span class="menu-icon fa fa-table"></span> Schedule </a>
-        </li>
-      </ul>
+    <div id="sidebar-wrapper" ng-hide="isBared">
+        <ul class="sidebar">
+            <li class="sidebar-main">
+                <a ng-click="toggleSidebar()">
+                    <span class="logo-holder">
+                        <img src="img/bb-logo.png">
+                    </span>
+                    <span class="menu-text">Blurbiz</span>
+                </a>
+            </li>
+
+            <li ng-if="user.is_admin" ui-sref-active="active" class="sidebar-list">
+                <a ui-sref="admin">
+                    <span class="icon-holder">
+                        <img class="sidebar-icon" src="img/icons/sidebar-warning-icon.png">
+                    </span>
+                    <span class="menu-text"> Dashboard</span>
+                </a>
+            </li>
+            <li ui-sref-active="active" class="sidebar-list">
+                <a ui-sref="project.index">
+                    <span class="icon-holder">
+                        <img class="sidebar-icon" src="img/icons/sidebar-home-icon.png">
+                    </span>
+                    <span class="menu-text">Home</span>
+                </a>
+            </li>
+            <li ui-sref-active="active" class="sidebar-list">
+                <a ui-sref="tables">
+                    <span class="icon-holder">
+                        <img class="sidebar-icon" src="img/icons/sidebar-clock-icon.png">
+                    </span>
+                    <span class="menu-text"> Schedule </span>
+                </a>
+            </li>            
+        </ul>
     </div>
     <!-- End Sidebar -->
-
     <div id="content-wrapper">
-      <div class="page-content">
-
-        <!-- Header Bar -->
-        <div class="row header">
-          <div class="col-xs-12">
-            <div class="user pull-right">
-              <div class="item dropdown" uib-dropdown>
-                <a href="#" class="dropdown-toggle" uib-dropdown-toggle>
-                  <img src="img/avatar.jpg">
-                </a>
-                <ul class="dropdown-menu dropdown-menu-right">
-                  <li class="dropdown-header">
-                    {{ user.name }}
-                  </li>
-                  <li class="divider"></li>
-                  <li class="link">
-                    <a href="#">
-                      Profile
-                    </a>
-                  </li>
-                  <li class="link">
-                    <a href="#">
-                      Menu Item
-                    </a>
-                  </li>
-                  <li class="link">
-                    <a href="#">
-                      Menu Item
-                    </a>
-                  </li>
-                  <li class="divider"></li>
-                  <li class="link">
-                    <a ui-sref="login" target="_self">
-                      Logout
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <!-- <div class="item dropdown" uib-dropdown>
+        <div class="page-content">
+            <!-- Header Bar -->
+            <div class="page-info clearfix" ng-hide="isBared">
+                <div class="page-meta">
+                    <input class="page-title-input" focus-me="title_editing" ng-show="title_editing" ng-model="rootScope.pageTitle" ng-keyup="$event.keyCode == 13 ? titleEditing(false) : null" ng-blur="titleEditing(false);">
+                    <div ng-class="{'hoveric': titleEditable()}" class="page-title" ng-hide="title_editing">
+                        <span ng-click="titleEditing(true)">{{ rootScope.pageTitle }}</span>
+                        <img src="img/icons/icon-pencil.png" class="icon" />
+                    </div>
+                </div>
+                <div class="user-info">
+                    <div class="item dropdown" uib-dropdown>
+                        <a href="#" class="dropdown-toggle" uib-dropdown-toggle>
+                            <img class="img-circle" ng-src="{{ user.photo }}" err-src="img/avatar.jpg">
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-right user-menu">
+                            <li class="dropdown-header">
+                                <h3>{{ user.name }}</h3>
+                                <span>{{user.company}}</span>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a ui-sref="myaccount">My Account</a>
+                            </li>
+                            <li>
+                                <a ui-sref="timezone">Settings</a>
+                            </li>
+                            <li>
+                                <a target="_blank" href="http://blurbiz.io/support">Help</a>
+                            </li>
+                            <li>
+                                <a ng-click="logout()" target="_self">Sign Out</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="item dropdown" uib-dropdown>
                <a href="#" class="dropdown-toggle" uib-dropdown-toggle>
                   <i class="fa fa-bell-o"></i>
                 </a>
@@ -71,20 +107,18 @@
                     <a href="#">Server Down!</a>
                   </li>
                 </ul>
-              </div> -->
-            </div>
-            <div class="meta">
-              <div class="page">
-                {{ state.current.data.title }}
               </div>
-            </div>
-          </div>
+               -->
+               <!-- End Header Bar -->
+
+            <!-- Main Content -->
+            <div ui-view></div>
+            
         </div>
-        <!-- End Header Bar -->
+        <!-- End Page Content -->
+    </div>
+    <!-- End Content Wrapper -->
+</div>
+<!-- End Page Wrapper -->
 
-        <!-- Main Content -->
-        <div ui-view></div>
 
-      </div><!-- End Page Content -->
-    </div><!-- End Content Wrapper -->
-  </div><!-- End Page Wrapper -->

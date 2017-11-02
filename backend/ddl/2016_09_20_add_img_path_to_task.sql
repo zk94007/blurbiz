@@ -1,0 +1,1 @@
+alter table public.task ADD COLUMN img_path character varying(255);

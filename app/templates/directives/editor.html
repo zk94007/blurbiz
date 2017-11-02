@@ -1,0 +1,1249 @@
+<div class="angular-meditor">
+  <div class="meditor-content-wrapper" ng-class="{'meditor-content-border--show': model.showToolbar}" style="text-align:{{textAlignment}}">
+    <div class="angular-meditor-content" ng-class="{'editable': model.clickCount > 1}" ng-dblclick="editabled($event)" contenteditable="{{contenteditable}}"
+      ng-click="movable($event)" meditor-contenteditable ng-model="model.ngModel" ng-transclude></div>
+    <a ng-if-start="model.showToolbar" class="handle l" title="Stretch" ng-mousedown="startStretch(0, $event)"></a>
+    <a class="handle r" title="Stretch" ng-mousedown="startStretch(1, $event)"></a>
+    <a ng-if-end class="rotate" title="Rotate" ng-mousedown="startRotate($event)"></a>
+  </div>
+</div>
+
+<div class="angular-meditor-toolbar" style="top: {{ position.top }}px; left: {{ position.left }}px" ng-class="{ 'angular-meditor-toolbar--show': model.showToolbar, 'angular-meditor-toolbar--bottom': position.below }">
+  <div ng-class="{hide : ngModel.indexOf('data:image/png;') != -1}">
+    <ul>
+      <li>
+        <label class="meditor-select">
+          <select ng-model="family" class="meditor-family-selector" style="font-family: '{{family}}'">
+            <option ng-repeat="font in familyOptions" value="{{font}}" style="font-family: '{{font}}'" ng-selected="font == family">{{font}}</option>
+          </select>
+        </label>
+      </li>
+      <li>
+        <label class="meditor-select">
+          <select ng-model="size" ng-options="s.value as s.label for s in sizeOptions" class="meditor-size-selector"></select>
+        </label>
+      </li>
+      <li>
+        <button type="button" ng-click="SimpleAction('bold')" class="meditor-button-bold" ng-class="{ 'bold': 'meditor-button--active' }[styles.fontWeight]">
+        B
+      </button>
+      </li>
+      <li>
+        <button type="button" ng-click="SimpleAction('italic')" class="meditor-button-italic" ng-class="{ 'italic': 'meditor-button--active' }[styles.fontStyle]">
+        I
+      </button>
+      </li>
+      <li>
+        <button type="button" ng-click="SimpleAction('underline')" class="meditor-button-underline" ng-class="{ 'underline': 'meditor-button--active' }[styles.textDecoration]">
+        U
+      </button>
+      </li>
+
+      <li>
+        <button type="button" class='color-swatch' style="background-color: {{selectedColor}}" ng-click="ShowColors()" class="meditor-button-underline"
+          ng-class="{ 'underline': 'meditor-button--active' }[styles.textDecoration]">
+        </button>
+      </li>
+
+
+      <!-- <li class="li-clock" uib-dropdown is-open="timer.isopen" auto-close="outsideClick">
+        <img src="img/icons/stopclock_white.png" class="spanic" uib-dropdown-toggle>        
+        <div uib-dropdown-menu class="timer-popup">
+            <div class="text-center timer-container">
+                <div>
+                    <h4><img src="img/icons/stopclock_white.png" class="spanic" /> Timer</h4>
+                    <div>Set Start and End time for your Text</small>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-5 form-group">
+                      <div>Start Time</div>
+                      <input type="text" time-format max-time="{{overlay.time_range.endTime}}" class="timer-input form-control" ng-model="overlay.time_range.startTime">
+                  </div>
+                  <div class="timer-to col-sm-2">To</div>
+                  <div class="col-sm-5 form-group">
+                      <div>End Time</div>
+                      <input type="text"  time-format max-time="{{maxTimerStopWatchString}}" class="timer-input form-control" ng-model="overlay.time_range.endTime">
+                  </div>
+                </div>
+                
+            </div>
+        </div>
+      </li>  -->
+
+      <li class="li-clock">
+        <a ng-click="delete({overlay: overlay})">
+          <img src="img/icons/trash-white.png" class="spanic">
+        </a>
+      </li>
+    </ul>
+</div>
+
+  <div ng-class="{hide : ngModel.indexOf('data:image/png;') == -1}">
+     <ul>
+      <li class="li-clock">
+        <a ng-click="delete({overlay: overlay})">
+          <img src="img/icons/trash-white.png" class="spanic">
+        </a>
+      </li>
+    </ul>  
+  </div>
+
+  <div class="color-panel" ng-class="{'color-panel--show': model.showColors, 'color-panel-wide' : colorPicker.visible }">
+    <div class="color-picker-container" ng-show="colorPicker.visible">
+
+      <div style="margin-left:5px;height :285px; ">
+        <a-ckolor model="colorPicker.color" element-id="an_id" input-id="an_input_id" name="an-input-name" type="hidden" blur="false"
+          default-color="'#a10005'" onselect="colorPicker.onColor"></a-ckolor>
+        <div style='clear:both'></div>
+
+      </div>
+
+    </div>
+    <div ng-show="!colorPicker.visible ">
+      <div class="color-type "> <span class='mode' ng-class='{mode_active : textMode == 0}' ng-click='textMode = 0'>Text</span> | <span <span class='mode'
+          ng-class='{mode_active : textMode == 1}' ng-click='textMode = 1'>Highlight</span></div>
+      <hr/>
+      <div class="highlight-controls " ng-if="textMode==1 ">
+        <span class="clear-button " ng-click="SimpleAction( 'backColor' , 'transparent');model.showColors=false;"> <i class="fa fa-map-marker " aria-hidden="true "></i> None </span>
+        <span class='align-buttons'>
+                   <span class="button " ng-click="setAlignment( 'center') "><i class="fa fa-align-center
+          " aria-hidden="true " ng-class="{activeButton : textAlignment=='center' } "></i> </span>
+        <span class="button " ng-click="setAlignment( 'justify') "> <i class="fa fa-align-justify " aria-hidden="true
+          " ng-class="{activeButton : textAlignment=='justify' } "></i> </span>
+        </span>
+      </div>
+      <div style='clear:both'></div>
+
+      <div style="font-size:60%;color:gray;marging-top:5px;">Most Recent</div>
+      <div class="color-container ">
+        <div ng-repeat="color in colorPicker.tempColors ">
+          <div class='color-swatch' ng-click="SimpleAction( textMode==0 ? 'foreColor' : 'backColor' ,color) " style="display:inline-table;background-color:
+          {{color}} ">
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size:60%;color:gray">Default Colors</div>
+      <div class="color-container ">
+        <div ng-repeat="color in colorSwatch ">
+          <div class='color-swatch' ng-click="SimpleAction( textMode==0 ? 'foreColor' : 'backColor', color) " style="background-color:
+          {{color}} ">
+          </div>
+        </div>
+      </div>
+      <hr/>
+      <div class="color-picker " ng-click="colorPicker.visible=true "> More Colors </div>
+    </div>
+  </div>
+  <div>
+
+  </div>
+</div>
+
+
+
+<style>
+  a-ckolor-wheel {
+    display: block;
+    position: absolute;
+    z-index: 9999;
+    filter: none !important;
+  }
+
+  .c-ckolor__input-row {
+    margin: 14px 0px;
+    margin-top: -20px;
+  }
+
+  .c-ckolor__input-row.center {
+    text-align: center;
+  }
+
+  .c-ckolor__input-wrapper {
+    width: 200px;
+    height: 21px;
+    line-height: 21px;
+    padding: 7px;
+    background: #fff;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.14), 0px 3px 10px rgba(0, 0, 0, 0.035);
+    border-radius: 2px;
+    margin: 7px 0px;
+    font-size: 14px;
+    color: #555;
+    font-family: sans-serif;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .c-ckolor__input-wrapper button {
+    outline: none !important;
+    background: transparent;
+    border: none;
+    -webkit-appearance: none;
+    width: 21px;
+    font-size: 18px;
+    padding: 0px;
+    color: #fff;
+    opacity: .7;
+    box-shadow: none;
+    margin: -4px 0px 0px 0px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+
+  .c-ckolor__input-wrapper button:hover {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+
+  .c-ckolor__input-wrapper span {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .c-ckolor__overlay {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    background: radial-gradient(ellipse at 50% 250px, rgba(19, 49, 63, 0.91) 0%, rgba(0, 0, 0, 0.91) 100%);
+    backface-visibility: hidden;
+    z-index: 9999;
+  }
+
+  .c-ckolor__overlay .c-ckolor__swatch {
+    margin: 0 0 0 1px;
+    width: 0px;
+    height: 0px;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 18px;
+    position: relative;
+  }
+
+  .c-ckolor__overlay .c-ckolor__swatch span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07), 0 1px 0 1px rgba(0, 0, 0, 0.07);
+    border-radius: 50%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+  }
+
+  .c-ckolor__overlay .c-ckolor__input-wrapper {
+    width: 30%;
+    overflow: hidden;
+    background: 0 0;
+    box-shadow: none;
+    color: #aaa;
+    display: inline-block;
+    padding: 0px;
+    margin: 0px 1px;
+    line-height: 14px;
+  }
+
+  .c-ckolor__overlay .c-ckolor__input-wrapper.smaller {
+    width: 30px;
+  }
+
+  .c-ckolor__overlay .c-ckolor__input-wrapper.button {
+    width: 9%;
+    vertical-align: middle;
+    margin: 0px 0px 0px 2px;
+  }
+
+  .c-ckolor__overlay .c-ckolor__input-wrapper.dropdown {
+    width: 20%;
+    overflow: visible;
+    position: relative;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 12px;
+  }
+
+  .c-ckolor__overlay .c-ckolor__input-wrapper.dropdown div {
+    margin-left: 3px;
+  }
+
+  .c-ckolor__overlay .c-ckolor__input-wrapper.dropdown div:before {
+    content: "\f0dd";
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    margin: 0px 3px 0px 0px;
+    position: relative;
+    top: -3px;
+  }
+
+  .c-ckolor__overlay .c-ckolor__input-wrapper.dropdown ul {
+    margin: 0;
+    padding: 0;
+    display: block;
+    position: absolute;
+    height: auto;
+    overflow: hidden;
+    max-height: 0px;
+    background: rgba(255, 255, 255, 0.77);
+    width: 100%;
+    color: #333;
+    border-radius: 2px;
+    transition: all .2s;
+  }
+
+  .c-ckolor__overlay .c-ckolor__input-wrapper.dropdown ul li {
+    display: block;
+    padding: 5px 7px;
+    box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.05);
+  }
+
+  .c-ckolor__overlay .c-ckolor__input-wrapper.dropdown ul li:hover {
+    background: #fff;
+  }
+
+  .c-ckolor__overlay .c-ckolor__input-wrapper.dropdown:hover ul {
+    max-height: 140px;
+  }
+
+  .c-ckolor__overlay .c-ckolor__input-wrapper.hex {
+    width: 100%;
+  }
+
+  .c-ckolor__overlay .c-ckolor__input-wrapper.hex input {
+    text-align: left;
+  }
+
+  .c-ckolor_previous-swatch {
+    height: 0px;
+    display: inline-block;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.12);
+    padding: 3%;
+    margin: 1.7%;
+    border-radius: 50%;
+    transition: transform .2s;
+  }
+
+  .c-ckolor__overlay-inner {
+    width: 170px;
+    position: relative;
+    margin: 5px auto 20px;
+  }
+
+  .c-ckolor__overlay-inputs {
+    width: 40%;
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    top: 2px;
+  }
+
+  .c-ckolor__alpha-wrapper {
+    background: linear-gradient(0deg, rgba(138, 138, 138, 0.14) 0px, rgba(138, 138, 138, 0.14) 1px, transparent 1px, transparent 5px), linear-gradient(90deg, rgba(138, 138, 138, 0.14) 0px, rgba(138, 138, 138, 0.14) 1px, transparent 1px, transparent 5px);
+    background-repeat: repeat;
+    background-size: 5px 5px;
+    background-position: 7px 6px;
+    border-radius: 50px;
+  }
+
+  .c-ckolor__alpha {
+    position: relative;
+    width: 100%;
+    height: 2px;
+    border-radius: 50px;
+    cursor: pointer;
+  }
+
+  .c-ckolor__saturation {
+    position: relative;
+    width: 100%;
+    height: 21px;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07), 0 1px 0 1px rgba(0, 0, 0, 0.07);
+  }
+
+  .c-ckolor__saturation:hover .c-ckolor__saturation-handle,
+  .c-ckolor__alpha:hover .c-ckolor__alpha-handle {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: inset 0 0 0 1px #fff, inset 0 2px 14px rgba(0, 0, 0, 0.16), 0 1px 3px rgba(0, 0, 0, 0.25), 0 7px 14px rgba(0, 0, 0, 0.2);
+  }
+
+  .c-ckolor__saturation-handle,
+  .c-ckolor__alpha-handle {
+    pointer-events: none;
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    top: 3px;
+    left: 50%;
+    margin-left: -7px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.79), inset 0 2px 14px rgba(0, 0, 0, 0.22), 0 1px 3px rgba(0, 0, 0, 0.14);
+    transition: transform .2s, background .2s, box-shadow .2s;
+    cursor: pointer;
+    transform: scale(1);
+  }
+
+  .c-ckolor__swatch {
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: 2px;
+  }
+
+  .c-ckolor__wheel-scoop {
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: red;
+    margin: -11px 0px 0px -11px;
+    box-shadow: 0px 0px 0px 2px #fff;
+    transition: transform .2s;
+  }
+
+  .c-ckolor__wheel {
+    overflow: hidden;
+    position: absolute;
+    border-radius: 50%;
+    width: 0px;
+    height: 0px;
+    padding: 50%;
+    position: relative;
+    margin-bottom: 28px;
+    cursor: pointer;
+    background: #fff;
+    border-radius: 50%;
+    z-index: 0;
+  }
+
+  .c-ckolor__wheel,
+  .c-ckolor__wheel * {
+    user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+  }
+
+  .c-ckolor__wheel-color {
+    display: block;
+  }
+
+  .c-ckolor__wheel-color:nth-child(1) {
+    transform: rotate(10deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(2) {
+    transform: rotate(20deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(3) {
+    transform: rotate(30deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(4) {
+    transform: rotate(40deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(5) {
+    transform: rotate(50deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(6) {
+    transform: rotate(60deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(7) {
+    transform: rotate(70deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(8) {
+    transform: rotate(80deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(9) {
+    transform: rotate(90deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(10) {
+    transform: rotate(100deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(11) {
+    transform: rotate(110deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(12) {
+    transform: rotate(120deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(13) {
+    transform: rotate(130deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(14) {
+    transform: rotate(140deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(15) {
+    transform: rotate(150deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(16) {
+    transform: rotate(160deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(17) {
+    transform: rotate(170deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(18) {
+    transform: rotate(180deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(19) {
+    transform: rotate(190deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(20) {
+    transform: rotate(200deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(21) {
+    transform: rotate(210deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(22) {
+    transform: rotate(220deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(23) {
+    transform: rotate(230deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(24) {
+    transform: rotate(240deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(25) {
+    transform: rotate(250deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(26) {
+    transform: rotate(260deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(27) {
+    transform: rotate(270deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(28) {
+    transform: rotate(280deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(29) {
+    transform: rotate(290deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(30) {
+    transform: rotate(300deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(31) {
+    transform: rotate(310deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(32) {
+    transform: rotate(320deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(33) {
+    transform: rotate(330deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(34) {
+    transform: rotate(340deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(35) {
+    transform: rotate(350deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(36) {
+    transform: rotate(360deg);
+  }
+
+  .c-ckolor__wheel-color:nth-child(37) {
+    transform: rotate(370deg);
+  }
+
+  .c-ckolor__wheel-color,
+  .c-ckolor__wheel-color-inner1,
+  .c-ckolor__wheel-color-inner2,
+  .c-ckolor__wheel-color-inner2-2,
+  .c-ckolor__wheel-value {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .c-ckolor__wheel-colors {
+    width: 120%;
+    height: 120%;
+    margin-left: -10%;
+    margin-top: -10%;
+    position: relative;
+    filter: blur(14px);
+    background: #000;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+  }
+
+  .c-ckolor__wheel-color-inner1 {
+    transform: rotate(60deg) translate(50%, 50%);
+  }
+
+  .c-ckolor__wheel-color-inner2 {
+    transform: rotate(-79deg) translate(49%, 26%);
+    transform-origin: 0%;
+    background-image: linear-gradient(177deg, transparent 30%, rgba(0, 0, 0, 0.35) 38%, rgba(0, 0, 0, 0.5) 42%, rgba(0, 0, 0, 0.9) 55%), linear-gradient(177deg, rgba(255, 255, 255, 0.9) 13%, rgba(255, 255, 255, 0) 30%);
+  }
+
+  .c-ckolor__wheel-value {
+    box-shadow: inset 0px 0px 3px rgba(255, 255, 255, 0.53), inset 0px 0px 5px 1px rgba(0, 0, 0, 0.12), inset 0px 0px 0px 1px rgba(0, 0, 0, 0.38), 0px 0px 0px 1px #000;
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 18%), radial-gradient(ellipse at center, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 11%), radial-gradient(ellipse at center, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 6%), radial-gradient(ellipse at center, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 3%);
+    pointer-events: all;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  .c-ckolor__wheel-value:hover .c-ckolor__wheel-scoop {
+    transform: scale(1.1);
+  }
+
+  .inTable {
+    display: inline-table;
+    margin: 2px !important;
+  }
+
+  .color-picker-container {
+    width: 200px;
+    position: relative;
+  }
+
+  .button {
+    color: rgba(100, 100, 100, 0.6);
+  }
+
+  .activeButton {
+    color: white;
+  }
+
+  .clear-button {
+    font-size: 60%;
+    float: left;
+    margin-left: 10px;
+  }
+
+  .clear-button:hover {
+    color: #aaa;
+  }
+
+  .align-buttons {
+    font-size: 60%;
+    float: right;
+    margin-right: 10px;
+  }
+
+  .color-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    /* Or do it all in one line with flex flow */
+    flex-flow: row wrap;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .color-picker {
+    font-size: 80%;
+    color: gray;
+  }
+
+  .mode {
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    color: gray;
+    font-size: 80%;
+  }
+
+  .mode_active {
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    color: rgb(52, 112, 110);
+    font-weight: bold;
+  }
+
+  .color-swatch {
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    height: 20px;
+    margin: 3px;
+    width: 20px;
+    margin: 0, 5px;
+    background-color: black;
+  }
+
+  .color-swatch:hover {
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    border-style: solid;
+    border-color: white;
+    padding: 1px;
+    border-width: 2px;
+  }
+
+  .color-panel {
+    padding: 1em;
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    border-radius: 10px;
+    background-color: #31343f;
+    padding: 10px;
+    left: -4002px;
+    top: -5000px;
+    width: 140px;
+    z-index: 9999999;
+    position: relative;
+    opacity: 0;
+    -webkit-transition-property: -webkit-transform, opacity;
+    -moz-transition-property: -moz-transform, opacity;
+    transition-property: transform, opacity;
+    -webkit-transition-duration: 0.075s;
+    -moz-transition-duration: 0.075s;
+    transition-duration: 0.075s;
+    -webkit-transition-timing-function: ease-out;
+    -moz-transition-timing-function: ease-out;
+    transition-timing-function: ease-out;
+    text-align: center;
+    /*-webkit-transform: translate3d(0, 10px, 0);
+  -moz-transform: translate3d(0, 10px, 0);
+  -ms-transform: translate3d(0, 10px, 0);
+  -o-transform: translate3d(0, 10px, 0);
+  transform: translate3d(0, 10px, 0); }*/
+  }
+
+  .color-panel-wide {
+    width: 200px !important;
+  }
+
+  .color-panel--show {
+    opacity: 1;
+    z-index: 9999999;
+    left: 135px;
+    top: 0px;
+    /*-webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  -ms-transform: translate3d(0, 0, 0);
+  -o-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0); */
+  }
+
+  .angular-meditor {
+    position: relative;
+  }
+
+  .angular-meditor-toolbar {
+    position: absolute;
+    z-index: -1;
+    display: block;
+    background-color: #31343F;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    height: 62px;
+    /* width: 432px; */
+    position: absolute;
+    border-radius: 5px;
+    border-color: #31343F;
+    border-style: gray;
+    color: white;
+    border-width: 2px;
+    font-size: 110%;
+    opacity: 0;
+    -webkit-transition-property: -webkit-transform, opacity;
+    -moz-transition-property: -moz-transform, opacity;
+    transition-property: transform, opacity;
+    -webkit-transition-duration: 0.075s;
+    -moz-transition-duration: 0.075s;
+    transition-duration: 0.075s;
+    -webkit-transition-timing-function: ease-out;
+    -moz-transition-timing-function: ease-out;
+    transition-timing-function: ease-out;
+    -webkit-transform: translate3d(0, 10px, 0);
+    -moz-transform: translate3d(0, 10px, 0);
+    -ms-transform: translate3d(0, 10px, 0);
+    -o-transform: translate3d(0, 10px, 0);
+    transform: translate3d(0, 10px, 0);
+  }
+
+  .angular-meditor-toolbar:after {
+    position: absolute;
+    bottom: -0.4375em;
+    left: 50%;
+    margin-left: -0.1875em;
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-width: 0.4375em 0.4375em 0;
+    border-style: solid;
+    border-color: #1d1d1d transparent transparent;
+  }
+
+  .angular-meditor-toolbar.angular-meditor-toolbar--bottom:after {
+    bottom: auto;
+    top: -0.4375em;
+    border-width: 0 0.4375em 0.4375em;
+    border-color: transparent transparent #1d1d1d;
+  }
+
+  .angular-meditor-toolbar ul {
+    overflow: hidden;
+    display: table-row;
+    list-style-type: none;
+    border-radius: 3px;
+  }
+
+  .angular-meditor-toolbar li {
+    display: table-cell;
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  .angular-meditor-toolbar button,
+  .angular-meditor-toolbar select {
+    background-color: #31343F;
+    float: left;
+    height: 2.25em;
+    margin: 0;
+    padding: 0.5em 0.75em;
+    border-width: 1px 0 0 0;
+    border-color: #2f2f2f;
+    border-style: solid;
+    box-shadow: none;
+    font-size: 1em;
+    color: #efefef;
+    -webkit-transition: all .1s;
+    -moz-transition: all .1s;
+    transition: all .1s;
+    padding-right: 30px;
+  }
+
+  .angular-meditor-toolbar button:hover,
+  .angular-meditor-toolbar select:hover {
+    cursor: pointer;
+    background-color: #151515;
+  }
+
+  .angular-meditor-toolbar .meditor-family-selector {
+    width: 7.5em;
+  }
+
+  .angular-meditor-toolbar button {
+    width: 2.5em;
+  }
+
+  .angular-meditor-toolbar .meditor-button--active {
+    background-color: #151515;
+    border-width: 0 0 1px 0;
+  }
+
+  .angular-meditor-toolbar .meditor-select {
+    position: relative;
+    overflow: hidden;
+    min-width: 3.25em;
+    margin: 0;
+    padding: 0;
+    font-size: 1em;
+  }
+
+  .angular-meditor-toolbar-png {
+    position: absolute;
+    z-index: -1;
+    margin-left: 10px;
+    display: block;
+    background-color: #31343F;
+    padding-top: 8px;
+    /* padding-bottom: 16px; */
+    height: 40px;
+    width: 80px;
+    position: absolute;
+    border-radius: 5px;
+    border-color: #31343F;
+    border-style: gray;
+    color: white;
+    border-width: 2px;
+    font-size: 110%;
+    opacity: 0;
+    -webkit-transition-property: -webkit-transform, opacity;
+    -moz-transition-property: -moz-transform, opacity;
+    transition-property: transform, opacity;
+    -webkit-transition-duration: 0.075s;
+    -moz-transition-duration: 0.075s;
+    transition-duration: 0.075s;
+    -webkit-transition-timing-function: ease-out;
+    -moz-transition-timing-function: ease-out;
+    transition-timing-function: ease-out;
+    -webkit-transform: translate3d(0, 10px, 0);
+    -moz-transform: translate3d(0, 10px, 0);
+    -ms-transform: translate3d(0, 10px, 0);
+    -o-transform: translate3d(0, 10px, 0);
+    transform: translate3d(0, 10px, 0);
+  }
+
+  .angular-meditor-toolbar-png:after {
+    position: absolute;
+    bottom: -0.4375em;
+    left: 50%;
+    margin-left: -0.1875em;
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-width: 0.4375em 0.4375em 0;
+    border-style: solid;
+    border-color: #1d1d1d transparent transparent;
+  }
+
+  .angular-meditor-toolbar-png.angular-meditor-toolbar--bottom:after {
+    bottom: auto;
+    top: -0.4375em;
+    border-width: 0 0.4375em 0.4375em;
+    border-color: transparent transparent #1d1d1d;
+  }
+
+  .angular-meditor-toolbar-png ul {
+    overflow: hidden;
+    display: table-row;
+    list-style-type: none;
+    border-radius: 3px;
+  }
+
+  .angular-meditor-toolbar-png li {
+    display: table-cell;
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  .angular-meditor-toolbar-png button,
+  .angular-meditor-toolbar-png select {
+    background-color: #31343F;
+    float: left;
+    height: 2.25em;
+    margin: 0;
+    padding: 0.5em 0.75em;
+    border-width: 1px 0 0 0;
+    border-color: #2f2f2f;
+    border-style: solid;
+    box-shadow: none;
+    font-size: 1em;
+    color: #efefef;
+    -webkit-transition: all .1s;
+    -moz-transition: all .1s;
+    transition: all .1s;
+    padding-right: 30px;
+  }
+
+  .angular-meditor-toolbar-png button:hover,
+  .angular-meditor-toolbar-png select:hover {
+    cursor: pointer;
+    background-color: #151515;
+  }
+
+  .angular-meditor-toolbar-png .meditor-family-selector {
+    width: 7.5em;
+  }
+
+  .angular-meditor-toolbar-png button {
+    width: 2.5em;
+  }
+
+  .angular-meditor-toolbar-png .meditor-button--active {
+    background-color: #151515;
+    border-width: 0 0 1px 0;
+  }
+
+  .angular-meditor-toolbar-png .meditor-select {
+    position: relative;
+    overflow: hidden;
+    min-width: 3.25em;
+    margin: 0;
+    padding: 0;
+    font-size: 1em;
+  }
+
+  .angular-meditor-toolbar-png .li-clock img.spanic {
+    width: 20px !important;
+    height: 20px !important;
+    max-width: initial;
+  }
+
+  .angular-meditor-toolbar-png div {
+    margin: inherit;
+  }
+
+  .angular-meditor-content {
+    cursor: move;
+  }
+
+  .angular-meditor-content.editable {
+    cursor: text;
+  }
+
+  .meditor-content-wrapper.meditor-content-border--show {
+    border: 1px dashed white;
+  }
+
+  .meditor-content-wrapper .handle:before {
+    position: absolute;
+    content: ' ';
+    background: #3f4652;
+    width: 10px;
+    height: 10px;
+    left: 13px;
+    top: 13px;
+    border: 2px solid #fff;
+    transition: background .15s linear;
+    box-shadow: 0 0 3px 1px rgba(0, 0, 0, .15);
+  }
+
+  .meditor-content-wrapper .handle:hover:before,
+  .meditor-content-wrapper .handle.on:before {
+    background: #00c4cc;
+  }
+
+  .meditor-content-wrapper .handle {
+    position: absolute;
+    z-index: 1001;
+    display: block;
+  }
+
+  .meditor-content-wrapper .handle.l {
+    width: 14px;
+    height: 100%;
+    top: 0;
+    border-radius: 10px 0 0 10px;
+    left: -12px;
+    margin-top: 0;
+    border-right: none;
+    cursor: ew-resize;
+  }
+
+  .meditor-content-wrapper .handle.l:before {
+    left: 4px;
+    top: 50%;
+    margin-top: -8px;
+    width: 6px;
+    border-radius: 10px 0 0 10px;
+    border-right: none;
+  }
+
+  .meditor-content-wrapper .handle.r {
+    width: 14px;
+    height: 100%;
+    top: 0;
+    border-radius: 0 10px 10px 0;
+    right: -12px;
+    margin-top: 0;
+    border-right: none;
+    cursor: ew-resize;
+  }
+
+  .meditor-content-wrapper .handle.r:before {
+    left: 2px;
+    top: 50%;
+    margin-top: -7px;
+    width: 6px;
+    border-radius: 0 10px 10px 0;
+    border-left: none;
+  }
+
+  .meditor-content-wrapper .rotate {
+    width: 16px;
+    height: 16px;
+    margin: 10px 0 0 -8px;
+    border-radius: 14px;
+
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    z-index: 1000;
+  }
+
+  .meditor-content-wrapper .rotate:before {
+    top: -10px;
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: 0;
+    height: 10px;
+    margin-left: -1px;
+    border-left: 1px dashed #3f4652;
+    background-color: #fff;
+  }
+
+  .meditor-content-wrapper .rotate:after {
+    left: 0;
+    top: 0;
+    content: '';
+    background-color: #fff;
+    background-image: url('../../img/icons/icon_rotate.svg');
+    background-size: 14px 14px;
+    background-repeat: no-repeat;
+    background-position: 1px 2px;
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 16px;
+    box-shadow: 0 0 3px 1px rgba(0, 0, 0, .15);
+  }
+
+  select {
+    padding: 4px;
+    margin: 0;
+    background: #fff;
+    color: #888;
+    border: none;
+    outline: none;
+    display: inline-block;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+  }
+  /* Targetting Webkit browsers only. FF will show the dropdown arrow with so much padding. */
+
+  @media screen and (-webkit-min-device-pixel-ratio:0) {
+    select {
+      padding-right: 50px
+    }
+  }
+
+  .angular-meditor-toolbar label {
+    position: relative
+  }
+
+  .angular-meditor-toolbar label:after {
+    content: "\f078";
+    font-family: "FontAwesome";
+    font-size: 18px;
+    color: #aaa;
+    right: 0px;
+    top: 4px;
+    padding: 0 0 2px;
+    position: absolute;
+    pointer-events: none;
+    background-color: transparent;
+  }
+
+  .angular-meditor-toolbar label:before {
+    content: '';
+    right: 4px;
+    top: 0px;
+    width: 23px;
+    height: 18px;
+    background-color: transparent;
+    position: absolute;
+    pointer-events: none;
+    display: block;
+  }
+
+  .angular-meditor-toolbar--show {
+    opacity: 1;
+    z-index: 999999;
+    -webkit-transform: translate3d(0, 0, 0);
+    -moz-transform: translate3d(0, 0, 0);
+    -ms-transform: translate3d(0, 0, 0);
+    -o-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+
+  img.spanic {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+
+  .angular-meditor-toolbar .li-clock {
+    vertical-align: middle;
+    padding: 0 10px !important;
+  }
+
+  .angular-meditor-toolbar .li-clock img.spanic {
+    width: 20px !important;
+    height: 20px !important;
+    max-width: initial;
+  }
+
+  .timer-popup {
+    background-color: #31343F;
+  }
+
+  .timer-container h4 {
+    color: white;
+  }
+
+  .timer-container {
+    width: 250px;
+    font-size: x-small;
+    color: lightgray;
+    padding: 0px 10px 0px 10px;
+  }
+
+  .timer-to {
+    margin-top: 20px;
+  }
+
+  .timer-input {
+    line-height: 12px !important;
+    padding: 5px;
+  }
+</style>

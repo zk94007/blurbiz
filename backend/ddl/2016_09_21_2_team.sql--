@@ -1,0 +1,29 @@
+CREATE SEQUENCE team_id_seq
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+ALTER TABLE team_id_seq
+  OWNER TO postgres;
+  
+CREATE TABLE public.team
+(
+  id integer NOT NULL DEFAULT nextval('team_id_seq'::regclass),
+  name character varying(255) NOT NULL,
+  monthly_plan integer, 
+  snapchat boolean DEFAULT true,
+  facebook boolean DEFAULT true,
+  twitter boolean DEFAULT true,
+  instagram boolean DEFAULT true,
+  pinterest boolean DEFAULT true,
+  CONSTRAINT team_pkey PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE team
+  OWNER TO postgres;
+
+INSERT INTO public."team" (name, monthly_plan, snapchat, facebook, twitter, instagram, pinterest) VALUES ('Blurbiz', 3, false, true, true, true, true);
+INSERT INTO public."team" (name, monthly_plan, snapchat, facebook, twitter, instagram, pinterest) VALUES ('Cocoa', 2, false, true, false, true, true);

@@ -1,0 +1,197 @@
+<div class="profile-setting">
+    <uib-tabset>
+        <uib-tab  ui-sref="myaccount" ui-sref-active="active" active="false" heading="My account"></uib-tab>
+        <uib-tab ui-sref="integrations" ui-sref-active="active" active="false" heading="Integrations"></uib-tab>
+        <uib-tab ui-sref="plans" ui-sref-active="active" active="false" heading="Plans"></uib-tab>
+        <uib-tab ui-sref="billing" ui-sref-active="active" heading="Billing"></uib-tab>
+    </uib-tabset>
+    <div class="uib-tab-content">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="billing-box">
+                <div class="billing-box-heading">Plan Details</div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3 col-md-3 pr-0">
+                        <div class="billing-lftbox">
+                            <h4>{{ userSubscriptionPlan.plan_name }}</h4>
+                            <p ng-show="userSubscriptionPlan.plan_id!=1">You are currently subscribed to the <b>{{ userSubscriptionPlan.plan_name }}</b> plan with <b>Monthly Billing.</b></p>
+                            <p ng-show="userSubscriptionPlan.plan_id==1">You are currently subscribed to the <b>{{ userSubscriptionPlan.plan_name }}</b> plan for <b>{{ userSubscriptionPlan.number_of_days_free_trial }} Days.</b></p>
+                            <button type="button" class="btn custo" ng-click="gotoplans()">Customize Plan</button>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-9 col-md-9 pl-0">
+                        <div class="billing-rgtbox">
+                            <div class="billing-rgtbox-head">Details</div>
+                            <div class="billing-rgtbox-content">
+                                <div class="billing-leftcontent">Projects Per Month</div>
+                                <div class="billing-rgtcontent">{{ userSubscriptionPlan.number_of_projects }}</div>
+                            </div>
+                             <div class="billing-rgtbox-content">
+                                <div class="billing-leftcontent">Time Limit Per Video</div>
+                                <div class="billing-rgtcontent"><span>Seconds</span> {{ userSubscriptionPlan.time_limit_per_video_in_seconds }}</div>
+                            </div>                            
+                            <div class="billing-rgtbox-content">
+                                <div class="billing-leftcontent">Number Of User</div>
+                                <div class="billing-rgtcontent">{{ userSubscriptionPlan.number_of_user }}</div>
+                            </div>
+                            <div class="billing-rgtbox-content" ng-show="userSubscriptionPlan.number_of_days_free_trial !=0">
+                                <div class="billing-leftcontent">Number Of Free Trial</div>
+                                <div class="billing-rgtcontent">{{ userSubscriptionPlan.number_of_days_free_trial }}</div>
+                            </div>  
+                        </div>
+                        <div class="billing-rgtbox-btmprice">
+                            <div class="billing-rgtbox-rgtprice"> Price Per Month/ <span>{{ userSubscriptionPlan.plan_price | currency }}</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="billing-box">
+                <div class="billing-box-heading">Payment Method</div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="payment-method">
+                            <div class="payment-method-lft" ng-hide="userPaymentMethod.creditcard_number"><b>Payment method not added yet.</b></div>
+                            <div class="payment-method-lft" ng-show="userPaymentMethod.creditcard_number"><b>{{userPaymentMethod.card_type | uppercase}}</b> ending in <b>{{userPaymentMethod.creditcard_number}}</b></div>
+                            <div class="payment-method-rgt" ng-show="userPaymentMethod.creditcard_number" ng-click="updatePaymentMethod(userPaymentMethod)">Update Payment Method</div>
+                        </div>                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style type="text/css">    
+/*Billing Detail*/
+
+.billing-box {
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    margin-bottom: 30px;
+}
+
+.billing-lftbox p b{
+    color: #000;
+    font-weight: normal;
+}
+
+.billing-box-heading {
+    border-bottom: 1px solid #ddd;
+    font-size: 18px;
+    padding: 15px 20px;
+}
+
+.billing-lftbox {
+    border-right: 1px solid #ddd;
+    min-height: 347px;
+    padding: 30px 0;
+    text-align: center;
+}
+
+.billing-lftbox p {
+    color: #bac2cf;
+    font-size: 16px;
+}
+
+.billing-lftbox h4 {
+    color: #b2bac9;
+    font-size: 22px;
+    margin: 0 0 80px;
+}
+
+.billing-lftbox .btn.custo {
+    background: #50e3c2 none repeat scroll 0 0;
+    color: #fff;
+    font-size: 16px;
+    padding: 12px 24px;
+    margin-top: 30px;
+}
+
+.billing-rgtbox {
+    display: inline-block;
+    min-height: 270px;
+    width: 100%;
+}
+
+.pl-0{
+    padding-left: 0;
+}
+
+.pr-0{
+    padding-right: 0;
+}
+
+.billing-lftbox {
+    border-right: 1px solid #ddd;
+    padding: 30px 0;
+    text-align: center;
+}
+
+.billing-rgtbox-head {
+    border-bottom: 1px solid #ddd;
+    font-size: 16px;
+    padding: 10px 20px;
+}
+
+.billing-rgtbox-content {
+    display: inline-block;
+    width: 100%;
+}
+
+.billing-leftcontent {
+    float: left;
+}
+
+.billing-rgtcontent {
+    color: #ccc;
+    float: right;
+}
+
+.billing-rgtcontent span{
+    color: #000;
+    padding-right: 16px;
+}
+
+.billing-rgtbox-content {
+    border-bottom: 1px solid #ddd;
+    display: inline-block;
+    padding: 14px 20px;
+    width: 100%;
+}
+
+.billing-rgtbox-btmprice {
+    display: inline-block;
+    padding: 20px;
+    width: 100%;
+}
+
+.billing-rgtbox-rgtprice {
+    float: right;
+    font-size: 18px;
+    color: #cccccc;
+}
+
+.billing-rgtbox-rgtprice span{
+    color: #65a8e7;
+    padding-left: 30px;
+}
+
+.payment-method {
+    display: inline-block;
+    width: 100%;
+}
+
+.payment-method-lft {
+    float: left;
+}
+
+.payment-method-rgt {
+    float: right;
+    color: #24b696;
+}
+
+.payment-method {
+    display: inline-block;
+    padding: 16px 20px;
+    width: 100%;
+}
+</style>

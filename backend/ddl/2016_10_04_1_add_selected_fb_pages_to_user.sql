@@ -1,0 +1,1 @@
+ALTER TABLE public.user ADD COLUMN selected_fb_pages character varying;

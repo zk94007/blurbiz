@@ -1,0 +1,1 @@
+ALTER TABLE public.media_file ADD COLUMN deleted integer NOT NULL DEFAULT 0;

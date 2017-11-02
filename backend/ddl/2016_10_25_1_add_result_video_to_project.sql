@@ -1,0 +1,1 @@
+ALTER TABLE public.project ADD COLUMN result_video character varying;

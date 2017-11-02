@@ -1,0 +1,1 @@
+ALTER TABLE public.task ADD COLUMN social_notes character varying;

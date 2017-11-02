@@ -1,0 +1,368 @@
+<style>
+.dashboard-container select {
+	height: 30px;
+	-webkit-appearance: menulist-button;
+}
+.dashboard-container button.btn {
+    height: 30px;
+    font-size: small;
+}
+.button-row {
+	padding: 10px;
+	border-bottom: 1px solid #909091;
+}
+.button-row button {
+	margin-left: 10px;
+	float: right;
+}
+
+.team-wrapper {
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+.team-name {
+	float: left;
+	min-width: 100px;
+	font-weight: bold;
+}
+.team-user-count {
+	float: left;
+	min-width: 150px;
+}
+
+.team-body {
+	border-radius: 4px;
+	border: 1px solid #909091;
+}
+
+.team-body > div {
+	padding: 5px 10px;
+}
+
+.team-body > .team-member-row {
+	border-bottom: 1px solid #909091;
+}
+
+.team-member-row.row > div {
+	margin-bottom: initial;
+}
+
+.personal-info {
+	display: table;
+	height: 30px;
+}
+
+.personal-info > * {
+	margin-right: 15px;
+    vertical-align: middle;
+    display: table-cell;
+}
+
+.personal-info .member-name {
+	width: 110px;
+}
+
+.personal-info .member-email {
+	width: 200px;
+}
+
+.personal-info .member-created-at {
+	width: 150px;
+}
+
+.personal-info .member-last-seen {
+	/* width: 150px;*/
+}
+
+.social-network-item {
+    float: left;
+}
+
+.social-network-item > img.icon {
+	height: 25px;
+}
+
+.social-network-item > .btn {
+	padding: 6px;
+}
+
+.label-for-facebook {
+	color: #3b5998;
+}
+.label-for-twitter {
+	color: #55acee;	
+}
+.label-for-snapchat {
+	color: #ffe400;
+}
+.label-for-pinterest {
+	color: #ce333b;
+}
+.label-for-instagram {
+	color: #c21975;
+}
+.plan-label{
+	line-height: 35px;
+}
+.plan-name-label{
+	font-size: 16px;
+	font-weight: bold;
+	text-align: center;
+}
+
+.admin-pricing-tiles .panel.panel-default {
+    display: inline-block;
+    min-height: 375px;
+    width: 100%;
+}
+
+.admin-pricing-tiles  .panel-heading{
+	display: inline-block;
+	width: 100%;
+}
+
+.admin-pricing-tiles .panel-body {
+    display: inline-block;
+    min-height: 270px;
+    padding: 0;
+    width: 100%;
+}
+
+.admin-pricing-tiles .panel-body span:first-child{
+	font-weight: 600;
+	color: #606060;
+}
+
+
+.admin-pricing-tiles .panel-footer {
+	background: #fff none repeat scroll 0 0;
+	display: inline-block;
+	padding: 0;
+	width: 100%;
+	border: none;
+}
+.admin-pricing-tiles .plan-label {
+    display: inline-block;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    padding: 10px 20px;
+}
+
+.admin-pricing-tiles .panel-footer .plan-label {
+	border: none;
+}
+
+.admn-prig-edit-icon {
+    display: inline-block;
+    padding: 0 0 0 10px;
+}
+
+.admn-prig-edit-icon a{
+    color: #6a6a6a;
+}
+
+.admin-pricing-tiles .panel-footer .plan-label .admin-foot-price-text{
+   color: #b0b0b0;
+   font-size: 16px;
+}
+
+
+.admin-pricing-tiles .panel-footer .plan-label .admin-footprice{
+   color: #51a0e5;
+   font-size: 16px;
+}
+.plan-label .pull-left {
+    font-size: 12px !important;
+}
+</style>
+<flash-message></flash-message>
+<div ng-cloak>
+  <md-content>
+    <md-tabs md-dynamic-height md-border-bottom>
+      <md-tab label="User Control">
+        <md-content class="md-padding">
+	        <!-- User Controll Content Start Here-->
+	        <div class="dashboard-container">
+				<div class="button-row clearfix">
+					<button class="btn btn-success" ng-click="openNewUserModal()">Create New User</button>
+					<!-- <button class="btn btn-default">Add New User</button> -->
+					<button class="btn btn-default" ng-click="openInviteUserModal()">Invite User</button>
+				</div>				
+				<div class="teams-area">
+					<div class="team-wrapper" ng-repeat="team in teams">
+						<div class="team-header clearfix">
+							<div class="pull-left">
+								<div class="team-name">{{ team.name }}</div>
+								<div class="team-user-count">{{ team.members.length }} Team Member{{ team.members.length > 1 ? 's' : '' }}</div>
+								<a class="btn-link" ng-click="onPermanentlyDeleteAccount(team.id)">Permanently Delete Account</a>
+							</div>
+							<div class="pull-right">
+								Monthly Plan <select name="plan" ng-model="team.plan_selection" ng-change="planUpdate(team.id, team.plan_selection)">
+							                    <option value="1" ng-selected="team.plan_selection == 1">Free</option>
+							                    <option value="2" ng-selected="team.plan_selection == 2">Free 14 Day Trial</option>
+							                    <option value="3" ng-selected="team.plan_selection == 3">Pro Plan</option>
+							                    <option value="4" ng-selected="team.plan_selection == 4">Plus Plan</option>
+							                    <option value="5" ng-selected="team.plan_selection == 5">Power Plan</option>
+							                </select>
+							</div>
+						</div>
+						<div class="team-body">
+							<div class="team-member-row clearfix" ng-repeat="member in team.members">
+								<div class="personal-info pull-left small">
+									<img ng-src="{{ member.photo }}" err-src="img/avatar.jpg" class="photo-icon img-circle">
+									<div class="member-name">{{ member.name }}</div>
+									<div class="member-email">{{ member.email | limitLength:true:25:'...' }}</div>
+									<div class="member-created-at"><b>Created:</b> {{ ago(member.created_at) }}</div>
+									<div class="member-last-seen"><b>Last Logged In:</b> {{ ago(member.last_seen) }}</div>
+								</div>
+								<div class="personal-action-settings pull-right small">
+									<button class="btn btn-default" ng-click="">CRM</button>
+									<button class="btn btn-success" ng-click="">MixPanel</button>
+									<select ng-options="option.value as option.label for option in is_enabled_options" ng-model="member.is_enabled" ng-change="updateUserEnableInfo(member)"></select>
+								</div>
+							</div>
+							<div class="team-member-row clearfix">
+								<div class="personal-info pull-left small">
+									<span>Access to Social Media Channels</span>
+								</div>
+								<div class="pull-right">
+									<div class="social-network-item" ng-repeat="item in team.social_items">
+										<img class="icon" ng-src="img/{{ item.name }}.png" err-src="img/empty.png">
+										<label ng-click="setConnectionInTeam(team.id, item.name, true)" ng-if="!item.status" class="btn label-for-{{ item.name }}">
+							                <span class="glyphicon glyphicon-plus"> </span>
+							            </label>
+							            <label ng-click="setConnectionInTeam(team.id, item.name, false)" ng-if="item.status" class="btn label-for-{{ item.name }}">
+							                <span class="glyphicon glyphicon-ok"> </span>
+							            </label>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+        	<!-- User controll  Content End Here-->
+        </md-content>
+      </md-tab>
+      <md-tab label="Pricing">
+        <md-content class="md-padding admin-pricing-tiles">          
+          	<div class="plan-area">
+				<div class="col-md-3" ng-repeat="subscriptionPlan in subscriptionPlans | orderBy:'id'">
+				    <div class="panel panel-default">
+				        <div class="panel-heading">
+				        	<div class="plan-name-label">{{ subscriptionPlan.plan_name }}</div>
+				        </div>
+				        <div class="panel-body">
+				        	<div class="plan-label">
+				        		<span class="pull-left">Number Of Projects</span>
+				        		<span class="pull-right">{{ subscriptionPlan.number_of_projects }} 
+				        			<span ng-click="editPlan({id:subscriptionPlan.id, field_name:'number_of_projects', field_value: subscriptionPlan.number_of_projects})" class="admn-prig-edit-icon"><a href="javascript:void(0);"><i class="fa fa-pencil"></i></a></span>
+				        		</span>
+				        	</div>
+				        	<div class="plan-label">
+				        		<span class="pull-left">Time limit per video</span>
+				        		<span class="pull-right">{{ subscriptionPlan.time_limit_per_video_in_seconds }}
+				        			<span ng-click="editPlan({id:subscriptionPlan.id, field_name:'time_limit_per_video_in_seconds', field_value: subscriptionPlan.time_limit_per_video_in_seconds})" class="admn-prig-edit-icon"><a href="javascript:void(0);"><i class="fa fa-pencil"></i></a></span>
+				        		</span>
+				        	</div>
+				        	<div class="plan-label" ng-show="subscriptionPlan.number_of_days_free_trial != ''">
+				        		<span class="pull-left">Number of days free trial</span>
+				        		<span class="pull-right">{{ subscriptionPlan.number_of_days_free_trial }}
+				        			<span ng-click="editPlan({id:subscriptionPlan.id, field_name:'number_of_days_free_trial', field_value: subscriptionPlan.number_of_days_free_trial})" class="admn-prig-edit-icon"><a href="javascript:void(0);"><i class="fa fa-pencil"></i></a></span>
+				        		</span>
+				        	</div>
+				        	<div class="plan-label">
+				        		<span class="pull-left">Number of user</span>
+				        		<span class="pull-right">{{ subscriptionPlan.number_of_user }}
+				        			<span ng-click="editPlan({id:subscriptionPlan.id, field_name:'number_of_user', field_value: subscriptionPlan.number_of_user})" class="admn-prig-edit-icon"><a href="javascript:void(0);"><i class="fa fa-pencil"></i></a></span>
+				        		</span>
+				        	</div>
+				        </div>
+				        <div class="panel-footer" ng-show="subscriptionPlan.plan_price != 0.00">
+				        	<div class="plan-label">
+				        		<span class="admin-foot-price-text">Price Per Month/</span>
+				        		<span class="pull-right admin-footprice">{{ subscriptionPlan.plan_price | currency }}
+				        			<span ng-click="editPlan({id:subscriptionPlan.id, field_name:'plan_price', field_value: subscriptionPlan.plan_price})" class="admn-prig-edit-icon"><a href="javascript:void(0);"><i class="fa fa-pencil"></i></a></span>
+				        		</span>
+
+				        	</div>
+				        </div>
+				    </div>						
+				</div>
+		  	</div>
+        </md-content>
+	  </md-tab>
+	  <md-tab label="Email">
+			<md-content class="md-padding">
+					<!-- User Controll Content Start Here-->
+					<div class="dashboard-container">
+						<!-- <div class="button-row clearfix">
+							<button class="btn btn-success" ng-click="openNewUserModal()">Create New Email Template</button>
+							
+						</div>	 -->
+					</div>
+				</md-content>
+			<md-content class="md-padding admin-pricing-tiles">          
+				  <div class="plan-area">
+					<div class="col-md-3" ng-repeat="subscriptionPlan in subscriptionPlans | orderBy:'id'">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<div class="plan-name-label">{{ subscriptionPlan.plan_name }}</div>
+							</div>
+							<div class="panel-body">
+								<div class="plan-label">
+									<span class="pull-left">Number Of Projects</span>
+									<span class="pull-right">{{ subscriptionPlan.number_of_projects }} 
+										<span ng-click="editPlan({id:subscriptionPlan.id, field_name:'number_of_projects', field_value: subscriptionPlan.number_of_projects})" class="admn-prig-edit-icon"><a href="javascript:void(0);"><i class="fa fa-pencil"></i></a></span>
+									</span>
+								</div>
+								<div class="plan-label">
+									<span class="pull-left">Time limit per video</span>
+									<span class="pull-right">{{ subscriptionPlan.time_limit_per_video_in_seconds }}
+										<span ng-click="editPlan({id:subscriptionPlan.id, field_name:'time_limit_per_video_in_seconds', field_value: subscriptionPlan.time_limit_per_video_in_seconds})" class="admn-prig-edit-icon"><a href="javascript:void(0);"><i class="fa fa-pencil"></i></a></span>
+									</span>
+								</div>
+								<div class="plan-label" ng-show="subscriptionPlan.number_of_days_free_trial != ''">
+									<span class="pull-left">Number of days free trial</span>
+									<span class="pull-right">{{ subscriptionPlan.number_of_days_free_trial }}
+										<span ng-click="editPlan({id:subscriptionPlan.id, field_name:'number_of_days_free_trial', field_value: subscriptionPlan.number_of_days_free_trial})" class="admn-prig-edit-icon"><a href="javascript:void(0);"><i class="fa fa-pencil"></i></a></span>
+									</span>
+								</div>
+								<div class="plan-label">
+									<span class="pull-left">Number of user</span>
+									<span class="pull-right">{{ subscriptionPlan.number_of_user }}
+										<span ng-click="editPlan({id:subscriptionPlan.id, field_name:'number_of_user', field_value: subscriptionPlan.number_of_user})" class="admn-prig-edit-icon"><a href="javascript:void(0);"><i class="fa fa-pencil"></i></a></span>
+									</span>
+								</div>
+							</div>
+							<div class="panel-footer" ng-show="subscriptionPlan.plan_price != 0.00">
+								<div class="plan-label">
+									<span class="admin-foot-price-text">Price Per Month/</span>
+									<span class="pull-right admin-footprice">{{ subscriptionPlan.plan_price | currency }}
+										<span ng-click="editPlan({id:subscriptionPlan.id, field_name:'plan_price', field_value: subscriptionPlan.plan_price})" class="admn-prig-edit-icon"><a href="javascript:void(0);"><i class="fa fa-pencil"></i></a></span>
+									</span>
+	
+								</div>
+							</div>
+						</div>						
+					</div>
+				  </div>
+			</md-content>
+		  </md-tab>       
+    </md-tabs>
+  </md-content>
+  	<script type="text/ng-template" id="updatePlanModal.html">
+        <div class="modal-body">
+            <span class="btn-close" ng-click="cancel()"></span>
+            <h3 class="modal-title" id="modal-title">Update Plan Detail</h3>
+            <label>{{plan_field_name}}</label>
+            <input type="text" class="form-control" placeholder="value" required ng-model="field_value" ng-enter="ok()" />
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-custom btn-green btn-md" type="button" ng-click="ok()">Update</button>
+        </div>
+    </script>
+</div>

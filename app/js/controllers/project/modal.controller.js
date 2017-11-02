@@ -5,14 +5,18 @@
         .module('Blurbiz.project')
         .controller('Project.CreateModalController', Controller);
 
-    function Controller($scope, $uibModalInstance, $state, LocalStorageService, socket) {
-
+    function Controller($scope, $uibModalInstance, $state, LocalStorageService, socket, FlashService) {
+        $scope.perror = '';        
         $scope.ok = function() {
-            socket.emit('create_project', {
-                'project_name': $scope.project_name,
-                'token': LocalStorageService.getToken()
-            });
-            $uibModalInstance.close();
+            if($scope.project_name && $scope.project_name.trim()!=''){
+              socket.emit('create_project', {
+                  'project_name': $scope.project_name,
+                  'token': LocalStorageService.getToken()
+              });
+              $uibModalInstance.close();
+            }else{
+                $scope.perror = 'Please enter project name.';
+            }
         };
 
         socket.on('create_project_response', function(msg) {

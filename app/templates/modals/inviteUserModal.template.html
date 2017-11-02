@@ -1,0 +1,19 @@
+<div class="modal-body">
+    <div ng-cloak>
+      <div id="user-modal-cont" class="form-group">
+        <h3>Invite New User to an Existing Company</h2>
+        
+          <div id="user-modal-err" ng-if="error">{{error}}</div>
+          <select chosen
+                  placeholder-text-single="Select existing company name"
+                  ng-model="newUser.company"
+                  ng-disabled="newUser.newCompany"
+                  ng-options="item.name as item.name for item in companyList">
+          </select>
+          <input type="text" class="form-control" placeholder="User Email" ng-model="newUser.email" >
+          
+          <button class="btn btn-success" ng-click="sendInvite()">Invite User</button>
+          <div id="user-modal-note">By clicking "Invite User" you will send out an email to the new user to create an account and join company</div>
+        </div>
+    </div>
+</div>

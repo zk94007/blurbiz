@@ -1,0 +1,184 @@
+.project_detail{
+    background-color:#2c3b4d; 
+    color:lightgray ; 
+}
+.cursor-pointer{
+    cursor: pointer;
+}
+.project_detail .link a{
+    color:lightgray ; 
+    cursor: pointer;
+}
+
+.project_detail .link a:focus, .project_detail .link a:hover {
+    color:white ; 
+    background-color: transparent !important;
+    text-decoration: none;
+}
+
+.project_detail .reposition_icon{
+    width: 16px; 
+    height: 16px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+.project_detail .zoom{
+    padding: 0px 8px;
+    cursor: pointer;
+}
+.project_detail .img-wrapper img{
+    /* width: 100%; */
+    /* height: 300px; */
+    margin: 0px;
+}
+.project_detail md-content{
+    background-color:#2c3b4d; 
+    color:lightgray ; 
+}
+
+.project_detail .md-tab{
+    color:rgb(211, 211, 211)!important;
+    border-right: 1px #000 solid !important;
+    border-bottom: 1px #000 solid !important;
+    padding-bottom: 10px;
+    text-transform: none;
+}
+.project_detail .md-active{
+    color:rgb(211, 211, 211)!important;
+    background-color:#2c3b4d;   
+    border-bottom: 1px #2c3b4d solid !important;    
+}
+.project_detail md-tabs-canvas {
+    background-color:#1f2c3c;
+    border-top: 1px #000 solid;
+}
+
+.project_detail md-ink-bar {
+    color: #50e3c2 !important;
+    background: #50e3c2 !important;
+    top: 0;
+    margin-right: 1px;
+    margin-left: 1px;
+}
+.project_detail .time-spent{
+    position: absolute;
+    bottom: 10px;
+    right: 30px;
+}
+.project_detail .views{
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    z-index: 1;
+}
+.project_detail .views span{
+    cursor: pointer;
+}
+.project_detail .view_sm{
+    border: 1px #000 solid;
+    border-radius: 4px;
+    padding: 10px 3px;
+    font-size: smaller;
+}
+.project_detail .view_lg{
+    border: 1px #000 solid;
+    border-radius: 4px;
+    padding: 10px 15px;
+    font-size: smaller;
+    margin-right: 30px;
+}
+.project_detail .arrow_up{
+    -ms-transform: rotate(90deg); /* IE 9 */
+    -webkit-transform: rotate(90deg); /* Chrome, Safari, Opera */
+    transform: rotate(90deg);
+}
+.project_detail .arrow_down{
+    -ms-transform: rotate(-90deg); /* IE 9 */
+    -webkit-transform: rotate(-90deg); /* Chrome, Safari, Opera */
+    transform: rotate(-90deg);
+}
+.project_detail .arrow_right{
+    -ms-transform: rotate(180deg); /* IE 9 */
+    -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+    transform: rotate(180deg);
+}
+.project_detail .normal_icon{
+    font-size: 45px;
+    padding: 7px;
+    color: #fff;
+}
+.project_detail .animation_div div{
+    border: 1px gray solid;
+    border-radius: 4px;
+    padding: 70px 10px;
+    width: 145px;
+    margin: 10px;
+    cursor: pointer;
+    color:#fff;
+}
+.project_detail .animation_div li:hover div,
+.project_detail .animation_div li.active div,
+.project_detail .animation_div li:focus div{
+    background-color: #4ddaba;
+    border: 1px transparent solid !important;
+}
+.project_detail .animation_div li:focus , .project_detail .editCanvas_tab  .editCanvas_div li:focus{
+    outline:none;
+}
+.project_detail .editCanvas_tab .editCanvas_div{
+    padding: 10px 0px 0px 30px;
+}
+.project_detail .editCanvas_tab  .editCanvas_div li{
+    padding:4px;
+}
+.project_detail .editCanvas_tab  .editCanvas_div img{
+    height: 230px;
+    width: 150px;
+}
+.project_detail .editCanvas_tab  .editCanvas_div .overlay{
+    background-color: rgba(211, 211, 211,0.2) !important;
+    position: absolute;
+    height: 230px;
+    width: 150px;
+    padding: 0px;
+    margin: 0px;
+    border-radius: 3px;
+}
+.project_detail .editCanvas_tab  .editCanvas_div .overlay span{
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    margin-top: 70%;
+}
+.project_detail .editCanvas_tab .text_div ,
+.project_detail .editCanvas_tab .layer_div{
+    min-width: 150px;
+    border: 1px solid #999;
+    margin: 20px;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+.project_detail .layer_div .layer_btn{
+    font-size: smaller;
+    background-color: #1f2c3c;
+    border-radius: 3px;
+    padding: 5px;
+    text-align: center;
+    cursor: pointer;
+    outline:none;
+}
+.project_detail .editCanvas_tab .layer_div div{
+    outline:none;
+    font-size: smaller;
+}
+.project_detail ._md-thumb:after, .project_detail ._md-focus-thumb{
+    background-color: #2c3b4d !important;
+    border-color: gray !important;
+}
+.project_detail ._md-track, .project_detail ._md-focus-ring{
+    background-color: #50e3c2 !important;
+}
+
+.project_detail .media-items-container {
+    margin: 20px 0px;
+}

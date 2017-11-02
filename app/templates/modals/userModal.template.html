@@ -1,0 +1,35 @@
+<style>
+  input.form-control.ui-select-search {
+    box-sizing: inherit;
+    -webkit-box-sizing: inherit;
+  }
+</style>
+<div class="modal-body">
+    <div ng-cloak>
+      <div id="user-modal-cont" class="form-group">
+        <h2>Create new user</h2>
+        
+          <div id="user-modal-err" ng-if="error">{{error}}</div>
+          <!-- <select chosen
+                  id="createUserSelect"
+                  placeholder-text-single="Company name"
+                  ng-model="newUser.company"
+                  ng-options="item.name as item.name for item in companyList">
+          </select> -->
+
+          <ui-select ng-model="newUser.company">
+            <ui-select-match placeholder="Select or search company ...">{{$select.selected}}</ui-select-match>
+            <ui-select-choices repeat="company_name in getCompaniesList($select.search) | filter: $select.search">
+              <div ng-bind="company_name"></div>
+            </ui-select-choices>
+          </ui-select>
+
+          <input type="text" class="form-control input-username" ng-change="checkCompanySt()" placeholder="Username" ng-model="newUser.name" >
+          <input type="email" class="form-control" ng-change="checkCompanySt()" placeholder="User Email" ng-model="newUser.email" >
+          <input type="password" class="form-control" ng-change="checkCompanySt()" placeholder="Create password" ng-model="newUser.password">
+          
+          <button class="btn btn-success" ng-click="create()">Create new user</button>
+          <div id="user-modal-note">By clicking "Create new user" you will send users the login unformation</div>
+        </div>
+    </div>
+</div>

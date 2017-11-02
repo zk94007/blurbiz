@@ -1,0 +1,1 @@
+ALTER TABLE public.media_file ADD COLUMN crop_ratio character varying;

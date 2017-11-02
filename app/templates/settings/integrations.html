@@ -1,0 +1,72 @@
+<div class="profile-setting">
+    <uib-tabset>
+        <uib-tab  ui-sref="myaccount" ui-sref-active="active" active="false" heading="My account"></uib-tab>
+        <uib-tab ui-sref="integrations" ui-sref-active="active" heading="Integrations"></uib-tab>
+        <uib-tab ui-sref="plans" ui-sref-active="active" heading="Plans"></uib-tab>
+        <uib-tab ui-sref="billing" ui-sref-active="active" active="false" heading="Billing"></uib-tab>
+    </uib-tabset>
+
+    <div class="uib-tab-content">
+        <div class="integration-wrapper">
+            <div class="integration-icon">
+                <img src="img/icons/dropbox.png">
+            </div>
+            <div class="integration-explanation">
+                <h5 class="integration-title">Dropbox</h5>
+                <small>You can connect Dropbox to upload your media files.</small>
+            </div>
+            <div class="integration-button">
+                <button ng-click="integrations.connectToSocial('dropbox')" ng-if="!integrations.connectionStates.dropbox" class="btn btn-green btn-custom btn-sm">Connect</button>
+                <button ng-click="integrations.disconnectFromSocial('dropbox')" ng-if="integrations.connectionStates.dropbox" class="btn btn-orange btn-custom btn-sm">Disconnect</button>
+            </div>
+        </div>
+
+        <div class="integration-wrapper">
+            <div class="integration-icon">
+                <img src="img/icons/drive.png">
+            </div>
+            <div class="integration-explanation">
+                <h5 class="integration-title">Google Drive</h5>
+                <small>You can connect Google Drive to upload your media files.</small>
+            </div>
+            <div class="integration-button">
+                <div class="integration-button-inner-wrapper">
+                    <button ng-click="integrations.connectToSocial('google_drive')" ng-if="!integrations.connectionStates.google_drive" class="btn btn-green btn-custom btn-sm">Connect</button>
+                    <button ng-click="integrations.disconnectFromSocial('google_drive')" ng-if="integrations.connectionStates.google_drive" class="btn btn-orange btn-custom btn-sm">Disconnect</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="integration-wrapper">
+            <div class="integration-icon">
+                <img src="img/icons/box.png">
+            </div>
+            <div class="integration-explanation">
+                <h5 class="integration-title">Box</h5>
+                <small>You can connect Box to upload your media files.</small>
+            </div>
+            <div class="integration-button">
+                <div class="integration-button-inner-wrapper">
+                    <button ng-click="integrations.connectToSocial('box')" ng-if="!integrations.connectionStates.box" class="btn btn-green btn-custom btn-sm">Connect</button>
+                    <button ng-click="integrations.disconnectFromSocial('box')" ng-if="integrations.connectionStates.box" class="btn btn-orange btn-custom btn-sm">Disconnect</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="integration-wrapper">
+            <div class="integration-icon">
+                <img src="img/icons/instagram.png">
+            </div>
+            <div class="integration-explanation">
+                <h5 class="integration-title">Instagram</h5>
+                <small>You can connect Instagram to upload your media files.</small>
+            </div>
+            <div class="integration-button">
+                <div class="integration-button-inner-wrapper">
+                    <button ng-click="integrations.connectToSocial('instagram2')" ng-if="!integrations.connectionStates.instagram2" class="btn btn-green btn-custom btn-sm">Connect</button>
+                    <button ng-click="integrations.disconnectFromSocial('instagram2')" ng-if="integrations.connectionStates.instagram2" class="btn btn-orange btn-custom btn-sm">Disconnect</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,1 @@
+alter table public.user ADD COLUMN is_enabled boolean DEFAULT true;

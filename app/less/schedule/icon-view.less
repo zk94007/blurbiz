@@ -1,0 +1,224 @@
+.icon-view {
+	.post-icon {
+        max-width: 100%;
+        max-height: 100%;
+        width: initial;
+        height: initial;
+        margin: 0 auto;
+        float: initial;
+    }
+
+    .icons-column {
+	    min-width: 90px;
+	    padding-left: 3px;
+	    padding-right: 3px;
+	    display: inline-block;
+	    float: left;
+	    text-align: center;
+	}
+
+	.icons-column-wrappper {
+	    border: 1px solid @color-gray-m;
+	    border-radius: 2px;
+	    padding-left: 3px;
+	    padding-right: 3px;
+
+		.icons-header {
+			color: @color-gray-dark-l;
+		    text-align: center;
+		    margin-top: 15px;
+		    margin-bottom: 15px;
+
+		    &.icons-header-today {
+	            color: @color-orange;
+	            font-weight: bold;
+	        }
+		}
+
+	    .icons-item-cont {
+		    display: block;
+		    border-color: #DDD;
+		    padding: 0 !important;
+		    border-radius: 3px;
+		    overflow: hidden;
+		    margin-bottom: 3px !important;
+
+		    .icons-detail {
+	        	text-align: left;
+	        	padding: 10px 10px 5px;
+	        	border-bottom: 1px solid @color-gray-l;
+
+	        	.description {
+	                overflow: hidden;
+				    font-size: 10px;
+				    line-height: 12px;
+				    font-weight: 300;
+				    height: 36px;
+		        }
+
+		        .title {
+	        	    font-size: 12px;
+	    			font-weight: bold;
+		        }
+	        }
+
+			.icons-img-cont {
+			    text-align: center;
+			    position: relative;
+			    padding-top: 67%;
+			    width: 100%;
+			    overflow: hidden;
+			    border-bottom: 1px solid @color-gray-l;
+
+			    .img-content-wrapper {
+		            width: 100%;
+		            height: 100%;
+		            padding-top: 67%;
+		            position: relative;
+
+		            .img-wrapper-inner {
+			            position: absolute;
+			            top: 0;
+			            left: 0;
+			            bottom: 0;
+			            right: 0;
+
+			            .horizontal-vertical-center {
+				            height: 100%;
+				        }
+			        }
+		        }
+
+			    .img-wrapper img {
+				    position: absolute;
+				    top: 50%;
+				    max-height: 100%;
+				    display: block;
+				    left: 50%;
+				    -webkit-transform: translate(-50%, -50%);
+				}
+			}
+
+			.icons-img-cont-inner {
+			    position: absolute;
+			    top: 0;
+			    left: 0;
+			    bottom: 0;
+			    right: 0;
+			}
+
+			.icons-remove-post {
+			    position: absolute;
+			    right: 4px;
+			    top: ~"calc(100% - 30px)";
+			    z-index: 2;
+			    color: @color-white;
+			    background-color: @color-dark-transparent;
+			    padding: 5px 8px;
+			    border-radius: 3px;
+			    cursor: pointer;
+			}
+
+			.time-cont {
+			    position: absolute;
+			    color: @color-white;
+			    background: @color-blue-light-h;
+			    font-size: 10px;
+			    font-weight: 300;
+			    padding: 3px;
+			    border-radius: 3px;
+			    top: 5px;
+			    left: 3px;
+			    z-index: 3;
+			    text-transform: lowercase;
+			}
+
+			.icons-description-cont {
+			    text-align: left;
+			    height: 35px;
+			    padding: 5px 10px;
+
+			    i {
+			    	font-size: 25px;
+			    	line-height: 1;
+			    	vertical-align: middle;
+			    }
+
+			    a {
+			    	display: inline-block;
+			    	width: 25px;
+			    	height: 25px;
+
+			    	img {
+			    		width: 100%;
+			    	}
+			    }
+
+			    .status-button {
+					float: right;
+					.font(normal, 11px, 20px, @color-white);
+					letter-spacing: 0.3px;
+					padding: 0 5px;
+					vertical-align: middle;
+					display: inline-block;
+					margin-top: 3px;
+					border-radius: 3px;
+
+					&.status-pub {
+						background-color: #55C089;
+					}
+
+					&.status-sch {
+						background-color: @color-yellow;
+					}
+			    }
+			}
+		}
+	}
+
+	.icons-tool-container {
+	    position: absolute;
+	    left: 0px;
+	    right: 0px;
+	    top: 0px;
+	    bottom: 0px;
+	    background-color: rgba(44, 59, 77, 0.7);
+	    z-index: 1;
+	    transition: all ease 0.5s;
+
+	    &.ng-hide {
+	    	opacity: 0;
+	    }
+
+	    .icons-tool-container-inner {
+		    height: 100%;
+
+		    .btn-green {
+		    	background-color: #55C089;
+		    }
+		}
+	}
+
+	.tool-icon {
+	    display: none;
+        margin-top: ~"calc(33% - 12px)";
+        font-size: 23px;
+        margin-left: 2px;
+        margin-right: 2px;
+        cursor: pointer;
+        color: #FFF;
+        transition: all ease 0.5s;
+
+        &:hover {
+        	color: @color-green;
+
+        	&.tool-icon-yellow {
+        		color: @color-yellow;
+        	}
+        }
+
+	    @media (max-width: 1500px) {
+	    	// display: inline-block;
+	    }
+	}
+}	

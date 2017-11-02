@@ -26,7 +26,7 @@
 		    	'name': 'Test Name',
 		    	'company': 'Test',
 		    	'email': userData,
-		    	'front_path': 'http://www.blurbiz.com/confirm/'
+		    	'front_path': config.env.frontend + '/confirm/'
 			});
         } 
 

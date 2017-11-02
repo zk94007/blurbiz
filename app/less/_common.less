@@ -1,0 +1,140 @@
+body {
+	font-family: "Helvetica Neue", sans-serif;
+}
+
+.btn-custom {
+	&.btn-white {
+		.button(@color-orange, @color-white, darken(@color-white, 10%));
+
+		&.with-border {
+			box-shadow: inset 0 0 0 1px @color-gray-m;
+			color: @color-gray-dark-h;
+		}
+	}
+
+	&.btn-green{
+		.button(@color-white, @color-green, darken(@color-green, 10%));
+	}
+
+	&.btn-grey {
+		.button(@color-white, @color-gray-dark-l, darken(@color-gray-dark-l, 10%));
+	}
+
+	&.btn-yellow{
+		.button(@color-white, @color-yellow, darken(@color-yellow, 10%));
+	}
+
+	&.btn-orange{
+		.button(@color-white, @color-orange, darken(@color-orange, 10%));
+	}
+
+	&.btn-outline {
+		.button(@color-white, transparent, rgba(255, 255, 255, 0.1));
+		 box-shadow:inset 0px 0px 0px 1px @color-white;
+	}
+
+	&.btn-sm {
+		font-size: 14px;
+		padding: 6px 25px;
+	}
+
+	&.btn-md {
+		.font(bold, 13px, 16px, @color-white);
+		padding: 11.5px 25px;
+	}
+
+	&.btn-add {
+		.font(600, 12px, 15px, @color-gray-dark-l);
+		padding: 12px;
+		box-shadow: inset 0 0 0 0.5px @color-gray-dark-l !important;
+
+		img {
+			margin-right: 7px;
+		}
+	}
+
+	&.tool-btn {
+	    width: 40%;
+	    font-size: 12px;
+	    padding: 15px 5px;
+	    display: inline-block;
+	    margin-top: ~"calc(33% - 25px)";
+	    border-radius: 4px;
+
+	    @media (max-width: 1500px) {
+	    	// display: none;
+	    	padding: 7px 0;
+	    	margin-top: ~"calc(33% - 14px)";
+	    }
+	}
+}
+
+.success-like {
+	color: @color-white;
+    background-color: @color-green;
+    border-color: @color-green;
+}
+
+.warning-like {
+	color: @color-white;
+    background-color: @color-yellow;
+    border-color: @color-yellow;
+}
+
+.video-js {
+	width: 100%;
+
+	&.video-js-list {
+        float: right;
+        height: 45px;
+        width: 48px;
+    }
+}
+
+.vjs-video-wrap .vjs-big-play-button {
+    display: none;
+}
+
+.bg-youtube {
+	background: #8D150C;
+}
+
+.bg-youtube .custom-link-box {
+	background-color: #a94e48;
+}
+
+
+//To Be Replaced when handling mobile responsiveness
+//------------------------
+.big-width {
+    display: inline-block !important;
+}
+
+.small-width {
+    display: none !important;
+}
+
+.extra-small-width {
+    display: none !important;
+}
+
+@media (max-width: @screen-md-max) {
+    .big-width {
+        display: none !important;
+    }
+
+    .small-width {
+        display: inline-block !important;
+    }
+}
+
+@media (max-width: @screen-sm-max) {
+    .small-width {
+        display: none !important;
+    }
+
+    .extra-small-width {
+        display: inline-block !important;
+    }
+}
+//------------------------

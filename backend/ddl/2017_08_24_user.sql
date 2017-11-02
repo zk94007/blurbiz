@@ -1,0 +1,1 @@
+ALTER TABLE public.user ADD COLUMN team_name character varying(255);
