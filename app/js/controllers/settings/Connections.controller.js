@@ -5,7 +5,7 @@
         .module('Blurbiz.project')
         .controller('ConnectionsController', ConnectionsController);
 
-    function ConnectionsController(Facebook, $scope, $timeout, LocalStorageService,  SocialConnectService, socket) {
+    function ConnectionsController(Facebook, $scope, $timeout, LocalStorageService, SocialConnectService, socket, $uibModal) {
         var vm = this;
 
         $scope.$watch('expire_free_trial', function(value) {

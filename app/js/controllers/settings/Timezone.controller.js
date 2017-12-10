@@ -6,7 +6,7 @@
         .controller('TimezoneController', TimezoneController);
 
 
-    function TimezoneController(LocalStorageService, socket, $scope, FlashService) {
+    function TimezoneController(LocalStorageService, socket, $scope, FlashService, $uibModal) {
         var vm = this;
 
         vm.timeZones = timezone_from_google_calendar;
@@ -26,21 +26,21 @@
             }
         });
 
-        $scope.$watch('expire_free_trial', function(value) {
-            if(value) {
+        $scope.$watch('expire_free_trial', function (value) {
+            if (value) {
                 $uibModal.open({
                     animation: true,
-                    backdrop: false,                  
-                    keyboard : false,
-                    backdropClick : false,
+                    backdrop: false,
+                    keyboard: false,
+                    backdropClick: false,
                     templateUrl: 'templates/modals/freeTrialCompletedModal.html',
                     windowTemplateUrl: 'templates/modals/shareModalWindow.template.html',
                     controller: 'Project.planModalController',
                     resolve: {
                         plan: function () {
-                            return { };
+                            return {};
                         }
-                    } 
+                    }
                 });
             }
         });

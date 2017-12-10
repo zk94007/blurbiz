@@ -2460,29 +2460,54 @@ input.form-control {
   color: #fff;
 }
 .profile-setting ul.nav-tabs {
-  padding: 12px 15px 0;
+  padding: 7px 15px 0;
+  border-bottom: none;
 }
 .profile-setting ul.nav-tabs .uib-tab > div {
   background-color: transparent;
-  color: #8290A5;
+  color: #828d98;
+  border: none;
+  font-size: 16px;
 }
 .profile-setting ul.nav-tabs .uib-tab.active > div,
 .profile-setting ul.nav-tabs .uib-tab:hover > div,
 .profile-setting ul.nav-tabs .uib-tab:focus > div,
 .profile-setting ul.nav-tabs .uib-tab:active > div {
-  color: #00D060;
-  font-weight: bold;
-  border-bottom: 1px solid #FFF;
+  color: #5ce6cd;
+  font-size: 16px;
+  /* border-bottom: 1px solid #FFF; */
 }
 .profile-setting .uib-tab-content {
   position: relative;
-  padding: 25px 15px;
+  padding: 10px 15px 10px;
+  display: inline-block;
+  width: 100%;
+}
+.profile-setting .uib-tab-content .panel-default{
+  border: 1px solid #d8e0e9;
+}
+.profile-setting .uib-tab-content .panel-default > .panel-heading{
+  padding-top: 5px;
+  padding-bottom: 4px;
 }
 .profile-setting .uib-tab-content .form-label {
   font-weight: normal;
   font-size: 14px;
   line-height: 1;
   color: #979797;
+}
+.profile-setting .uib-tab-content .plan-name-label{
+  font-size: 20px;
+  font-weight: 500;
+  color: #5c5c5c;
+  text-align: center;
+}
+
+.profile-setting .uib-tab-content .plan-label .pull-left {
+    font-size: 10px !important;
+}
+.profile-setting .uib-tab-content .plan-label .pull-right{
+  color: #c1c8d4;
 }
 .profile-setting .uib-tab-content .profile-holder {
   position: absolute;

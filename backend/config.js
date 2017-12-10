@@ -1,10 +1,14 @@
 module.exports = {
 	dbConfig: {
-          user: 'postgres',
-		//   password: '#2017BlurBiz@T*',
-		password: '123456',
-        	database: 'blurbiz',
-	        port: 5432
+		user: 'postgres',
+		password: '6TxaC#TI*SgjU3Y^V7lySE0l',
+		// password: '123456',
+		database: 'blurbiz',
+		port: 5432
+	},
+	stripe_key: {
+		// test: 'sk_test_1Da0KIiZLwsBW2wCkmrCvmmn',
+		test: 'sk_test_Vo1K1BcweuhFppRakThUAVpC',
 	},
 	mailConfig: {
 		auth: {

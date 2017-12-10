@@ -27,7 +27,7 @@
                             </div>
                              <div class="billing-rgtbox-content">
                                 <div class="billing-leftcontent">Time Limit Per Video</div>
-                                <div class="billing-rgtcontent"><span>Seconds</span> {{ userSubscriptionPlan.time_limit_per_video_in_seconds }}</div>
+                                <div class="billing-rgtcontent"><span>Seconds</span> 40 {{ userSubscriptionPlan.time_limit_per_video_in_seconds }}</div>
                             </div>                            
                             <div class="billing-rgtbox-content">
                                 <div class="billing-leftcontent">Number Of User</div>
@@ -64,51 +64,56 @@
 /*Billing Detail*/
 
 .billing-box {
-    border: 1px solid #dddddd;
+    border: 1px solid #e2e8ef;
     border-radius: 4px;
     margin-bottom: 30px;
+    background: #fff;
 }
 
 .billing-lftbox p b{
-    color: #000;
+    color: #4a4a4a;
     font-weight: normal;
 }
 
 .billing-box-heading {
-    border-bottom: 1px solid #ddd;
-    font-size: 18px;
+    border-bottom: 1px solid #e2e8ef;
+    font-size: 20px;
     padding: 15px 20px;
+    color: #405063;
+    font-weight: 600;
 }
 
 .billing-lftbox {
-    border-right: 1px solid #ddd;
-    min-height: 347px;
+    border-right: 1px solid #e2e8ef;
+    min-height: 310px;
     padding: 30px 0;
     text-align: center;
 }
 
 .billing-lftbox p {
-    color: #bac2cf;
-    font-size: 16px;
+    color: #b4bdcb;
+    font-size: 14px;
+    padding: 0px 25px;
 }
 
 .billing-lftbox h4 {
-    color: #b2bac9;
-    font-size: 22px;
+    color: #b4bdcb;
+    font-size: 24px;
+    min-height: 66px;
     margin: 0 0 80px;
 }
 
 .billing-lftbox .btn.custo {
     background: #50e3c2 none repeat scroll 0 0;
     color: #fff;
-    font-size: 16px;
-    padding: 12px 24px;
+    font-size: 14px;
+    padding: 10px 24px;
     margin-top: 30px;
 }
 
 .billing-rgtbox {
     display: inline-block;
-    min-height: 270px;
+    min-height: 255px;
     width: 100%;
 }
 
@@ -121,20 +126,25 @@
 }
 
 .billing-lftbox {
-    border-right: 1px solid #ddd;
+    border-right: 1px solid #e2e8ef;
     padding: 30px 0;
     text-align: center;
 }
 
 .billing-rgtbox-head {
-    border-bottom: 1px solid #ddd;
-    font-size: 16px;
+    border-bottom: 1px solid #e2e8ef;
+    font-size: 14px;
     padding: 10px 20px;
+    color: #5c5c5c;
+    font-weight: 600;
 }
 
 .billing-rgtbox-content {
     display: inline-block;
     width: 100%;
+    font-size: 10px;
+    color: #5c5c5c;
+    font-weight: 600;
 }
 
 .billing-leftcontent {
@@ -142,8 +152,10 @@
 }
 
 .billing-rgtcontent {
-    color: #ccc;
+    color: #c1c8d4;
     float: right;
+    font-size: 10px;
+    font-weight: 600;
 }
 
 .billing-rgtcontent span{
@@ -152,32 +164,36 @@
 }
 
 .billing-rgtbox-content {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #e2e8ef;
     display: inline-block;
-    padding: 14px 20px;
+    padding: 13px 20px;
     width: 100%;
+    vertical-align: top;
 }
 
 .billing-rgtbox-btmprice {
     display: inline-block;
-    padding: 20px;
+    padding: 20px 20px 10px;
     width: 100%;
 }
 
 .billing-rgtbox-rgtprice {
     float: right;
-    font-size: 18px;
-    color: #cccccc;
+    font-size: 16px;
+    color: #ababab;
+    font-weight: 600;
 }
 
 .billing-rgtbox-rgtprice span{
-    color: #65a8e7;
-    padding-left: 30px;
+    color: #59a3e8;
+    font-size: 25px;
+    padding-left: 50px;
 }
 
 .payment-method {
     display: inline-block;
     width: 100%;
+    font-size: 10px;
 }
 
 .payment-method-lft {
@@ -186,12 +202,16 @@
 
 .payment-method-rgt {
     float: right;
-    color: #24b696;
+    color: #50e3c2;
+    font-weight: 600;
 }
 
 .payment-method {
     display: inline-block;
-    padding: 16px 20px;
+    padding: 16px 30px 16px 20px;
     width: 100%;
+}
+body{
+    background: #f9fafc;
 }
 </style>

@@ -69,6 +69,24 @@ function AuthController($scope, $state, $cookies, LocalStorageService, socket, $
     });
   };
 
+  $scope.emailValidate = function() {
+    socket.emit('emailValidate', {
+      'email': $scope.email
+    });
+
+    socket.removeListener('emailValidationResponse');
+    socket.on('emailValidationResponse', function(msg) {
+      console.log(msg);
+      if(msg.success == false) {
+        $scope.isDisabled = true;
+        $scope.message.error = msg.msg;
+      } else {
+        $scope.isDisabled = false;
+        $scope.message.error = '';
+      }
+    });
+  };
+
   socket.on('signup_response', function (msg) {
     //
     console.log('singup response: ' + JSON.stringify(msg));

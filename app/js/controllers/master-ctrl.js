@@ -48,10 +48,10 @@ function MasterCtrl($scope, $rootScope, $cookieStore, $state, socket, LocalStora
         });
         socket.removeListener('get_current_user_response');
         socket.on('get_current_user_response', function(msg) {
-            // console.log(msg);
+            console.log(msg);
             $scope.projectCanCreate = msg.number_of_projects;
             $scope.is_admin = msg.is_admin;
-            if(Number($scope.userUsedFreePlan) > msg.number_of_days_free_trial && msg.plan_id==1 && msg.is_admin==false && popupShowCount==1){
+            if(Number($scope.userUsedFreePlan) > msg.number_of_days_free_trial && msg.plan_id==1 && msg.is_admin==false && popupShowCount==1 && msg.admin_update == 0){
                 $scope.expire_free_trial = true;
             } else {
                 $scope.expire_free_trial = false; 

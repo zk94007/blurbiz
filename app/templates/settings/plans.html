@@ -1,7 +1,7 @@
 <style type="text/css">
 
     .plan-label, .plan-price{
-        line-height: 35px;
+
         width: 100%;
         float: left;
     }
@@ -10,7 +10,7 @@
         font-weight: bold;
         font-size: 18px;
         color: royalblue;
-        margin-top: 40px;
+        margin-top: 71px;
     }
     .plan-name-label{
         font-size: 18px;
@@ -30,11 +30,14 @@
     .setting-plan-style .panel-body .plan-label {
         display: inline-block;
         width: 100%;
-        border: 1px solid #ddd;
+        border: 1px solid #d8e0e9; 
         border-left: none;
         border-right: none;
         border-top: none;
-        padding: 10px 20px;
+        padding: 10px 18px ;
+        font-size: 10px;
+        font-weight: 600;
+        vertical-align: top;
     }
 
     .setting-plan-style  .panel-body {
@@ -57,19 +60,22 @@
 
     .btn.choose-greenbtn{
         background-color: #50e3c2;
-        font-size: 16px;
+        font-size: 14px;
         font-weight: normal;
-        padding: 15px 30px;
+        padding: 11px 30px;
         color: #fff;
     }
 
     .choose-btn{
-        margin-bottom: 40px;
+        margin-bottom: 30px;
+        margin-top: 17px;
     }
 
     .plan-mnth{
-        color: #5da3e6;
-        font-weight: normal !important;
+        color: #59a3e8;
+        font-size: 16px;
+        font-weight: 300 !important;
+        margin-left: 5px;
     }
 
     .free-plan{
@@ -79,14 +85,31 @@
     }
 
     .plan-price-amnt{
-        font-size: 32px;
-        color: #5da3e6 !important;
+        font-size: 36px;
+        color: #59a3e8 !important;
         font-weight: normal !important;
     }
     .loader{
         top: 50% !important;
         left: 50%;
         position: absolute;
+    }
+    .plan-price .plan-label{
+        padding-bottom: 0px !important;
+        padding-top: 0px !important;
+    }
+    .plan-area .col-md-3{
+        padding: 0px 5px;
+    }
+    .profile-setting .uib-tab-content {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    body{
+        background: #f9fafc;
+    }
+    .profile-setting .uib-tab-content .panel-default{
+        background: #fff;
     }
 </style>
 <i ng-if="loading" class="fa fa-spinner fa-pulse fa-4x fa-fw loader"></i>

@@ -36,16 +36,18 @@
         });
 
         socket.on('get_teams_response', function(teams) {
-            console.log('GET_TEAMS_RESPONSE: ', teams);
+            // console.log('GET_TEAMS_RESPONSE: ', teams);
             //$scope.teams = msg;
 
             var newTeams = {};
             _.each(teams, function (t) {
                 if (!newTeams[t.id]) {
+                    // console.log(t);
                     newTeams[t.id] = {
                         id: t.id,
                         name: t.name,
                         members: [],
+                        plan_id: t.plan_id,
                         plan_selection: t.monthly_plan,
                         social_items: [
                             {
@@ -85,7 +87,7 @@
                 }
             });
             $scope.teams = _.values(newTeams);
-
+            console.log($scope.teams);
         });
 
         socket.on('update_team_plan_response', function(msg) {
@@ -97,6 +99,7 @@
         })
 
         $scope.planUpdate = function (teamId, plan_selected) {
+            // console.log(teamId, plan_selected);
             socket.emit('update_team_plan', { 'teamId': teamId, 'plan_selected': plan_selected, 'token': LocalStorageService.getToken() });
         }
 
@@ -109,13 +112,42 @@
             });
         };
 
-        $scope.plan_options = [
-            {id: 1, name: 'Free'},
-            {id: 2, name: 'Free 14 Day Trial'},
-            {id: 3, name: 'Pro Plan'},
-            {id: 4, name: 'Plus Plan'},
-            {id: 5, name: 'Power Plan'},
-        ];
+        socket.emit('get_subscription_plans', {
+            token: LocalStorageService.getToken()
+        });
+
+        // socket.removeListener('get_subscription_plans_response');
+        socket.on('get_subscription_plans_response', function (msg) {
+            if (msg.success) {
+                $scope.plan_options = [
+                    { id: 1, plan_id: 0, plan_name: 'Free' }
+                ];
+                msg.subscription_plans.forEach(function(plans) {
+                    if(plans.plan_name == 'Free Trial') {
+                        $scope.plan_options.push({ id: plans.id, plan_id: plans.id, plan_name: 'Free ' + plans.number_of_days_free_trial +' Day Trial' })
+                    } else {
+                        $scope.plan_options.push({ id: plans.id, plan_id: plans.id, plan_name: plans.plan_name+' Plan' })
+                    }
+                }, this);
+            }
+        });
+
+        socket.on('payment_method_not_add', function (msg) {
+            if(msg.success) {
+                var modalInstance = $uibModal.open({
+                    animation: $scope.animationsEnabled,
+                    templateUrl: 'templates/modals/confirmModal.html',
+                    controller: 'ConfirmModalController',
+                    size: 'sm',
+                    resolve: {
+                        content: function () {
+                            return msg.msg;
+                        }
+                    }
+                });
+                return modalInstance.result;
+            }
+        });
 
         $scope.is_enabled_options = [
             {label: 'Enable User', value: 1},
@@ -134,7 +166,6 @@
                 .then(function(){
                     PermanentlyDeleteAccount(teamId);
                 });
-
         };
 
         socket.on('delete_team_response', function (msg) {

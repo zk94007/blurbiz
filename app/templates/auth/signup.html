@@ -8,15 +8,24 @@
             <input type="text" name="name" id="name" class="form-control" ng-model="name" required placeholder="Your Name" />
         </div>
         <div class="form-group">
-            <input type="text" name="email" id="email" class="form-control" ng-model="email" required placeholder="Your Email" />
+             <!-- ng-blur="emailValidate()" -->
+            <input type="text" name="email" id="email" class="form-control" ng-model="email"  required placeholder="Your Email" />
         </div>
         <div class="form-group">
             <input type="password" name="password" id="password" ng-model="password" class="form-control" required placeholder="Create Password" />
         </div>
-        <button type="submit" class="btn btn-custom btn-sm btn-green btn-submit">Sign Up</button>
+         <!-- ng-disabled="isDisabled" -->
+        <button type="submit"  class="btn btn-custom btn-sm btn-green btn-submit">Sign Up</button>
         <p>By clicking "Sign Up" you agree to Blurbiz <a href="http://blurbiz.io/terms" target="_blank">Terms of Services</a></p>
         <div ng-if="message.error" class="alert alert-danger">{{ message.error }}</div>
         <div ng-if="message.success" class="alert alert-success">{{ message.success }}</div>
     </form>
     <p>I already have an account. <a ui-sref="login">Login</a></p>
 </div>
+<style>
+.alert.alert-danger {
+    color: #FFF;
+    background-color: rgba(255, 0, 0, 0.8);
+    border: none;
+}
+</style>

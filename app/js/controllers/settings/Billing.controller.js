@@ -26,8 +26,14 @@
         // End get subscription plans
 
         // Get user payment method
-         socket.emit('get_payment_method', {
+        socket.emit('get_payment_method', {
             token: token
+        });
+
+        socket.removeListener('payment_method_update');
+        socket.on('payment_method_update', function(msg) {
+            $scope.userPaymentMethod.card_type = msg.type;
+            $scope.userPaymentMethod.creditcard_number = msg.card_number;
         });
 
         socket.removeListener('get_payment_method_response');

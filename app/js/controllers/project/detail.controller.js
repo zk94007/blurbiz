@@ -1965,7 +1965,7 @@
         
         
         $scope.startCrop = function (noPause) {
-                
+            $scope.video_loading = true;
             $scope.reposition = true;
             // console.log($scope.cropImage, 'CropImage');
             if(typeof $scope.cropImage != 'undefined') {
@@ -2093,7 +2093,10 @@
                             break;
             }
 
-            $window.location.reload();
+            $timeout(function() {
+                $window.location.reload(true);
+            }, 1000);
+            
         });
 
         $scope.testCrop = function() {
@@ -2143,7 +2146,7 @@
             $scope.config.isCropping = true;
             $scope.config.cropstep = 1;
             $scope.dimensions = msg.dimensions;
-
+            $scope.video_loading = false;
             
             // console.log(msg);
             
@@ -2252,10 +2255,10 @@
             var dataRatio = {
                 aspectRatio: ratio, project_id: Number($scope.project_id)
             }
-
+            
             switch (ratio) {
                 
-                case '169':
+                case '169': 
                     updateAllItem('media_files', 'crop_ratio', '169');
                     var item_data = filterJSON('media_files', $scope.main_item.id);
                     $scope.main_item.pathAspect = '';

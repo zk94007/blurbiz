@@ -101,24 +101,29 @@
 .label-for-instagram {
 	color: #c21975;
 }
-.plan-label{
+/* .plan-label{
 	line-height: 35px;
-}
+} */
 .plan-name-label{
-	font-size: 16px;
-	font-weight: bold;
+	font-size: 20px;
+	font-weight: 600;
+	color: #5c5c5c;
 	text-align: center;
 }
 
 .admin-pricing-tiles .panel.panel-default {
     display: inline-block;
-    min-height: 375px;
+    min-height: 370px;
     width: 100%;
+    border: 1px solid #d8e0e9;
 }
 
 .admin-pricing-tiles  .panel-heading{
 	display: inline-block;
 	width: 100%;
+	background: none;
+	padding-top: 5px;
+	padding-bottom: 4px;
 }
 
 .admin-pricing-tiles .panel-body {
@@ -144,11 +149,14 @@
 .admin-pricing-tiles .plan-label {
     display: inline-block;
     width: 100%;
-    border: 1px solid #ddd;
+    border: 1px solid #d8e0e9;
     border-left: none;
     border-right: none;
     border-top: none;
-    padding: 10px 20px;
+    padding: 10px 18px;
+    font-size: 10px;
+    font-weight: 600;
+    vertical-align: top;
 }
 
 .admin-pricing-tiles .panel-footer .plan-label {
@@ -165,23 +173,75 @@
 }
 
 .admin-pricing-tiles .panel-footer .plan-label .admin-foot-price-text{
-   color: #b0b0b0;
+   color: #ababab;
    font-size: 16px;
+   font-weight: 500;
+   display: inline-block;
+   margin-top: 5px;
 }
 
 
 .admin-pricing-tiles .panel-footer .plan-label .admin-footprice{
-   color: #51a0e5;
-   font-size: 16px;
+   color: #59a3e8;
+   font-size: 24px;
+}
+.admin-pricing-tiles .panel-footer .plan-label .admin-footprice .admn-prig-edit-icon{
+	font-size: 16px;
+
 }
 .plan-label .pull-left {
-    font-size: 12px !important;
+    font-size: 10px !important;
+}
+.plan-label .pull-right{
+	color: #c1c8d4;
+}
+.plan-label .pull-right .admn-prig-edit-icon{
+	color: #5c5c5c;
+}
+.dashbord-top-section md-tabs-wrapper{
+	background: #f6f8fb;
+}
+.dashbord-top-section  md-tabs .md-tab.md-active{
+	color: #5ce6cd !important;
+}
+.md-tab{
+	text-transform: none !important;
+	padding-top: 18px;
+	padding-bottom: 18px;
+}
+.md-tab.md-active{
+	color: #5ce6cd !important;
+	font-weight: 600; 
+
+}
+.dashbord-top-section md-ink-bar{
+	display: none;
+}
+.dashbord-top-section md-tabs-canvas{
+	height: 60px;
+}
+.dashbord-top-section .admin-pricing-tiles{
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-top: 56px;
+}
+.plan-area {
+    padding: 0px 10px;
+ }
+.plan-area .col-md-3{
+    padding: 0px 5px;
+}
+body{
+	background: #f9fafc;
+}
+md-content.md-default-theme, md-content{
+	background: none;
 }
 </style>
 <flash-message></flash-message>
 <div ng-cloak>
   <md-content>
-    <md-tabs md-dynamic-height md-border-bottom>
+    <md-tabs md-dynamic-height md-border-bottom class="dashbord-top-section">
       <md-tab label="User Control">
         <md-content class="md-padding">
 	        <!-- User Controll Content Start Here-->
@@ -200,13 +260,14 @@
 								<a class="btn-link" ng-click="onPermanentlyDeleteAccount(team.id)">Permanently Delete Account</a>
 							</div>
 							<div class="pull-right">
-								Monthly Plan <select name="plan" ng-model="team.plan_selection" ng-change="planUpdate(team.id, team.plan_selection)">
-							                    <option value="1" ng-selected="team.plan_selection == 1">Free</option>
-							                    <option value="2" ng-selected="team.plan_selection == 2">Free 14 Day Trial</option>
-							                    <option value="3" ng-selected="team.plan_selection == 3">Pro Plan</option>
-							                    <option value="4" ng-selected="team.plan_selection == 4">Plus Plan</option>
-							                    <option value="5" ng-selected="team.plan_selection == 5">Power Plan</option>
-							                </select>
+								Monthly Plan
+								<select name="plan" ng-model="team.plan_id" ng-change="planUpdate(team.id, team.plan_id)">
+									<option value="5" ng-selected="team.plan_id == 0">Free</option>
+									<option value="1" ng-selected="team.plan_id == 1">{{plan_options[1].plan_name}}</option>
+									<option value="2" ng-selected="team.plan_id == 2">Pro Plan</option>
+									<option value="3" ng-selected="team.plan_id == 3">Plus Plan</option>
+									<option value="4" ng-selected="team.plan_id == 4">Enterprise Plan</option>
+								</select>
 							</div>
 						</div>
 						<div class="team-body">
@@ -219,8 +280,8 @@
 									<div class="member-last-seen"><b>Last Logged In:</b> {{ ago(member.last_seen) }}</div>
 								</div>
 								<div class="personal-action-settings pull-right small">
-									<button class="btn btn-default" ng-click="">CRM</button>
-									<button class="btn btn-success" ng-click="">MixPanel</button>
+									<!-- <button class="btn btn-default" ng-click="">CRM</button> -->
+									<!-- <button class="btn btn-success" ng-click="">MixPanel</button> -->
 									<select ng-options="option.value as option.label for option in is_enabled_options" ng-model="member.is_enabled" ng-change="updateUserEnableInfo(member)"></select>
 								</div>
 							</div>

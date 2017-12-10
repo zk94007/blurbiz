@@ -3,8 +3,8 @@
         padding: 0px;
     }
     .navbar-default {
-        background-color: #1F2C3C;
-        border-color: #1F2C3C;
+        background-color: #1f2c3c;
+        border-color: #1f2c3c;
     }
     .navbar {
         border-radius: 0px;
@@ -12,18 +12,21 @@
     }
 
     .navbar-nav-custom {
-        margin: 8px;
+        margin: 5px 0px;
     }
 
     .btn.btn-done, .btn.btn-preview, .btn.btn-replace, .btn.btn-reposition {
-        font-size: 15px;
+        font-size: 14px;
         padding-left: 20px !important;
         padding-right: 20px !important;
+        padding-top: 5px;
+        padding-bottom: 5px;
+
     }
 
     .btn-done {
         background-color: #4A90E2 !important;
-        color: #B1B9C2 !important;
+        color: #bfc6cd !important;
     }
     .btn-preview {
         background-color: #7ED321 !important;
@@ -32,13 +35,17 @@
     .btn-reposition {
         background-color: #2FB698 !important;
         color: #fff !important;
+        position: absolute !important;
+        min-width: 140px;
+        top: -15px;
+        left: 50px;
     }
     .btn-replace {
         background-color:#9B9B9B !important;
         color: #B1B9C2 !important;
     }
     .marginTenRight {
-        margin-right: 10px !important;
+        margin-left: 25px !important;
     }
 
 .video-editor {
@@ -56,16 +63,72 @@ body,html,#wrapper,#content-wrapper,.page-content,.project_detail{
     height: 100%;
 }
 #video-canvas{
-    height: calc(100% - 150px);
-    height: -webkit-calc(100% - 150px);
+    /* height: calc(100% - 150px);
+    height: -webkit-calc(100% - 150px); */
     display: table;
 }
-
+#video-canvas.minheight-fix{
+    height: calc(100% - 150px);
+    height: -webkit-calc(100% - 150px); 
+}
+#video-canvas.minheight-fix .video-canvas{
+    height: calc(100vh - 129px);
+    height: -webkit-calc(100vh - 129px);
+}
 .video-canvas{
-        height: calc(100vh - 129px);
-        height: -webkit-calc(100vh - 129px);
+        /* height: calc(100vh - 129px);
+        height: -webkit-calc(100vh - 129px); */
         display: table-cell;
         vertical-align: middle;
+}
+
+.bg-overlay {
+    display: none;
+}
+
+@media screen and (max-width: 767px) {
+    .bg-overlay {
+        position: fixed;
+        z-index: 99;
+        height: 100vh;
+        width: 100vw;
+        background: rgba(0,0,0,0.95);
+        color: #fff;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        text-align: center;
+        display: flex;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+                align-items: center;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+                justify-content: center;
+                flex-flow: column wrap;
+    }
+    .bg-overlay-img{
+        float: left;
+        text-align: center;
+        max-width: 100px;
+        margin-bottom: 20px;
+    }
+    .bg-overlay-img img{
+        max-width: 100%;
+    }
+    .bg-overlay-title{
+        color: #fff;
+        font-size: 20px;
+        font-weight: 600;
+        width: 100%;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    .bg-overlay-text{
+        color: #9c9c9c;
+        font-size: 14px;
+        width: 100%;
+        text-align: center;
+    }
 }
 
 </style>
@@ -127,6 +190,11 @@ body,html,#wrapper,#content-wrapper,.page-content,.project_detail{
     bottom: 0;
 }
   </style>
+<div class="bg-overlay">
+    <div class="bg-overlay-img"><img src="/img/not-video-showimg.png"></div>
+    <div class="bg-overlay-title">Your brower is too  small</div>
+    <div class="bg-overlay-text">Resize your brower to be wide <br/>to get back into design mode.</div>
+</div>
 <div class="col-xs-12 projects-container project_detail" ng-keydown="keydown($event)" ng-keyup="keyup($event)" tabindex="1">
     <div ng-show="video_loading"></div>
     <!-- <div ng-show="video_loading" class="progress row">
@@ -310,7 +378,7 @@ body,html,#wrapper,#content-wrapper,.page-content,.project_detail{
         <!-- </span> -->
     <!-- </div> -->
 
-    <span ng-if="!reposition && !player" class="time-spent" style="text-align: right; padding-bottom: 50px; z-index: 5; pointer-events:none;">{{totalTimeDuration}}<br>Video Duration</span>
+    <span ng-if="!reposition && !player" class="time-spent" style="text-align: right; padding-bottom: 35px; z-index: 5; pointer-events:none;"><span>{{totalTimeDuration}}</span><br>Video Duration</span>
         <div ng-if="video_loading" class="video_loading-container" style="z-index:99; text-align:center;">
             <div class="pre-loader"> <img src="/img/icons/pre-loader.png" alt=""> </div>
             <h3 style="z-index:999; padding-left:-30px !important; color:#009EDC; opacity: inherit; position: relative;" ng-if="loadingData != ''">{{ loadingData }}<span class="loader__dot">.</span><span class="loader__dot">.</span><span class="loader__dot">.</span></h3>
@@ -463,9 +531,9 @@ body,html,#wrapper,#content-wrapper,.page-content,.project_detail{
             
         </div>
         
-        <div ng-if="!player && !reposition" class="videogular-container" style="height:40px; margin-bottom: 15px; background-color:#1B2126 !important;">
-            <div class="col-sm-2" ng-if="!isImage(main_item.path)"><i id="videoPlayer" class="fa fa-play fa-4" aria-hidden="true" style="font-size: 30px; margin: 2px 10px 0 10px; padding:3px 15px 3px 19px; border-radius:6px; background-color: #323D46" ng-click="playVideo()"></i></div>
-            <div class="col-sm-8">
+        <div ng-if="!player && !reposition" class="videogular-container" style="height:45px; margin-bottom: 15px; background-color:#1B2126 !important;">
+            <div class="col-sm-2 detail-video-icon" ng-if="!isImage(main_item.path)"><i id="videoPlayer" class="fa fa-play fa-4" aria-hidden="true"  ng-click="playVideo()"></i></div>
+            <div class="col-sm-8 detail-video-bar">
                 <style>
                     .videoSeekTime {
                         visibility: visible !important;
@@ -478,8 +546,8 @@ body,html,#wrapper,#content-wrapper,.page-content,.project_detail{
                 </style>
                 <!-- <div class="videoSeekTime" >{{minRangeSlider.minValue/10}}</div> -->
                 <rzslider ng-if="!isImage(main_item.path)" class="controls-container" rz-slider-model="minRangeSlider.min" rz-slider-high="minRangeSlider.max" rz-slider-options="minRangeSlider.options"></rzslider></div>   
-            <div class="col-sm-2" ng-if="!isImage(main_item.path)"><label style="margin: 10px 0 0 0;">{{main_item.videoDuration}}</label></div>
-            <div class="col-sm-4"  ng-if="isImage(main_item.path)">
+            <div class="col-sm-2 detail-video-value" ng-if="!isImage(main_item.path)"><label style="margin: 10px 0 0 0;">{{main_item.videoDuration}}</label></div>
+            <div class="col-sm-4 detail-video-range"  ng-if="isImage(main_item.path)">
                 <rzslider id="search" rz-slider-model="minSlider.value"  
                         rz-slider-options="minSlider.options"></rzslider>
                 <span class="form-control-feedback" style="border-radius:25px; background-color: #323D46;">{{minSlider.value}}s</span>
@@ -492,7 +560,7 @@ body,html,#wrapper,#content-wrapper,.page-content,.project_detail{
             </div>
         </div>
 
-        <div ng-if="player" class="videogular-container video-crop">
+        <div ng-if="player" class="videogular-container video-crop video-crop-new">
             <div class="main_item_centerior horizontal-vertical-center">
                 <div class="img-wrapper">
                         
@@ -503,16 +571,21 @@ body,html,#wrapper,#content-wrapper,.page-content,.project_detail{
                             </vg-media>
                                 <vg-controls>  
                                  <vg-play-pause-button></vg-play-pause-button> 
-                                  <vg-time-display>{{ currentTime | date:'mm:ss' : 'UTC' }}</vg-time-display>  
-                                  <vg-scrub-bar>
+                                  <div class="video-bar">  
+                                    <vg-scrub-bar>
                                     <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
-                                </vg-scrub-bar>  
+                                    </vg-scrub-bar> 
+                                  </div>  
+                                <div class="video-timer"> 
+                                <vg-time-display>{{ currentTime | date:'mm:ss' : 'UTC' }}</vg-time-display> 
+                                <span>/</span>
                                  <vg-time-display>{{ timeLeft | date:'mm:ss' : 'UTC' }}</vg-time-display> 
-                                 <vg-volume>
+                                </div>
+                                 <!-- <vg-volume>
                                     <vg-mute-button></vg-mute-button>
                                     <vg-volume-bar></vg-volume-bar>
                                 </vg-volume> 
-                                 <vg-fullscreen-button></vg-fullscreen-button> 
+                                 <vg-fullscreen-button></vg-fullscreen-button>  -->
                               </vg-controls>      
                              <vg-overlay-play></vg-overlay-play> 
                              <vg-buffering></vg-buffering> 
@@ -544,40 +617,40 @@ body,html,#wrapper,#content-wrapper,.page-content,.project_detail{
                         <div class="row">
                             <div class="chooser-container">
                                 <div class="text_div">
-                                    <span>Text</span>
-                                    <hr/>
-                                    <div class="row">
+                                    <span class="chooser-container-title">Text</span>
+                                    
+                                    <div class="chooser-container-boxouter">
                                         <div ng-repeat="medium in media" ng-class="{ 'hidden_overlays': !checkIfMainItem(medium) }">
                                             <div ng-repeat="textOverlay in medium.texts" class="text">
                                                 <div ng-if="medium.id == main_item.id">
                                                    
                                                 <div  class="text_overlay overlay_{{textOverlay.id}}" id="text_overlay_{{textOverlay.id}}" >
                                                     
-                                                    <div ng-if="textOverlay.overlay_type != 'png'" class="col-sm-4 text-center cursor-pointer" style="padding: 5px; min-height:52px; max-height: 52px;"><span class="col-sm-11" style="border: dashed 1px; background: #1F2C3C; color:#fff; margin:0px; padding:0px; min-height:52px; word-break: break-all;overflow: hidden; text-overflow: ellipsis; width: 70px; height: 50px;" ng-bind-html="textOverlay.content"></span>
+                                                    <div ng-if="textOverlay.overlay_type != 'png'" class="col-sm-4 text-center cursor-pointer" style="padding: 5px; min-height:52px; max-height: 52px;"><span class="col-sm-11" style="border: dashed 1px; background: #1F2C3C; color:#fff; margin:0px; padding:5px; min-height:52px; word-break: break-all;overflow: hidden; text-overflow: ellipsis; width: 100%; height: 50px;border-radius: 5px;font-size: 10px;" ng-bind-html="textOverlay.content"></span>
                                                         <a ng-click="deleteOverlay(textOverlay)"><i class="icon-class fa fa-times" aria-hidden="true"></i></a>
                                                     </div>
                                                 </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-sm-4 text-center cursor-pointer" style="padding: 5px; min-height:52px;"><span class="col-sm-11" style="border: dashed 1px; background: #1F2C3C; color:#fff; margin:0px; padding:0px; min-height:52px;"><a style="color: #fff; margin-top: 3px;" ng-click="insertNewTextOverlay('body')"><i class="fa fa-font"></i><p style="text-align:center;">Add Text</p></a></span></div>
-                                        <div class="col-sm-4 text-center cursor-pointer" style="padding: 5px; min-height:52px;"><span class="col-sm-11" style="border: dashed 1px; background: #1F2C3C; color:#fff; margin:0px; padding:0px; min-height:52px;"></span></div>
+                                        <div class="col-sm-4 text-center cursor-pointer" style="padding: 5px; min-height:52px;"><span class="col-sm-11" style=" background: #1F2C3C; color:#fff; margin:0px; padding:0px; min-height:52px;border-radius: 5px;padding-top: 10px;"><a style="color: #fff; margin-top: 3px;" ng-click="insertNewTextOverlay('body')"><i class="fa fa-font"></i><p style="text-align:center; font-size: 10px;">Add Text</p></a></span></div>
+                                        <div class="col-sm-4 text-center cursor-pointer" style="padding: 5px; min-height:52px;"><span class="col-sm-11" style="border: dashed 1px; background: #1F2C3C; color:#fff; margin:0px; padding:0px; min-height:52px;border-radius: 5px;"></span></div>
                                         <!-- <div class="col-sm-4 text-center cursor-pointer"><img src="/img/icons/header.png" ng-click="insertNewTextOverlay('header')"><br>Header</div> -->
                                         <!-- <div class="col-sm-4 text-center cursor-pointer"><img src="/img/icons/body.png" ng-click="insertNewTextOverlay('body')"><br>Body</div> -->
                                         <!-- <div class="col-sm-4 text-center cursor-pointer"><img src="/img/icons/footer.png" ng-click="insertNewTextOverlay('footer')"><br>Footer</div> -->
                                     </div>
                                 </div>
                                 <div class="text_div">
-                                    <span>Uploads</span>
-                                    <hr/>
-                                    <div class="row">
+                                    <span class="chooser-container-title">Uploads</span>
+                                    
+                                    <div class="chooser-container-boxouter">
                                         <div ng-repeat="medium in media" ng-class="{ 'hidden_overlays': !checkIfMainItem(medium) }">
                                             <div ng-repeat="textOverlay in medium.texts" class="text">
                                                 <div ng-if="medium.id == main_item.id">
                                                    
                                                 <div  class="text_overlay overlay_{{textOverlay.id}}" id="text_overlay_{{textOverlay.id}}" >
                                                     
-                                                    <div ng-if="textOverlay.overlay_type == 'png'" class="col-sm-4 text-center cursor-pointer" style="padding: 5px; min-height:52px; max-height: 52px;"><span class="col-sm-11" style="border: dashed 1px; background: #1F2C3C; color:#fff; margin:0px; padding:0px; min-height:52px;" ng-bind-html="textOverlay.content"></span>
+                                                    <div ng-if="textOverlay.overlay_type == 'png'" class="col-sm-4 text-center cursor-pointer" style="padding: 5px; min-height:52px; max-height: 52px;"><span class="col-sm-11" style="border: dashed 1px; background: #1F2C3C; color:#fff; margin:0px; padding:0px; min-height:52px;border-radius: 5px;" ng-bind-html="textOverlay.content"></span>
                                                         <a ng-click="deleteOverlay(textOverlay)"><i class="icon-class fa fa-times" aria-hidden="true"></i></a>
                                                     </div>
                                                 </div>
@@ -588,13 +661,13 @@ body,html,#wrapper,#content-wrapper,.page-content,.project_detail{
                                             <!-- <span class="col-sm-11" style="border: dashed 1px; background: #1F2C3C; color:#fff; margin:0px; padding:0px; min-height:52px;"><a style="color: #fff; margin-top: 3px;" ngf-select="uploadPngFiles($files)"><i class="fa fa-plus"></i><p style="text-align:center;">Add</p></a></span></div>
                                         <div class="col-sm-4 text-center cursor-pointer" style="padding: 5px; min-height:52px;"><span class="col-sm-11" style="border: dashed 1px; background: #1F2C3C; color:#fff; margin:0px; padding:0px; min-height:52px;"></span> -->
                                             <span class="col-sm-11" 
-                                                    style="border: dashed 1px; background: #1F2C3C; color:#fff; margin:0px; padding:0px; min-height:52px;">
+                                                    style=" background: #1F2C3C; color:#fff; margin:0px; padding:0px; min-height:52px;border-radius: 5px;padding-top: 5px;">
 
                                                     <a style="color: #fff; margin-top: 3px;"                                                 ngf-select="uploadPngFiles($files)" class="show" >
 
                                                        <i class="fa fa-plus"></i>
 
-                                                       <p id="overlay_image_add_button_id" style="text-align:center;">Add</p>
+                                                       <p id="overlay_image_add_button_id" style="text-align:center;font-size: 10px;">Add</p>
 
                                                     </a>
                                                     <p id="overlay_image_loading_id" class="hide" style="padding-top: 7px;"><i class='fa fa-spinner fa-spin ' style="font-size: 30px;" ></i></p>
@@ -737,7 +810,7 @@ user-select: none;
     }
     
     .rzslider {
-        margin: 17px 0 0 0;
+        margin: 13px 0 0 0;
     }
 
     /* .rzslider .rz-bubble {
@@ -760,15 +833,16 @@ user-select: none;
     }
     .controls-container.rzslider span:nth-child(7){
         /* visibility: visible !important; */
-        bottom: -13px !important;
-        margin-right: -81px;
-        color: #1B2126;
+        bottom: -18px !important;
+        /* margin-right: -81px; */
+        color: #fff;
+        font-weight: bold;
         float: left;
         z-index: 2;
         font-size: 18px;
         width: 69px;
         text-align: right;
-        padding-left: 53px;
+        padding-left: 50px;
         letter-spacing: -1px;
     }
     
@@ -785,7 +859,7 @@ user-select: none;
     } */
     .controls-container.rzslider  span:nth-child(8){
         /* visibility: visible !important; */
-        bottom: -13px !important;
+        bottom: -18px !important;
         margin-right: -81px;
         color: #1B2126;
         float: left;
@@ -809,7 +883,7 @@ user-select: none;
         top: -14px;
         z-index: 3;
         width: 16px;
-        height: 32px;
+        height: 42px;
         cursor: pointer;
         background-color: #fff;
          -webkit-border-radius: 0px;
@@ -858,7 +932,7 @@ user-select: none;
         left: 0;
         z-index: 1;
         width: 100%;
-        height: 32px;
+        height: 42px;
         padding-top: 2px;
         margin-top: -16px;
         box-sizing: border-box;
@@ -868,7 +942,7 @@ user-select: none;
         left: 0;
         z-index: 1;
         width: 100%;
-        height: 32px;
+        height: 42px;
         background: #d8e0f3;
         -webkit-border-radius: 2px;
         -moz-border-radius: 2px;
@@ -891,8 +965,8 @@ user-select: none;
     
     @media (min-width: 992px) and (max-width: 1199px) {
         .videogular-container {
-            width: 940px;
-            height: 528.75px;
+            width: 711.11px;
+            height: 400px;
         }
         .img-edit {
             max-height: 528.75px;
@@ -901,11 +975,17 @@ user-select: none;
     
     @media (min-width: 768px) and (max-width: 991px) {
         .videogular-container {
-            width: 728px;
-            height: 409.5px;
+            width: 711.11px;
+            height: 400px;
         }
         .img-edit {
             max-height: 409.5px;
+        }
+        .project_detail .tabs{
+            margin-top: 35px;
+        }
+        .project_detail .time-spent{
+            top: 510px !important;
         }
     }
 
@@ -1055,11 +1135,16 @@ user-select: none;
 <style>
     .icon-class {
         position: absolute;
-        margin-left: -12px;
-        margin-top: -10px;
-        background-color: brown;
-        border-radius: 45px;
-        padding: 3px;
+    margin-left: -12px;
+    margin-top: -10px;
+    background-color: #50e3c2;
+    border-radius: 59px;
+    padding: 3px;
+    width: 20px;
+    height: 20px;
+    }
+    .icon-class:before{
+        color: #fff;
     }
 </style>
 
@@ -1248,5 +1333,169 @@ user-select: none;
 
 .project_detail .tabs md-content .media-items-container .media-item {
     min-width: 255px;
+}
+.detail-video-icon{
+    width: 12%;
+}
+.detail-video-bar{
+    width: 73%;
+}
+.detail-video-value{
+    width: 15%;
+}
+.detail-video-icon .fa-play{
+    font-size: 21px;
+    margin: 5px 0px 0 0px;
+    padding: 7px 15px 7px 19px;
+    border-radius: 3px;
+    background-color: #323d46;
+    text-align: center;
+    color: #fff;
+    float: left;
+    width: 54px;
+}
+.rzslider .rz-bar.rz-selection{
+    background: #4a90e2;
+}
+.rzslider .rz-pointer:before{
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    margin: auto;
+    color: #000;
+    font-size: 12px;
+    content: '\e257';
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    line-height: 1;
+}
+.rzslider .rz-pointer.rz-pointer-max:before{
+    content: '\e258';
+}
+.project_detail .time-spent{
+    font-size: 14px;
+    font-weight: 300;
+    color: #fff;
+    top: 475px;
+    bottom: inherit;
+}
+.project_detail .time-spent span{
+    font-weight: bold;
+    font-size: 18px;
+    color: #fff;
+}
+.chooser-container-boxouter{
+    display: inline-block;
+    width: 100%;
+    vertical-align: middle;
+
+}
+.chooser-container-title{
+    border-bottom: 2px solid #88909a;
+    width: 100%;
+    display: inline-block;
+    margin-bottom: 10px;
+    padding-bottom: 3px;
+    color: #fff;
+}
+.project_detail .editCanvas_tab .text_div, .project_detail .editCanvas_tab .layer_div{
+    padding: 5px;
+    margin: 10px 20px;
+}
+.ratio{
+    color: #fff;
+    font-size: 12px;
+}
+.ratio.active{
+    border-color: #388a81;
+}
+.project-container{
+    border: 1px solid #999;
+}
+.project-container .hovereffect{
+    border: none;
+}
+.video-crop-new .video-bar{
+    display: inline-block;
+    width: 83%;
+    float: left;
+}
+.video-crop-new .video-timer{
+    float: right;
+    font-size: 10px;
+color: #394148;
+margin-top: 15px;
+margin-right: 10px;
+}
+.video-crop-new .video-timer vg-time-display{
+   display: inline-block;
+   width: auto;
+   vertical-align: middle;
+   font-size: 14px;
+   color: #394148;
+}
+.video-crop-new .video-timer vg-time-display:first-child{
+    color: #fff;
+}
+.video-crop-new .video-timer span{
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 16px;
+    color: #394148;
+}
+.detail-video-range{
+    width: 27%;
+}
+.video-crop-new .iconButton{
+    font-size: 22px;
+    color: #81919c;
+}
+.video-crop-new .iconButton:focus{
+    border: none;
+}
+.video-crop-new .video-bar vg-scrub-bar{
+    display: inline-block;
+    cursor: pointer;
+    vertical-align: middle;
+    position: relative;
+    width: 100%;
+}
+.video-crop-new .video-bar vg-scrub-bar [role="slider"]{
+    margin-top: 22px;
+    margin-bottom: 22px;
+    height: 8px;
+    background-color: #394148;
+    position: relative;
+    border-radius: 5px;
+}
+.video-crop-new .video-bar vg-scrub-bar .container{
+    position: absolute;
+    width: 100%;
+    height: 8px;
+    top: 22px;
+    padding-left: 0;
+}
+.video-crop-new .video-bar vg-scrub-bar-current-time{
+    background: #6f7d86;
+    border-radius: 5px;
+}
+.video-crop-new .video-bar vg-scrub-bar-current-time:after{
+    position: absolute;
+    right: -15px;
+    top: -6px;
+    border: 5px solid #9aa6af;
+    background: #242c33;
+    width: 20px;
+    height: 20px;
+    content: '';
+    border-radius: 100px;
+}
+.nav > li > a.menu-item{
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 </style>

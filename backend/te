@@ -1,0 +1,192 @@
+var WebSocketServer = require('ws').Server;
+var wss = new WebSocketServer({noServer: true});
+
+var server = http.createServer(function (request, response) {
+})
+
+server.listen(3040);
+server.on('upgrade', wss.handleUpgrade);
+wss.on('connection', function connection(ws) {
+    console.log("client connected");
+
+    var transporter = nodemailer.createTransport({
+        'service': 'gmail',
+        'auth': config.mailConfig.auth
+    });
+  ws.on('message', function incoming(message) {
+    console.log('received: %s', message);
+  });
+
+  ws.send('something');
+});
+
+
+
+
+
+///Video Preview - 3312
+
+
+// var newFilePath;
+                    // var guid = uuidGen.v1() + '.mp4';
+                    // newFilePath = './downloads/'+guid;
+                    
+                    // var mimeType = mime.lookup(element.path);
+                    // if(mimeType.includes('image/')) {
+                    //     //element.path = element.path.replace("https://"+config.azure_config.AZURE_STORAGE_ACCOUNT+".blob.core.windows.net/stage/", "./downloads/")
+                    //     console.log('Sample 11111', element.path);
+                    //     if(element.crop_data != null) {
+                    //         console.log('Sample 22222', element.path);
+                            
+                    //         ffmpeg(element.path)
+                    //         .addInputOptions('-loop 1')
+                    //         .input('anullsrc=cl=1')
+                    //         .addInputOptions('-f lavfi')
+                    //         .output(newFilePath)
+                    //         .audioCodec('libmp3lame')
+                    //         .videoCodec('libx264')
+                    //         .addOutputOptions('-t 3')
+                    //         .addOutputOptions('-pix_fmt yuv420p')
+                    //         .addOutputOptions(element.crop_data)
+                    //         .on('error', function(err) {
+                    //             successFalseCb(err, callback);
+                    //         })
+                    //         .on('progress', function(progress) {
+                    //             console.log('MimeType');
+                    //             console.log('Processing: '+newFilePath + progress.timemark + ' done');
+                    //             // sendCroppingStatus(message.media_spec.end - message.media_spec.start, progress.timemark);
+                    //         })
+                    //         .on('end', function() {
+                                
+                    //             element.representative = newFilePath;
+                    //             inputFiles.push(element.representative);
+                                
+                    //             if(count == result.rows.length) {
+                    //                 processTs(inputFiles);
+                    //             }
+                    //             successCb(callback);
+                                
+                    //         })
+                    //         .run();
+                    //     } else {
+                    //         //element.path = element.path.replace("https://"+config.azure_config.AZURE_STORAGE_ACCOUNT+".blob.core.windows.net/stage/", "./downloads/")
+                    //         ffmpeg(element.path)
+                    //         .addInputOptions('-loop 1')
+                    //         .input('anullsrc=cl=1')
+                    //         .addInputOptions('-f lavfi')
+                    //         .output(newFilePath)
+                    //         .audioCodec('libmp3lame')
+                    //         .videoCodec('libx264')
+                    //         .addOutputOptions('-t 3')
+                    //         .addOutputOptions('-pix_fmt yuv420p')
+                    //          .addOutputOptions(element.crop_data)
+                    //         .on('error', function(err) {
+                                
+                    //             successFalseCb(err, callback);
+                    //         })
+                    //         .on('progress', function(progress) {
+                    //             console.log('MimeType');
+                    //             console.log('Processing: ' + progress.timemark + ' done');
+                    //             // sendCroppingStatus(message.media_spec.end - message.media_spec.start, progress.timemark);
+                    //         })
+                    //         .on('end', function() {
+                                
+                    //             element.representative = newFilePath;
+                    //             inputFiles.push(element.representative);
+                    //             if(count == result.rows.length) {
+                    //                 processTs(inputFiles);
+                    //             }
+                    //             successCb(callback);
+                               
+                    //         })
+                    //         .run();
+                    //     }
+                    // } else if(mimeType.includes('video/')) {
+                    //     // inputFiles.push(element.path);
+                    //     element.representative = element.path;
+                    //     if(count == result.rows.length) {
+                    //         processTs(inputFiles);
+                    //     }
+                        // if(element.crop_data == null) {
+                        //     ffmpeg(element.representative)
+                        //     // .seekInput(0)
+                        //     .addOutputOptions('-t 3')
+                        //     .audioCodec('libmp3lame')
+                        //     .videoCodec('libx264')
+                        //     .output(newFilePath)
+                        //     // .addOutputOptions(element.crop_data)
+                        //     .on('error', function(err) {
+                        //         successFalseCb(err, callback);
+                        //     })
+                        //     .on('progress', function(progress) {
+                        //         console.log('Sapp12');
+                        //         console.log('Processing: ' + progress.timemark + ' done');
+                        //         // sendCroppingStatus(message.media_spec.end - message.media_spec.start, progress.timemark);
+                        //     })
+                        //     .on('end', function() {
+                        //         element.representative = newFilePath;
+                        //         if(count == result.rows.length) {
+                        //                 processTs(inputFiles);
+                        //             }
+                        //     })
+                        //     .run();
+                        // } else {
+                        //     ffmpeg(element.representative)
+                        //     // .seekInput(0)
+                        //     .addOutputOptions('-t 3')
+                        //     .audioCodec('libmp3lame')
+                        //     .videoCodec('libx264')
+                        //     .output(newFilePath)
+                        //     .addOutputOptions(element.crop_data)
+                        //     .on('error', function(err) {
+                        //         successFalseCb(err, callback);
+                        //     })
+                        //     .on('progress', function(progress) {
+                        //         console.log('Sapp12');
+                        //         console.log('Processing: ' + progress.timemark + ' done');
+                        //         // sendCroppingStatus(message.media_spec.end - message.media_spec.start, progress.timemark);
+                        //     })
+                        //     .on('end', function() {
+                        //         element.representative = newFilePath;
+                        //         inputFiles.push(element.representative);
+                        //             if(count == result.rows.length) {
+                        //                 processTs(inputFiles);
+                        //             }
+                        //     })
+                        //     .run();
+                        // }
+                //     }
+                // });
+                // console.log(inputFiles);
+
+//Input 
+ffmpeg -framerate 1/5 -i images1.jpg -t "15" -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" output2.mp4   
+
+
+//Generate TS
+ffmpeg -i ./downloads/05279ca0-8f05-11e7-a181-e5d91ce8cafa.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts i2.ts
+
+
+//Concate
+ffmpeg -i "concat:i1.ts|i2.ts" -c copy -bsf:v h264_mp4toannexb output15.mp4
+
+ffmpeg -loop 1 -i i1.jpg -c:v libx264 -t 5 -pix_fmt yuv420p -vf scale=320:240 out1.mp4
+
+ffmpeg -loop 1 -i i1.jpg -c:v libx264 -t 5 -pix_fmt yuv420p -vf scale=600:-2,crop=600:338:0:31,scale=720:404,pad=width=720:height=404:x=0:y=0:color=black,setsar=1:1 out1.mp4
+
+ffmpeg -loop 1 -i ./downloads/5166d910-9152-11e7-b63a-dd28e8e2d221.jpg -c:v libx264 -t 5 -pix_fmt yuv420p -vf scale=320:240 ./downloads/out12345.mp4;ffmpeg -i ./downloads/out12345.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts ./downloads/i12345.ts;
+
+
+//
+
+ffmpeg -loop 1 -f lavfi -i anullsrc=cl=1 -i 11.jpg -c copy -a libmp3lame -c copy -v libx264 -t 15 -vf "scale=600:-2,crop=600:338:0:31,scale=720:404,pad=width=720:height=404:x=0:y=0:color=black,setsar=1:1"
+
+
+
+
+
+    width: 100%;
+    z-index: 999;
+    height: 500px;
+    position: absolute;
+    border: 2px red;

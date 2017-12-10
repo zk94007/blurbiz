@@ -20,6 +20,7 @@
 			var extendedProperties = _.extend(properties, {size: file.size, name: file.name});
 			if(!properties.overlay) {
 				console.log('Png');
+				console.log(stream, extendedProperties);
 				ss(socket).emit('media_file_add', stream, extendedProperties);			    
 			} else {
 				// console.log('emit');

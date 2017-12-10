@@ -6,8 +6,12 @@ var config = {
     env: {
       // backend: 'http://13.82.187.88:3040',
       // frontend: 'http://13.82.187.88'
-      backend: 'http://localhost:3040',
-      frontend: 'http://localhost:4000'
+      // backend: 'http://localhost:3040',
+      // frontend: 'http://localhost:4000'
+	backend: 'http://13.82.190.44:3040',
+	frontend: 'http://13.82.190.44:4000'
+//       backend: 'http://192.168.1.120:3040',
+   //   frontend: 'http://localhost:4000'
     },
     social: {
       box: {

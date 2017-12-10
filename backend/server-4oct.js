@@ -1,6 +1,5 @@
 var pg = require('pg');
 var config = require('./config.js');
-var blacklist = require("./blacklist.js");
 var functions = require('./customFunction.js');
 var jwt = require('jsonwebtoken');
 var nodemailer = require('nodemailer');
@@ -36,17 +35,66 @@ var mime = require('mime-types');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const DataURI = require('datauri').promise;
 const getDuration = require('get-video-duration');
-var getResolution = require('get-video-dimensions');
 var shell = require('shelljs');
 var xoauth2 = require('xoauth2');
 // var Jimp = require("jimp");
 
-var stripe = require('stripe')(config.stripe_key.test);
-// sk_test_1Da0KIiZLwsBW2wCkmrCvmmn
-//sk_test_Vo1K1BcweuhFppRakThUAVpC
+// Jimp.read("./downloads/75dfc3a0-a44f-11e7-90c9-0db228a3877a.png", function (err, lenna) {
+//     if (err) throw err;
+//     lenna
+//     .rotate(45)
+//     .greyscale()                  // set greyscale 
+//          .write("./lena-small-bw.jpg"); // save 
+// });
+// gm('./downloads/75dfc3a0-a44f-11e7-90c9-0db228a3877a.png')
+// .rotate('rgba(255,255,255,0)', 45)
+// .resize(100, 100)
+// .flatten()
+// .write('./out1.png', function (err) {
+//   if (!err) console.log('crazytown has arrived');
+// })
+
+// gm('./62f86aa0-9881-11e7-b0a0-b513e28aa47b.jpeg')
+// .resize(800, 800)
+// .crop(711, 400, 45.5, 200)
+// .write('./'+uuidGen.v1()+'.jpg', function (err) {
+//   if (!err) console.log('crazytown has arrived');
+//   else console.log(err);
+// });
+
+// gm('./d4ad7e40-988d-11e7-837d-5f213f41ce90.jpeg')
+// // .resize(800, 800)
+// .crop(711, 400, 894.5, 300)
+// .write('./'+uuidGen.v1()+'.jpg', function (err) {
+//   if (!err) console.log('crazytown has arrived');
+//   else console.log(err);
+// });
+
+// gm('./d4ad7e40-988d-11e7-837d-5f213f41ce90.jpeg')
+// // .resize(800, 800)
+// .crop(400, 400, 1050, 300)
+// .write('./'+uuidGen.v1()+'.jpg', function (err) {
+//   if (!err) console.log('crazytown has arrived');
+//   else console.log(err);
+// });
+
+// gm('./d4ad7e40-988d-11e7-837d-5f213f41ce90.jpeg')
+// // .resize(800, 800)
+// .crop(224, 400, 1138, 300)
+// .write('./'+uuidGen.v1()+'.jpg', function (err) {
+//   if (!err) console.log('crazytown has arrived');
+//   else console.log(err);
+// });
+
+// gm('./downloads/8e049ce0-a034-11e7-b41f-edf8d7178af5.png')    
+// .size(function (err, size) {
+
+//     console.log(size);
+// });
 
 // shell.exec('ffmpeg -loop 1 -i ./downloads/4f171cb0-9152-11e7-b63a-dd28e8e2d221.jpg -c:v libx264 -t 5 -pix_fmt yuv420p -vf scale=320:240 ./downloads/out12346.mp4; ffmpeg -loop 1 -i ./downloads/5166d910-9152-11e7-b63a-dd28e8e2d221.jpg -c:v libx264 -t 5 -pix_fmt yuv420p -vf scale=320:240 ./downloads/out12345.mp4;');
 
+// var version = shell.exec('node --version', {silent:true}).stdout;
 
 // console.log(cam, 'Done');
 // var Snapchat = require('snapchat');
@@ -384,7 +432,7 @@ io1.on('connection', function (socket1) {
     }
 
     function successCb(callback, additionalParams, separateParams) {
-        // console.log('Test');
+        console.log('Test');
         var result = {
             'success': true
         }
@@ -598,6 +646,7 @@ io1.on('connection', function (socket1) {
     }
 
     function updateTextOverlay(textOverlay, callback) {
+        // console.log(textOverlay, 'Text Overlay');
         try {
             if(textOverlay.overlay_type == 'png') {
                 updateFields('text_overlay', textOverlay.id, [
@@ -679,16 +728,16 @@ io1.on('connection', function (socket1) {
                     'name': 'base64',
                     'value': textOverlay.base64
                 }
-            ], function (err, result) {
-                if (err) {
-                    successFalseCb(err, callback);
-                } else {
-                    successCb(callback);
-                }
-            });
+                ], function (err, result) {
+                    if (err) {
+                        successFalseCb(err, callback);
+                    } else {
 
-        } 
-    }   catch (err) {
+                        successCb(callback);
+                    }
+                });
+            }
+        } catch (err) {
             console.log('error in method update text_overlay: ' + err);
             successFalseCb(err, callback);
         }
@@ -907,7 +956,7 @@ io1.on('connection', function (socket1) {
                     var ratio169 = azurePath + '169'+ newPath;
                     var ratio916 = azurePath + '916'+ newPath;
                     var ratio11 = azurePath + '11'+ newPath;
-                    query('INSERT INTO public.media_file (project_id, path, resolution, name, youtube_data, representative, range, deleted, duration, ratio169, ratio11, ratio916, crop_data, updated_files) VALUES ($1, $2, $3, $4, $5, $6, $7, 2, $8, $9, $10, $11, $12, $13) RETURNING id, project_id, path, resolution, name, youtube_data, representative, range, ratio169, ratio11, ratio916, deleted;', [row.project_id, row.path, row.resolution, row.name + ' (Clone)', row.youtube_data, row.representative, row.range, row.duration, ratio169, ratio11, ratio916, row.crop_data, row.updated_files], function (err, result) {
+                    query('INSERT INTO public.media_file (project_id, path, resolution, name, youtube_data, representative, range, deleted, duration, ratio169, ratio11, ratio916, crop_data, updated_files) VALUES ($1, $2, $3, $4, $5, $6, $7, 2, $8, $9, $10, $11, $12, $13) RETURNING id, project_id, path, resolution, name, youtube_data, representative, range, deleted;', [row.project_id, row.path, row.resolution, row.name + ' (Clone)', row.youtube_data, row.representative, row.range, row.duration, ratio169, ratio11, ratio916, row.crop_data, row.updated_files], function (err, result) {
                         if (err) {
                             successFalseCb(err, callback);
                         } else {
@@ -922,10 +971,7 @@ io1.on('connection', function (socket1) {
                                     'id': row.id,
                                     'guid': message.guid,
                                     'deleted': row.deleted,
-                                    'range': row.range,
-                                    'ratio169': row.ratio169,
-                                    'ratio11': row.ratio11,
-                                    'ratio916': row.ratio916
+                                    'range': row.range
                                 });
                             }
                         }
@@ -1169,7 +1215,7 @@ io1.on('connection', function (socket1) {
                     return;
                 }
                 var user = result.rows[0];
-                console.log(JSON.stringify(user));
+                //console.log(JSON.stringify(user));
                 if (callback != null) {
                     callback(null, user);
                 }
@@ -1483,6 +1529,8 @@ io1.on('connection', function (socket1) {
 
     function share_post_twitter(client, tweetParams, item) {
 
+        console.log('share_twitter_2', tweetParams);
+
         client.post('statuses/update', tweetParams, function (error, tweet, response) {
             if (error) {
                 console.log("Twitter error! :\n");
@@ -1510,6 +1558,8 @@ io1.on('connection', function (socket1) {
         });
     }
 
+
+
     function share_twitter(item) {
         console.log('share_twitter_1');
 
@@ -1531,7 +1581,7 @@ io1.on('connection', function (socket1) {
             // We need to download the image to our "downloads" directory and upload it to Twitter
             var dir = './downloads';
             var pathArr = item.project_image ? item.project_image.split('/') : [];
-            var pathImg = './downloads/' + pathArr[pathArr.length - 1];
+            var pathImg = 'downloads/' + pathArr[pathArr.length - 1];
 
             if (!fs.existsSync(dir)) {
                 fs.mkdirSync(dir);
@@ -1560,11 +1610,13 @@ io1.on('connection', function (socket1) {
                 });
 
         } else {
+
             var tweetParams = {
                 status: item.description
             };
             share_post_twitter(client, tweetParams, item);
         }
+
     }
 
     function get_pinterest_boards(item, callback) {
@@ -1902,86 +1954,58 @@ io1.on('connection', function (socket1) {
                     });
                 }
                 else if (mimeType.includes("image/")) {
-                    var imageCropGreater = function(newFilename, width, height) {
-                        var guidName = uuidGen.v1();
-                        var pathFile169 = './downloads/169'+newFilename;
-                        var ratio169w = width - ((width/2) + 355.5);
-                        var ratio169h = ((height/2) - 200);
-                        gm('./uploads/' + filename)
-                        .crop(712, 400, ratio169w, ratio169h)
-                        .write(pathFile169, function (err) {
-                            if (!err) {
-                                putMediaToAzure('169'+newFilename, pathFile169, function(call, res){});
-                            }
-                            else {
-                                console.log(err);
-                            } 
-                        });
-
-                        var pathFile11 = './downloads/11'+newFilename;
-                        var ratio11w = width - ((width/2) + 200);
-                        var ratio11h = ((height/2) - 200);
-                        gm('./uploads/' + filename)
-                        .crop(400, 400, ratio11w, ratio11h)
-                        .write(pathFile11, function (err) {
-                            if (!err) {
-                                putMediaToAzure('11'+newFilename, pathFile11, function(call, res){});
-                            }
-                            else {
-                                console.log(err);
-                            } 
-                        });
-
-                        var pathFile916 = './downloads/916'+newFilename;
-                        var ratio916w = width - ((width/2) + 112);
-                        var ratio916h = ((height/2) - 200);
-                        gm('./uploads/' + filename)
-                        .crop(224, 400, ratio916w, ratio916h)
-                        .write(pathFile916, function (err) {
-                            if (!err) {
-                                putMediaToAzure('916'+newFilename, pathFile916, function(call, res){});
-                            }
-                            else {
-                                console.log(err);
-                            } 
-                        });
-                    }
-
                     gm('./uploads/' + filename)
                         .size(function (err, size) {
                             if (!err) {
                                 resolution = size.width + ' x ' + size.height;
                                 console.log(resolution,'-- Resolution --', size.width%2);
-                                // if((size.width%2) != 1 && ((size.height%2) != 1)) {
-                                     imageCropGreater(newFilename, size.width, size.height);
-                                    /* if(size.width < 712) {
-                                        if(size.height > 400) {
-                                            var padXt = (712 - size.width)/2;  
-                                            //console.log('Submit Data');
-                                            var resize = shell.exec("ffmpeg -i ./uploads/"+filename+" -vf scale="+size.width+":"+size.height+",pad=712:"+size.height+":"+padXt+":0 ./downloads/"+newFilename).code;
-                                            if(resize == 0) {
-                                                imageCropGreater(newFilename, 712, size.height);
-                                            } else {
+                                if((size.width%2) != 1 && ((size.height%2) != 1)) {
+                                    var guidName = uuidGen.v1();
+                                    var pathFile169 = './downloads/169'+newFilename;
+                                    var ratio169w = size.width - ((size.width/2) + 355.5);
+                                    var ratio169h = ((size.height/2) - 200);
+                                    gm('./uploads/' + filename)
+                                    .crop(712, 400, ratio169w, ratio169h)
+                                    .write(pathFile169, function (err) {
+                                        if (!err) {
+                                            putMediaToAzure('169'+newFilename, pathFile169, function(call, res){});
+                                        }
+                                        else {
+                                            console.log(err);
+                                        } 
+                                        // series_callback();
+                                    });
 
-                                            }
-                                        } else {
-                                            var padXt = (712 - size.width)/2;
-                                            var padYt = (400 - size.height)/2;
-                                            var resize = shell.exec("ffmpeg -i ./uploads/"+filename+" -vf scale="+size.width+":"+size.height+",pad=712:400:"+padXt+":"+padYt+" ./downloads/"+newFilename).code;
-                                            if(resize == 0) {
-                                                imageCropGreater(newFilename, 712, 400);
-                                            } else {
-                                                
-                                            }
+                                    var pathFile11 = './downloads/11'+newFilename;
+                                    var ratio11w = size.width - ((size.width/2) + 200);
+                                    var ratio11h = ((size.height/2) - 200);
+                                    gm('./uploads/' + filename)
+                                    .crop(400, 400, ratio11w, ratio11h)
+                                    .write(pathFile11, function (err) {
+                                        if (!err) {
+                                            putMediaToAzure('11'+newFilename, pathFile11, function(call, res){});
                                         }
-                                    } else {
-                                        if(size.height > 400) {
-                                           
-                                        } else {
+                                        else {
+                                            console.log(err);
+                                        } 
+                                        // series_callback();
+                                    });
+
+                                    var pathFile916 = './downloads/916'+newFilename;
+                                    var ratio916w = size.width - ((size.width/2) + 112);
+                                    var ratio916h = ((size.height/2) - 200);
+                                    gm('./uploads/' + filename)
+                                    .crop(224, 400, ratio916w, ratio916h)
+                                    .write(pathFile916, function (err) {
+                                        if (!err) {
+                                            putMediaToAzure('916'+newFilename, pathFile916, function(call, res){});
                                         }
-                                    } */
-                                    
-                                /* } else {
+                                        else {
+                                            console.log(err);
+                                        } 
+                                        // series_callback();
+                                    });
+                                } else {
                                     var width = size.width;
                                     var height = size.height;
                                     if((size.width%2) == 1) {   
@@ -2037,7 +2061,7 @@ io1.on('connection', function (socket1) {
                                         } 
                                         // series_callback();
                                     });
-                                } */
+                                }
                             }
                             series_callback();
                         });
@@ -2256,41 +2280,17 @@ io1.on('connection', function (socket1) {
         }, 5000);
     }
     function saveMediaFile(project_id, file_path, callback) {
-        console.log(file_path);
         download(file_path, './uploads/')
             .on('close', function () {
                 // console.log('One file has been downloaded.');
                 var filename = path.basename(file_path);
+
                 putMediaToS3bucketAndSaveToDB({ project_id: project_id }, filename, callback);
             });
     }
 
     function addMediaFile(properties, path, resolution, filename, newFilename, callback, token, youtube_data, representative) {
         try {
-            var insertData = function(query_string, query_array) {
-                query(query_string, query_array, function (err, result) {
-                    if (err) {
-                        successFalseCb(err, callback);
-                    } else {
-                        var row = result.rows[0];
-                        if (row != null) {
-                            successCb(callback, {
-                                'media_file_id': row.id,
-                                'path': row.path,
-                                'order_in_project': row.order_in_project,
-                                'resolution': row.resolution,
-                                'name': row.name,
-                                'youtube_data': row.youtube_data,
-                                'representative': row.representative
-                            });
-                        } else {
-                            successFalseCb('result row is null for the query', callback);
-                        }
-                    }
-
-                });
-            } 
-
             var projectId = properties.project_id;
             var order_in_project = properties.order_in_project;
             var query_string, query_array;
@@ -2325,20 +2325,36 @@ io1.on('connection', function (socket1) {
             else {
                 var mimeType = mime.lookup(path);
                 if(mimeType.includes("video/")) {
-                    getDuration(path).then(duration => {
-                        query_string = 'INSERT INTO public.media_file (project_id, path, order_in_project, resolution, name, youtube_data, representative, crop_data, duration) VALUES ($1, $2, (SELECT COALESCE(MAX(order_in_project), 0) + 1 AS order_in_project_max FROM public.media_file WHERE project_id = $1), $3, $4, $5, $6, $7, $8) RETURNING id, path, order_in_project, resolution, name, youtube_data, representative;'
-                        query_array = [projectId, path, resolution, filename, youtube_data, representative, '{"ratio1":"-vf scale=224:400:force_original_aspect_ratio=decrease,pad=712:400:(ow-iw)/2:(oh-ih)/2", "ratio2":"-vf scale=400:400:force_original_aspect_ratio=decrease,pad=712:400:(ow-iw)/2:(oh-ih)/2", "ratio3":"-vf scale=712:400:force_original_aspect_ratio=decrease,pad=712:400:(ow-iw)/2:(oh-ih)/2"}', '{"seekTime":0,"duration":'+duration+'}'];
-                        insertData(query_string, query_array);
-                    });   
+                    query_string = 'INSERT INTO public.media_file (project_id, path, order_in_project, resolution, name, youtube_data, representative, crop_data) VALUES ($1, $2, (SELECT COALESCE(MAX(order_in_project), 0) + 1 AS order_in_project_max FROM public.media_file WHERE project_id = $1), $3, $4, $5, $6, $7) RETURNING id, path, order_in_project, resolution, name, youtube_data, representative;'
+                    query_array = [projectId, path, resolution, filename, youtube_data, representative, '{"ratio1":"-vf scale=224:400:force_original_aspect_ratio=decrease,pad=712:400:(ow-iw)/2:(oh-ih)/2", "ratio2":"-vf scale=400:400:force_original_aspect_ratio=decrease,pad=712:400:(ow-iw)/2:(oh-ih)/2", "ratio3":"-vf scale=712:400:force_original_aspect_ratio=decrease,pad=712:400:(ow-iw)/2:(oh-ih)/2"}'];
                 } else {
-                    query_string = 'INSERT INTO public.media_file (project_id, path, order_in_project, resolution, name, youtube_data, representative, ratio169, ratio11, ratio916, crop_data, duration) VALUES ($1, $2, (SELECT COALESCE(MAX(order_in_project), 0) + 1 AS order_in_project_max FROM public.media_file WHERE project_id = $1), $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id, path, order_in_project, resolution, name, youtube_data, representative;'
-                    query_array = [projectId, path, resolution, filename, youtube_data, representative, ratio169, ratio11, ratio916, '{"ratio1":"-vf scale=224:400:force_original_aspect_ratio=decrease,pad=712:400:(ow-iw)/2:(oh-ih)/2", "ratio2":"-vf scale=400:400:force_original_aspect_ratio=decrease,pad=712:400:(ow-iw)/2:(oh-ih)/2", "ratio3":"-vf scale=712:400:force_original_aspect_ratio=decrease,pad=712:400:(ow-iw)/2:(oh-ih)/2"}', '10'];
-                    insertData(query_string, query_array);
+                    query_string = 'INSERT INTO public.media_file (project_id, path, order_in_project, resolution, name, youtube_data, representative, ratio169, ratio11, ratio916, crop_data) VALUES ($1, $2, (SELECT COALESCE(MAX(order_in_project), 0) + 1 AS order_in_project_max FROM public.media_file WHERE project_id = $1), $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id, path, order_in_project, resolution, name, youtube_data, representative;'
+                    query_array = [projectId, path, resolution, filename, youtube_data, representative, ratio169, ratio11, ratio916, '{"ratio1":"-vf scale=224:400:force_original_aspect_ratio=decrease,pad=712:400:(ow-iw)/2:(oh-ih)/2", "ratio2":"-vf scale=400:400:force_original_aspect_ratio=decrease,pad=712:400:(ow-iw)/2:(oh-ih)/2", "ratio3":"-vf scale=712:400:force_original_aspect_ratio=decrease,pad=712:400:(ow-iw)/2:(oh-ih)/2"}'];
                 }
-            }
+                
 
-            
-            
+            }
+            query(query_string, query_array, function (err, result) {
+                if (err) {
+                    successFalseCb(err, callback);
+                } else {
+                    var row = result.rows[0];
+                    if (row != null) {
+                        successCb(callback, {
+                            'media_file_id': row.id,
+                            'path': row.path,
+                            'order_in_project': row.order_in_project,
+                            'resolution': row.resolution,
+                            'name': row.name,
+                            'youtube_data': row.youtube_data,
+                            'representative': row.representative
+                        });
+                    } else {
+                        successFalseCb('result row is null for the query', callback);
+                    }
+                }
+
+            });
         } catch (err) {
             console.log('error in method addMediaFile: ' + err);
             successFalseCb(err, callback);
@@ -2361,7 +2377,6 @@ io1.on('connection', function (socket1) {
                             query('SELECT * FROM public.text_overlay WHERE media_id = $1', [row.id], function (err1, result1) {
                                 if (!err1) {
                                     row.texts = result1.rows;
-                                    
                                 }
                                 parallel_callback();
                             });
@@ -2371,7 +2386,6 @@ io1.on('connection', function (socket1) {
                         if (err2) {
                             successFalseCb(err2, callback);
                         } else {
-                            
                             successCb(callback, {
                                 'media_file_list': result.rows
                             });
@@ -2379,7 +2393,6 @@ io1.on('connection', function (socket1) {
                     });
                 }
                 else {
-                    
                     successCb(callback, {
                         'media_file_list': result.rows
                     });
@@ -2395,7 +2408,6 @@ io1.on('connection', function (socket1) {
         console.log('call method getProjectData: projectId = ' + projectId);
         try {
             query('SELECT * from public.project where id = $1', [projectId], function (err, result) {
-               
                 if (err) {
                     successFalseCb(err, callback);
                     return;
@@ -2414,7 +2426,6 @@ io1.on('connection', function (socket1) {
                         successFalseCb(result1.msg, callback);
                         return;
                     }
-                    
                     successCb(callback, {
                         'project_data': project,
                         'media_files': result1.media_file_list
@@ -2431,13 +2442,13 @@ io1.on('connection', function (socket1) {
     function getUserInfoById(id, callback) {
         console.log('call method getUserInfoById: id = ' + id);
         try {
-            query('select u.*, US.plan_id, US.plan_price, US.purchase_date, US.number_of_projects, US.time_limit_per_video_in_seconds, US.number_of_days_free_trial, US.admin_update, US.number_of_user, US.plan_name, t.name as company, snapchat, facebook, twitter, instagram, pinterest from (select * from public.user u where u.id = $1) as u left join public.team t on u.team_id = t.id LEFT JOIN public.user_subscriptions AS US ON u.id=US.user_id AND US.status=1', [id], function (err, result) {
+            query('select u.*, t.name as company, snapchat, facebook, twitter, instagram, pinterest from (select * from public.user u where u.id = $1) as u left join public.team t on u.team_id = t.id', [id], function (err, result) {
                 if (err) {
                     successFalseCb(err, callback);
                     return;
                 }
                 var user = result.rows[0];
-                console.log(JSON.stringify(user));
+                //console.log(JSON.stringify(user));
                 if (callback != null) {
                     callback(null, user);
                 }
@@ -2527,7 +2538,7 @@ io1.on('connection', function (socket1) {
         console.log('Call method getTeams');
 
         try {
-            var queryString = 'SELECT t.id AS id, t.name AS name, t.monthly_plan AS monthly_plan, t.snapchat AS snapchat, t.facebook AS facebook, t.twitter AS twitter, t.instagram AS instagram, t.pinterest AS pinterest, u.name AS member_name, u.photo AS member_photo, u.email AS member_email, u.team_id AS member_team_id, u.created_at AS member_created_at, u.last_login_date AS member_last_seen, u.is_enabled AS member_is_enabled, u.id AS member_id, us.plan_id FROM public.team t LEFT JOIN public.user u ON t.id = u.team_id LEFT JOIN public.user_subscriptions us ON u.id = us.user_id WHERE us.status = 1';
+            var queryString = 'SELECT t.id AS id, t.name AS name, t.monthly_plan AS monthly_plan, t.snapchat AS snapchat, t.facebook AS facebook, t.twitter AS twitter, t.instagram AS instagram, t.pinterest AS pinterest, u.name AS member_name, u.photo AS member_photo, u.email AS member_email, u.team_id AS member_team_id, u.created_at AS member_created_at, u.last_login_date AS member_last_seen, u.is_enabled AS member_is_enabled, u.id AS member_id FROM public.team t LEFT JOIN public.user u ON t.id = u.team_id';
             query(queryString, [], function (err, result) {
                 if (err) {
                     successFalseCb(err, callback);
@@ -2702,73 +2713,31 @@ io1.on('connection', function (socket1) {
 
     function projectInfo(project_id, callback) {
         try {
-            query('SELECT id, path, resolution, crop_data, crop_ratio, duration, representative, ratio169, ratio11, ratio916, aspect_ratio FROM public.media_file WHERE project_id = $1 AND deleted != 1 ORDER BY order_in_project', [project_id], function (err, result) {
+            query('SELECT id, path, resolution, crop_data, crop_ratio, representative, ratio169, ratio11, ratio916 FROM public.media_file WHERE project_id = $1 AND deleted != 1 ORDER BY order_in_project', [project_id], function (err, result) {
                 if (err) {
                     successFalseCb(err, callback);
                 } else {
                     var mediaFile = [];
                     for (var i = 0; i < result.rows.length; i++) {
                         var row = result.rows[i];
-                        var mimeType = mime.lookup(row.path);
-                        if(!mimeType.includes('image/')) {
-                            //var duration = JSON.parse(JSON.stringify(row.duration));
-
-                            var duration =  JSON.parse(row.duration)
-                            if(typeof duration.seekTime == 'undefined') {
-                                duration.seekTime = 0;
-                            }
-
-                            var media = {
-                                'media_id': row.id,
-                                'path': row.path,
-                                'representative': row.representative,
-                                'resolution': row.resolution,
-                                'crop_data': row.crop_data,
-                                'crop_ratio': row.crop_ratio,
-                                'seekTime': duration.seekTime,
-                                'duration': duration.duration,
-                                'durationVideo': duration.duration,
-                                'ratio169': row.ratio169,
-                                'ratio11': row.ratio11,
-                                'ratio916': row.ratio916,
-                                'crop_ratio': row.aspect_ratio
-                            };
-                        } else {
-                            var media = {
-                                'media_id': row.id,
-                                'path': row.path,
-                                'representative': row.representative,
-                                'resolution': row.resolution,
-                                'crop_data': row.crop_data,
-                                'crop_ratio': row.crop_ratio,
-                                'durationImage': Number(row.duration),
-                                'ratio169': row.ratio169,
-                                'ratio11': row.ratio11,
-                                'ratio916': row.ratio916,
-                                'crop_ratio': row.aspect_ratio
-                            };
-                        }
+                        var media = {
+                            'media_id': row.id,
+                            'path': row.path,
+                            'representative': row.representative,
+                            'resolution': row.resolution,
+                            'crop_data': row.crop_data,
+                            'crop_ratio': row.crop_ratio,
+                            'durationImage': 10,
+                            'ratio169': row.ratio169,
+                            'ratio11': row.ratio11,
+                            'ratio916': row.ratio916
+                        };
                         mediaFile.push(media);
                     }
-                    var videoTotalTime = 0;
-                    query('SELECT us.time_limit_per_video_in_seconds FROM public.user_subscriptions AS us INNER JOIN public.project AS p ON p.user_id = us.user_id WHERE p.id = $1 AND us.status = 1', [project_id], function (err, res) {
-                        if(err) {
-                            
-                        } else {
-                            console.log(res);
-                         if(res.rows.length > 0) {
-                            videoTotalTime = res.rows[0].time_limit_per_video_in_seconds;
-                         } else {
-                             videoTotalTime = 0;
-                         }
-                           
-                           successCb(callback, {
-                                'mediaFile': mediaFile,
-                                'videoTotalTime': videoTotalTime
-                            });
-                        }
+
+                    successCb(callback, {
+                        'mediaFile': mediaFile
                     });
-                    
                 }
             });
         } catch (err) {
@@ -2814,7 +2783,7 @@ io1.on('connection', function (socket1) {
     });
 
     socket1.on('project_data_response1', function (data) {
-        
+        console.log(data);
         getProjectData(data.project_id, data.is_need_text_overlay, function (err, result) {
             socket1.emit('project_data_response_update1', result);
         });
@@ -2934,35 +2903,6 @@ io1.on('connection', function (socket1) {
 
     //signup method
 
-    socket1.on('emailValidate', function(message) {
-        var domain = message.email.replace(/.*@/, "");
-        var matchEmail = '';
-
-        function asyncFunction(item, cb) {
-            setTimeout(() => {
-                cb();
-            }, 0);
-        }
-
-        var blacklistEmail = blacklist.blacklist_email.reduce((promiseChain, item) => {
-            return promiseChain.then(() => new Promise((resolve) => {
-                var domain = message.email.replace(/.*@/, "");
-                if(item == domain) {
-                    matchEmail = domain;
-                }
-                asyncFunction(item, resolve);
-            }));
-        }, Promise.resolve());
-        
-        blacklistEmail.then(() => {
-            if(matchEmail != '') {
-                socket1.emit('emailValidationResponse', {success: false, msg: 'This type of email is not allowed, Please use another email.'})
-            } else {
-                socket1.emit('emailValidationResponse', { success: true, msg: '' })
-            }
-        });      
-    });
-
     socket1.on('signup', function (message) {
         console.log('received singup message: ' + JSON.stringify(message));
         checkIfNotEmptyMessage(socket1, message, 'signup_response', function () {
@@ -3000,29 +2940,22 @@ io1.on('connection', function (socket1) {
                     socket1.emit('signup_response', result);
                     return;
                 }
-                getSubscriptionPlan({plan_id:1}, function(err, plandata){
-                    plandata = plandata.subscription_plan;                        
-                    query('INSERT INTO public.user_subscriptions(user_id, plan_id, plan_price, number_of_projects, time_limit_per_video_in_seconds, number_of_days_free_trial, number_of_user, status, plan_name, stripe_subscription_id, stripe_customer_id)' +
-                        ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);', [userId, parseInt(plandata.id), plandata.plan_price, plandata.number_of_projects, plandata.time_limit_per_video_in_seconds, plandata.number_of_days_free_trial, plandata.number_of_user, '1', plandata.plan_name, '0', '0'], function (err, result) {
-                                createEmailConfirmationEntry(userId, uuid, function (err1, result1) {
-                                    if (result1 && result1.success) {
-                                        var link = frontPath + uuid;
-                                        console.log('link: ' + link);
-                                        sendConfirmationEmail(email, link, function (err2, result2) {
-                                            console.log('sendConfirmationEmail result: ' + JSON.stringify(result2));
-                                            //emit initial result (success = true)
-                                            socket1.emit('signup_response', result);
-                                        });
-                                    } else {
-                                        socket1.emit('signup_response', {
-                                            'success': false,
-                                            'msg': err1
-                                        });
-                                    }
-                                });                       
-                            });
+                createEmailConfirmationEntry(userId, uuid, function (err1, result1) {
+                    if (result1 && result1.success) {
+                        var link = frontPath + uuid;
+                        console.log('link: ' + link);
+                        sendConfirmationEmail(email, link, function (err2, result2) {
+                            console.log('sendConfirmationEmail result: ' + JSON.stringify(result2));
+                            //emit initial result (success = true)
+                            socket1.emit('signup_response', result);
+                        });
+                    } else {
+                        socket1.emit('signup_response', {
+                            'success': false,
+                            'msg': err1
+                        });
+                    }
                 });
-                
             });
         });
     });
@@ -3048,28 +2981,9 @@ io1.on('connection', function (socket1) {
                                 return;
                             }
                             else {
-                                query("SELECT * FROM public.user_subscriptions WHERE user_id = $1 AND status = 1 ORDER BY id LIMIT 1", [deletedUserId], function(err, resultDeleted){
-                                    if(err) {
-
-                                    } else {
-                                        if (resultDeleted.rows.length > 0) {
-                                            query("UPDATE public.user_subscriptions SET status = 0 WHERE user_id = $1", [deletedUserId], function (err, resultUpdate) { });
-                                            var subscriptionId = resultDeleted.rows[0].stripe_subscription_id;
-                                            if (subscriptionId) {
-                                                stripe.subscriptions.del(
-                                                    subscriptionId,
-                                                    function (err, confirmation) {
-                                                        if (typeof confirmation == 'undefined' && confirmation.status == 'canceled') {
-                                                            result.success = true;
-                                                            socket1.emit('delete_user_response', result);
-                                                            return;
-                                                        }
-                                                    }
-                                                );
-                                            }
-                                        }
-                                    }
-                                });
+                                result.success = true;
+                                socket1.emit('delete_user_response', result);
+                                return;
                             }
                         });
                     }
@@ -3146,21 +3060,6 @@ io1.on('connection', function (socket1) {
 
     authRequiredCall(socket1, 'get_current_user', function (userInfo, message) {
         getUserInfoById(userInfo.id, function (err, result) {
-            if (err) {
-                userInfo = {
-                    success: false
-                };
-            }
-            else {
-                userInfo = result;
-                userInfo.success = true;
-            }
-            socket1.emit('get_current_user_response', userInfo);
-        });
-    });
-
-    authRequiredCall(socket1, 'get_current_user1', function (userInfo, message) {
-        getUserInfoById(userInfo.id, function (err, result) {
             if (!result.id) {
                 userInfo = {
                     success: false
@@ -3170,7 +3069,7 @@ io1.on('connection', function (socket1) {
                 userInfo = result;
                 userInfo.success = true;
             }
-            socket1.emit('get_current_user_response1', userInfo);
+            socket1.emit('get_current_user_response', userInfo);
         });
     });
 
@@ -3192,7 +3091,7 @@ io1.on('connection', function (socket1) {
 
     authRequiredCall(socket1, 'update_text_overlay', function (userInfo, message) {
         updateTextOverlay(message, function (err, result) {
-            // console.log('send create project response: ' + JSON.stringify(result))
+            console.log('send create project response: ');
             socket1.emit('update_text_overlay_response', result);
         });
     });
@@ -3301,27 +3200,16 @@ io1.on('connection', function (socket1) {
         });
     });
 
-    authRequiredCall(socket1, 'project_data_edit', function (userInfo, message) {
-        
-        getProjectData(message.project_id, message.is_need_text_overlay, function (err, result) {
-            
-            socket1.emit('project_data_response_edit', result);
-        });
-    });
-
     authRequiredCall(socket1, 'project_data', function (userInfo, message) {
-        
         getProjectData(message.project_id, message.is_need_text_overlay, function (err, result) {
-            
+           
             socket1.emit('project_data_response', result);
         });
     });
 
     authRequiredCall(socket1, 'media_file_add', function (userInfo, message) {
-        console.log(userInfo);
-        console.log(message);
         saveMediaFile(message.project_id, message.path, function (err, result) {
-            console.log('send media_file_add response: ' + JSON.stringify(result))
+            // console.log('send media_file_add response: ' + JSON.stringify(result))
             result.guid = message.guid;
             socket1.emit('media_added', result);
         });
@@ -3352,7 +3240,7 @@ io1.on('connection', function (socket1) {
     });
 
     authRequiredCall(socket1, 'get_teams', function (userInfo, message) {
-        // console.log(userInfo);
+        console.log(userInfo);
         getTeams(function (err, result) {
             socket1.emit('get_teams_response', result);
         });
@@ -3426,7 +3314,7 @@ io1.on('connection', function (socket1) {
             console.log(message.path, '-Samm1');
             downloadFileFromUrl(message.path, function (filepath) {
                 var filename = path.basename(filepath);
-                var inputPath = './uploads/' + filename;
+                var inputPath = './downloads/' + filename;
                 var outputPath = '../app/cache';
                 var outputFilename = filename.replace(/\.[^/.]+$/, "") + Date.now() + ".png";
 
@@ -3509,26 +3397,26 @@ io1.on('connection', function (socket1) {
         var filename = path.basename(data.name);
         var writeStream = fs.createWriteStream("./uploads/" + filename, { highWaterMark: 102400 * 5 });
         stream.pipe(writeStream);
+        console.log(data);
 
         writeStream.on('close', function (callback) {
             DataURI('./uploads/' + filename)
                 .then(content => {
                     var textContent = '<img src="' + content + '" style="left:655px; top:10px;">';
-                    query('INSERT INTO public.text_overlay(media_id, content, o_width, o_height, o_left, o_top, o_degree, overlay_type, base64) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, media_id, content, o_width, o_height, o_left, o_top, o_degree, overlay_type, time_range, base64;', [data.newOverlay.media_id, textContent, 100, 100, 100, 100, 0, 'png', content], function (err, result) {
+                    query('INSERT INTO public.text_overlay(media_id, content, o_width, o_height, o_left, o_top, o_degree, overlay_type, base64) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, media_id, content, o_width, o_height, o_left, o_top, o_degree, overlay_type, time_range;', [data.newOverlay.media_id, textContent, 100, 100, 100, 100, 0, 'png', content], function (err, result) {
                         if (err) {
                             // console.log(err)
                             successFalseCb(err, callback);
                         } else {
                             var row = result.rows[0];
+                           
                             // successCb(callback, {
                             //     id: row.id
                             // }
 
                             // );
                             fs.unlink('./uploads/' + filename);
-                            console.log('Data ----------------------');
                             socket1.emit('pngOverlay', row);
-                            successCb(callback);
                         }
                     });
                 })
@@ -3579,9 +3467,9 @@ io1.on('connection', function (socket1) {
 
     authRequiredCall(socket1, 'crop_video', function (userInfo, message) {
 
-        // console.log(userInfo, message, 'Sam123');
+        console.log(userInfo, message, 'Sam123');
 
-        // socket1.emit('set_project_video_inprogress', { percent: 0, text: 'initializing...' });
+        socket1.emit('set_project_video_inprogress', { percent: 0, text: 'initializing...' });
         cropVideo(message, function (err, result) {
             socket1.emit('set_crop_video_response', result);
         });
@@ -3596,7 +3484,7 @@ io1.on('connection', function (socket1) {
             var mimeType = mime.lookup(element.path);
             if(!mimeType.includes('image/')) {
                 // console.log(element.seekTime);
-                element.durationImage = { seekTime:element.seekTime, duration: element.duration}
+                element.durationImage = { seekTime:element.seekTime, duration: element.duration/10}
             }
             query('UPDATE public.media_file SET duration = $1 WHERE id = $2', [element.durationImage, element.media_id], function(err, result) {
                 if(callback == (message.media_files.length-1)) {
@@ -3639,19 +3527,64 @@ io1.on('connection', function (socket1) {
 
 
     function videoPreview(message, callback) {
-        socket1.emit('processData', '(1/6) Initializing process');
-        socket1.emit('ProcessPercentage', 0);
-        let processStep = 6;
-        let percentTotal = 100;
-        let calculatePer = 100/6;
-        let totPer = 0, totPer1 = 0, countResolve = 0;
+        // console.log(message);
         let inputFiles = [];
         var aspect_ratio = 16 / 9;
+        // console.log(message.media_files, 'Dee[al');
+        // console.log(message);
+        var cropStringGenerator = function (width, height) {
+            var crop_scale_string = '-vf scale=' + (parseInt(width / 2) * 2) + ':-1,crop=';
+            var x1 = (message.startX >= 0 && message.startX <= width) ? message.startX : 0;
+            var y1 = (message.startY >= 0 && message.startY <= height) ? message.startY : 0;
+            var x2 = (message.endX > 0 && message.endX < width) ? message.endX : (message.endX < 0 ? 0 : width);
+            var y2 = (message.endY > 0 && message.endY < height) ? message.endY : (message.endY < 0 ? 0 : height);
+            var scaleW = parseInt(360 * (x2 - x1) / (message.endX - message.startX)) * 2;
+            var scaleH = parseInt(360 * (y2 - y1) / (message.endY - message.startY) / aspectRatioSetting[message.crop_ratio]) * 2;
+            var padH = parseInt(360 / aspectRatioSetting[message.crop_ratio]) * 2;
+            var padX, padY;
+
+            crop_scale_string += (x2 - x1) + ':' + (y2 - y1) + ':' + x1 + ':' + y1;
+
+            if (x1 > 0) {
+                padX = 0;
+            }
+            else {
+                // padX = 720 - scaleW;
+                padX = parseInt(720 * message.startX / (message.startX - message.endX));
+            }
+
+
+            if (y1 > 0) {
+                padY = 0;
+            }
+            else {
+                // padY = padH + y1;
+                padY = parseInt(padH * message.startY / (message.startY - message.endY));
+            }
+
+            if (scaleW > 720 || padX < 0 || padY < 0) {
+                crop_scale_string += ',scale=0:0,pad=width=720:height=' + padH;
+                crop_scale_string += ':x=0:y=0';
+            }
+            else {
+                crop_scale_string += ',scale=' + scaleW + ':' + scaleH;
+                crop_scale_string += ',pad=width=720:height=' + padH;
+                crop_scale_string += ':x=' + padX;
+                crop_scale_string += ':y=' + padY;
+            }
+
+            // crop_scale_string += ':color=0x3A4456,setsar=1:1';
+            crop_scale_string += ':color=black,setsar=1:1';
+            // crop_scale_string += ',setsar=1:1';
+            socket1.emit('consoleData', crop_scale_string);
+
+            return crop_scale_string;
+        };
 
         var crop_string_argument = function(videoResolution, frameW, frameH) {
-           
-            var videoW = Number(videoResolution.width);
-            var videoH = Number(videoResolution.height);
+            var resolution = videoResolution.split(" x ");
+            var videoW = Number(resolution[0]);
+            var videoH = Number(resolution[1]);
             var crop_arg = {};
             crop_arg.frameH = frameH;
             crop_arg.frameW = frameW;
@@ -3659,7 +3592,7 @@ io1.on('connection', function (socket1) {
             crop_arg.videoW = videoW;
             var videoAspectRatio = videoW/videoH;
             var frameAspectRatio = frameW/frameH;
-
+            // socket1.emit('consoleData', videoAspectRatio+''+frameAspectRatio);
             if(Math.round(videoAspectRatio, 2) == Math.round(frameAspectRatio, 2)) {
                 crop_arg.padX = 0;
                 crop_arg.padY = 0;
@@ -3671,7 +3604,7 @@ io1.on('connection', function (socket1) {
                 var scaledHeight = frameH;
                 var scaledWidth = frameW;
                 var scaleFactor = 1;
-                
+
                 if(videoH > frameH) {
                     if(videoW > frameW) {
                         scaleFactor = frameW/videoW;
@@ -3711,6 +3644,18 @@ io1.on('connection', function (socket1) {
                     }
                 }
             }
+            /* else if(videoAspectRatio > frameAspectRatio) {
+                var temp = (frameW*videoH)/videoH;
+                crop_arg.frameH = frameH;
+                crop_arg.frameW = frameW;
+                crop_arg.padX = 0;
+                crop_arg.padY = (400 - temp)/2;
+                crop_arg.scaleH = (400 - (crop_arg.padY*2));
+                crop_arg.scaleW = frameW;
+                crop_arg.videoH = videoH;
+                crop_arg.videoW = videoW;
+            } */ 
+            socket1.emit('consoleData', videoAspectRatio+''+frameAspectRatio);
             return crop_arg;
         };
 
@@ -3720,7 +3665,6 @@ io1.on('connection', function (socket1) {
                 successFalseCb(err, callback);
             }
             else {
-                socket1.emit('processData1', result.rowCount);
                 var uploadConcat = function (preview) {
                     blobService.createBlockBlobFromLocalFile(
                         'stage',
@@ -3730,14 +3674,10 @@ io1.on('connection', function (socket1) {
                             if (error) {
                                 successFalseCb(err, callback);
                             } else {
-                                totPer = calculatePer*6;
-                                socket1.emit('ProcessPercentage', totPer);
                                 var uploadedPath = "https://" + config.azure_config.AZURE_STORAGE_ACCOUNT + ".blob.core.windows.net/stage/" + preview;
                                 console.log("FILE UPLOADED", uploadedPath);
                                 query("UPDATE public.project SET result_video = $1 WHERE id = $2", [uploadedPath, message.project_id], function (err, response) {                                    
-                                    setTimeout(() => {
-                                        socket1.emit('preview_download', uploadedPath);
-                                    }, 1000);
+                                    socket1.emit('preview_download', uploadedPath);
                                 });
                             }
                         }
@@ -3747,19 +3687,12 @@ io1.on('connection', function (socket1) {
                 var concatVideo = function (data) {                    
                     let inputNamesFormatted = "concat:" + data.join('|');
                     if (data.length > 0) {
-                        var finalfile = uuidGen.v1();
-                        var resolutionFile = uuidGen.v1() + '.mp4';                
-                        shell.exec('ffmpeg -i "'+inputNamesFormatted+'" -c copy -bsf:v h264_mp4toannexb -acodec copy  ./downloads/'+finalfile+'.mp4', function(code, stdout, stderr) {                            
+                        var finalfile = uuidGen.v1();                        
+                        shell.exec('ffmpeg -i "'+inputNamesFormatted+'" -c copy -bsf:v h264_mp4toannexb ./downloads/'+finalfile+'.mp4', function(code, stdout, stderr) {                            
                             successCb(function(err, res) {
-                                if(code == 0) {
-                                    shell.exec('ffmpeg -i ./downloads/'+finalfile+'.mp4 -vf scale=-2:720 ./downloads/'+ resolutionFile, function(code, stdout, stderr) {
-                                        if(code==0) {
-                                            totPer = calculatePer*5;
-                                            socket1.emit('ProcessPercentage', totPer);
-                                            socket1.emit('processData', '(6/6) Preparing final video');
-                                            uploadConcat(resolutionFile);
-                                        }
-                                    });                                  
+                                if(code == 0) {           
+                                    // socket1.emit('preview_download', finalfile+'.mp4');                         
+                                    uploadConcat(finalfile+'.mp4');
                                 }                               
                             });
                         });
@@ -3771,7 +3704,7 @@ io1.on('connection', function (socket1) {
                         cb();
                     }, 700);
                 }
-                
+
                 var text_overlayPng = [];
                 var updated_file = [];
                 var videoFiles = [];
@@ -3779,10 +3712,9 @@ io1.on('connection', function (socket1) {
                 let text_overlay = result.rows.reduce((promiseChain, item) => {
                     return promiseChain.then(() => new Promise((resolve) => {
                         query('SELECT content, base64, o_width, o_height, o_left, o_top, o_degree, overlay_type FROM public.text_overlay WHERE media_id = $1', [item.id], function(err, result_text) {
-                            var stepOne = result_text.rowCount > 0 ? Number(result_text.rowCount*result.rowCount) : result.rowCount;
+                            socket1.emit('consoleData', result_text.rows);
                             let allOverlay = result_text.rows.reduce((promiseChain1, item1) => {
                                 return promiseChain1.then(() => new Promise((resolve1) => {
-                                    
                                     var guidPng = uuidGen.v1();
                                     var overlayData = item1.base64 ? item1.base64 : '';
                                     overlayData = overlayData.replace(/^data:image\/png;base64,/, '');
@@ -3792,7 +3724,7 @@ io1.on('connection', function (socket1) {
                                         {
                                             console.log(err, '------ Testing Error -----');
                                         } else {
-                                            
+                                            socket1.emit('consoleData', 'Process Ex---');
                                             if(item1.overlay_type == 'png') {
                                                 gm('./downloads/'+guidPng+'.png')
                                                 .resize(item1.o_width, item1.o_height)
@@ -3800,49 +3732,33 @@ io1.on('connection', function (socket1) {
                                                 .write('./downloads/'+guidPng+'.png', function (err) {
                                                     if(!err){
                                                         text_overlayPng.push({png:'./downloads/'+guidPng+'.png', left:item1.o_left, degree:item1.o_degree, top:item1.o_top, width:item1.o_width, height:item1.o_height, media_id: item.id});
-                                                        totPer += calculatePer / stepOne;
-                                                        // socket1.emit('processData1', 'pro '+'-'+stepOne+'--'+totPer);
-                                                        socket1.emit('ProcessPercentage', totPer); 
+                                        
                                                         asyncFunction(item1, resolve1);
                                                     }else{
-                                                        totPer += calculatePer / stepOne;
-                                                        // socket1.emit('processData1', 'else 1 '+'-'+stepOne+'--'+totPer);
-                                                        socket1.emit('ProcessPercentage', totPer);
+                                                        socket1.emit('consoleData', err);
                                                         asyncFunction(item1, resolve1);
                                                     }
                                                 });
                                             } else {
                                                 text_overlayPng.push({png:'./downloads/'+guidPng+'.png', left:item1.o_left, degree:item1.o_degree, top:item1.o_top, width:item1.o_width, height:item1.o_height, media_id: item.id});
-                                                totPer += calculatePer / stepOne;
-                                                // socket1.emit('processData1', 'else 2 '+'-'+stepOne+'--'+totPer);
-                                                socket1.emit('ProcessPercentage', totPer);
                                                 asyncFunction(text_overlayPng, resolve1);
                                             }
-                                           
+                                            socket1.emit('consoleData', 'Success');
                                         }  
                                     });  
                                 })); 
                             }, Promise.resolve());
                             
                             allOverlay.then(() => {
-                                // countResolve++;
-                                // totPer1 += calculatePer * (countResolve/result.rowCount);
-                                // socket1.emit('ProcessPercentage', totPer1);
                                 asyncFunction(item, resolve);
                             });
                         });
-                        //asyncFunction(item, resolve);
                     }));   
                 }, Promise.resolve());
 
                 text_overlay.then(() => {
-                    totPer = calculatePer;
-                    socket1.emit('ProcessPercentage', totPer);
-                    
                     let mp4 = result.rows.reduce((promiseChain, item) => {
                         return promiseChain.then(() => new Promise((resolve) => {
-                            var stepTwo = calculatePer / Number(result.rowCount);
-                            socket1.emit('processData', '(2/6) Processing input media');
                             var crop_string = '';
                             var guid = uuidGen.v1();
                             var newFilePath = './downloads/' + guid + '.mp4';                            
@@ -3857,7 +3773,7 @@ io1.on('connection', function (socket1) {
                             // }
                             
                             if(mimeType.includes('image/')) {
-                                
+                                // socket.emit('consoleData', item);
                                 if(message.ratio == '916') {
                                     item.ratio = '916';
                                     item.ratioPath = item.ratio916.replace("https://"+config.azure_config.AZURE_STORAGE_ACCOUNT+'.blob.core.windows.net/stage', './downloads');
@@ -3868,142 +3784,44 @@ io1.on('connection', function (socket1) {
                                     item.ratio = '169';
                                     item.ratioPath = item.ratio169.replace("https://"+config.azure_config.AZURE_STORAGE_ACCOUNT+'.blob.core.windows.net/stage', './downloads');
                                 }
-                                // console.log(item, 'Emit Data');
-                                // var durationData = item.duration;
-                                item.duration = item.duration > 0 ? item.duration : 10;
-                                // -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=44100
-                                // ffmpeg -ar 48000 -t 60 -f s16le -acodec pcm_s16le -ac 2 -i /dev/zero -acodec libmp3lame -aq 4 output.mp3
-                                var code = shell.exec('ffmpeg -loop 1 -i '+ item.ratioPath +' -i ./output.mp3  -c:v libx264 -t '+ item.duration +' -c:a libmp3lame -ab 320k -pix_fmt yuv420p ' + newFilePath).code;
-                                
+                                var durationData = JSON.parse(item.duration);
+                                var code = shell.exec('ffmpeg -loop 1 -i '+ item.ratioPath +' -c:v libx264 -t '+ durationData.duration +' -pix_fmt yuv420p ' + newFilePath).code;
                                 if(code == 0) {
                                     updated_file.push({media_id: item.id, updated_files: newFilePath});
                                     query('UPDATE public.media_file SET updated_files = $1 WHERE id = $2', [newFilePath, item.id], function(err, res){ });
                                     item.newFilePath = newFilePath;
-                                    totPer += stepTwo;
-                                    socket1.emit('ProcessPercentage', totPer);
                                     mediaFiles.push(item);
                                     asyncFunction(item, resolve);
                                 } else {
-                                    socket1.emit('videoPreviewError', 'Error: Files can\'t Conncate');
+                                    socket1.emit('videoPreviewError', 'Error: Files can\'t Conncate Image');
                                     console.log('------ Log MainTain Image -------------');
                                 }
                             } else {  
-                                // socket1.emit('processData', 'Processing input video...');
+                                
                                 item.crop_data = JSON.parse(item.crop_data);
                                 
-                                // if(message.ratio == '916') {
-                                //      item.crop_string = item.crop_data.ratio1;
-                                // } else if(message.ratio == '11') {
-                                //     item.crop_string = item.crop_data.ratio2;
-                                // } else {
-                                //     item.crop_string = item.crop_data.ratio3;
-                                // }     
-                                var argThenVideoCrop = function(item, newFilePath) {
-                                    var durationData = JSON.parse(item.duration);
-                                
-                                    if(durationData.seekTime == undefined) { durationData.seekTime = 0; }
-                                    var durationVideo = (durationData.duration - (durationData.seekTime));
-                                    // console.log(durationData, 'TestTestTestTestTestTestTestTestTestTest')
-                                    var code = shell.exec('ffmpeg -i '+ item.path +' -ss '+ durationData.seekTime +' -t '+ durationVideo +' '+item.crop_string+ ' -codec:v libx264 -codec:a libmp3lame ' + newFilePath).code;
-                                    
-                                    if(code == 0) {
-                                        updated_file.push({media_id: item.id, updated_files: newFilePath});
-                                        query('UPDATE public.media_file SET updated_files = $1 WHERE id = $2', [newFilePath, item.id], function(err, res){ });
-                                        item.newFilePath = newFilePath;
-                                        totPer += stepTwo;
-                                        socket1.emit('ProcessPercentage', totPer);
-                                        // socket1.emit('processData', 'Processing input video...');
-                                        mediaFiles.push(item);
-                                        asyncFunction(item, resolve);
-                                    }  else {
-                                        socket1.emit('videoPreviewError', 'Error: Files can\'t Conncate Video');
-                                        console.log('------ Log MainTain Video -------------');
-                                    }
-                                }
-                                
-                                switch(message.ratio) {
-                                    case '169': 
-                                                
-                                                if(item.ratio169 != null && item.ratio169 != '') {
-                                                    
-                                                    item.path = item.ratio169;
-                                                    
-                                                    item.path = item.path.replace("https://"+config.azure_config.AZURE_STORAGE_ACCOUNT+'.blob.core.windows.net/stage', './downloads');
-                                                    getResolution(item.path).then(function (resolution) {
-                                                        
-                                                        var cropArgument = crop_string_argument(resolution, 712, 400);
-                                                        item.crop_string = "-vf scale="+cropArgument.videoW+":-1,crop="+cropArgument.videoW+":"+cropArgument.videoH+":0:0,scale="+cropArgument.scaleW+":"+cropArgument.scaleH+",pad=width="+cropArgument.frameW+":height="+cropArgument.frameH+":x="+cropArgument.padX+":y="+cropArgument.padY+":color=black,setsar=1:1";
+                                if(message.ratio == '916') {
+                                     item.crop_string = item.crop_data.ratio1;
+                                } else if(message.ratio == '11') {
+                                    item.crop_string = item.crop_data.ratio2;
+                                } else {
+                                    item.crop_string = item.crop_data.ratio3;
+                                }     
 
-                                                        argThenVideoCrop(item, newFilePath);
-                                                    });
-                                                } else {
-                                                    
-                                                    item.path = item.path.replace("https://"+config.azure_config.AZURE_STORAGE_ACCOUNT+'.blob.core.windows.net/stage', './uploads');
-                                                    getResolution(item.path).then(function (resolution) {
-                                                        
-                                                        var cropArgument = crop_string_argument(resolution, 712, 400);
-                                                        item.crop_string = "-vf scale="+cropArgument.videoW+":-1,crop="+cropArgument.videoW+":"+cropArgument.videoH+":0:0,scale="+cropArgument.scaleW+":"+cropArgument.scaleH+",pad=width="+cropArgument.frameW+":height="+cropArgument.frameH+":x="+cropArgument.padX+":y="+cropArgument.padY+":color=black,setsar=1:1";
-                                                       
-                                                        argThenVideoCrop(item, newFilePath);
-                                                    });
-                                                    
-                                                }
-                                                
+                                socket1.emit('consoleData', item);
+                                switch(message.ratio) {
+                                    case '169': var cropArgument = crop_string_argument(item.resolution, 712, 400);
+                                                socket1.emit('consoleData', cropArgument);
+                                                item.crop_string = "-vf scale="+cropArgument.videoW+":-1,crop="+cropArgument.videoW+":"+cropArgument.videoH+":0:0,scale="+cropArgument.scaleW+":"+cropArgument.scaleH+",pad=width="+cropArgument.frameW+":height="+cropArgument.frameH+":x="+cropArgument.padX+":y="+cropArgument.padY+":color=black,setsar=1:1";
                                                 item.ratio = '169';
                                                 break;
-                                    case '11':  
-                                                if(item.ratio11 != null && item.ratio11 != '') {
-                                                    
-                                                    item.path = item.ratio11;
-                                                    
-                                                    item.path = item.path.replace("https://"+config.azure_config.AZURE_STORAGE_ACCOUNT+'.blob.core.windows.net/stage', './downloads');
-                                                    getResolution(item.path).then(function (resolution) {
-                                                        
-                                                        var cropArgument = crop_string_argument(resolution, 400, 400);
-                                                        item.crop_string = "-vf scale="+cropArgument.videoW+":-1,crop="+cropArgument.videoW+":"+cropArgument.videoH+":0:0,scale="+cropArgument.scaleW+":"+cropArgument.scaleH+",pad=width="+cropArgument.frameW+":height="+cropArgument.frameH+":x="+cropArgument.padX+":y="+cropArgument.padY+":color=black,setsar=1:1";
-
-                                                        argThenVideoCrop(item, newFilePath);
-                                                    });
-                                                } else {
-                                                    
-                                                    item.path = item.path.replace("https://"+config.azure_config.AZURE_STORAGE_ACCOUNT+'.blob.core.windows.net/stage', './uploads');
-                                                    
-                                                    getResolution(item.path).then(function (resolution) {
-                                                        
-                                                        var cropArgument = crop_string_argument(resolution, 400, 400);
-                                                        item.crop_string = "-vf scale="+cropArgument.videoW+":-1,crop="+cropArgument.videoW+":"+cropArgument.videoH+":0:0,scale="+cropArgument.scaleW+":"+cropArgument.scaleH+",pad=width="+cropArgument.frameW+":height="+cropArgument.frameH+":x="+cropArgument.padX+":y="+cropArgument.padY+":color=black,setsar=1:1";
-
-                                                        argThenVideoCrop(item, newFilePath);
-                                                    });
-                                                }
-                                                
+                                    case '11':  var cropArgument = crop_string_argument(item.resolution, 400, 400);
+                                                item.crop_string = "-vf scale="+cropArgument.videoW+":-1,crop="+cropArgument.videoW+":"+cropArgument.videoH+":0:0,scale="+cropArgument.scaleW+":"+cropArgument.scaleH+",pad=width="+cropArgument.frameW+":height="+cropArgument.frameH+":x="+cropArgument.padX+":y="+cropArgument.padY+":color=black,setsar=1:1";
                                                 item.ratio = '11';
                                                 break;
-                                    case '916': 
-                                                if(item.ratio916 != null && item.ratio916 != '') {
-
-                                                    item.path = item.ratio916;
-                                                    
-                                                    item.path = item.path.replace("https://"+config.azure_config.AZURE_STORAGE_ACCOUNT+'.blob.core.windows.net/stage', './downloads');
-                                                    getResolution(item.path).then(function (resolution) {
-                                                        
-                                                        var cropArgument = crop_string_argument(resolution, 224, 400);
-                                                        item.crop_string = "-vf scale="+cropArgument.videoW+":-1,crop="+cropArgument.videoW+":"+cropArgument.videoH+":0:0,scale="+cropArgument.scaleW+":"+cropArgument.scaleH+",pad=width="+cropArgument.frameW+":height="+cropArgument.frameH+":x="+cropArgument.padX+":y="+cropArgument.padY+":color=black,setsar=1:1";
-
-                                                        argThenVideoCrop(item, newFilePath);
-                                                    });
-                                                } else {
-                                                    
-                                                    item.path = item.path.replace("https://"+config.azure_config.AZURE_STORAGE_ACCOUNT+'.blob.core.windows.net/stage', './uploads');                                                    
-                                                    getResolution(item.path).then(function (resolution) {
-                                                        
-                                                        var cropArgument = crop_string_argument(resolution, 224, 400);
-                                                        item.crop_string = "-vf scale="+cropArgument.videoW+":-1,crop="+cropArgument.videoW+":"+cropArgument.videoH+":0:0,scale="+cropArgument.scaleW+":"+cropArgument.scaleH+",pad=width="+cropArgument.frameW+":height="+cropArgument.frameH+":x="+cropArgument.padX+":y="+cropArgument.padY+":color=black,setsar=1:1";
-
-                                                        argThenVideoCrop(item, newFilePath);
-                                                    });
-                                                }
-                                                
+                                    case '916': var cropArgument = crop_string_argument(item.resolution, 224, 400);
+                                                socket1.emit('consoleData', cropArgument);
+                                                item.crop_string = "-vf scale="+cropArgument.videoW+":-1,crop="+cropArgument.videoW+":"+cropArgument.videoH+":0:0,scale="+cropArgument.scaleW+":"+cropArgument.scaleH+",pad=width="+cropArgument.frameW+":height="+cropArgument.frameH+":x="+cropArgument.padX+":y="+cropArgument.padY+":color=black,setsar=1:1";
                                                 item.ratio = '916';
                                                 break;
                                 }
@@ -4016,26 +3834,32 @@ io1.on('connection', function (socket1) {
 
                                 // item.crop_string = "-vf scale=1280:-1,crop=1280:720:0:0,scale=400:214,pad=width=400:height=400:x=0:y=88:color=black,setsar=1:1";
                                 
-                                
-                                
+                                var durationData = JSON.parse(item.duration);
+                                if(durationData.seekTime == undefined) { durationData.seekTime = 0; }
+                                var durationVideo = (durationData.duration - durationData.seekTime);
+                                item.path = item.path.replace("https://"+config.azure_config.AZURE_STORAGE_ACCOUNT+'.blob.core.windows.net/stage', './uploads');
+                                var code = shell.exec('ffmpeg -i '+ item.path +' -ss '+ durationData.seekTime +' -t '+ durationVideo +' '+item.crop_string+ ' -codec:v libx264 -codec:a libmp3lame ' + newFilePath).code;
+                                if(code == 0) {
+                                    updated_file.push({media_id: item.id, updated_files: newFilePath});
+                                    query('UPDATE public.media_file SET updated_files = $1 WHERE id = $2', [newFilePath, item.id], function(err, res){ });
+                                    item.newFilePath = newFilePath;
+                                    mediaFiles.push(item);
+                                    asyncFunction(item, resolve);
+                                }  else {
+                                    socket1.emit('videoPreviewError', 'Error: Files can\'t Conncate Video');
+                                    console.log('------ Log MainTain Video -------------');
+                                }
                             }
                         }));
                     }, Promise.resolve());
 
                     
                     mp4.then(() => {
-                        
-                        totPer = calculatePer*2;
-                        socket1.emit('ProcessPercentage', totPer);
-                        socket1.emit('processData', '(3/6) Adding overlay');
-                        // console.log('Process all Mp4 Media Files', mediaFiles, text_overlayPng);
                         var count = ind = 0;
-                        var stepThree = calculatePer / mediaFiles.length;
-                        socket1.emit('processData1', mediaFiles.length);
                         let mediaFile = mediaFiles.reduce((promiseChain, item) => {
                             return promiseChain.then(() => new Promise((resolve) => {
-                                
-                                var text_overdone = text_overlayPng.reduce((promiseChain1, item1) => {
+                               
+                               var text_overdone = text_overlayPng.reduce((promiseChain1, item1) => {
                                     
                                     return promiseChain1.then(() => new Promise((resolve1) => {
                                         
@@ -4103,7 +3927,7 @@ io1.on('connection', function (socket1) {
                                             //224x400
                                             // newLeft = newLeft - 244;
 
-                                            
+                                            socket1.emit('consoleData', newLeft+'::'+newTop);
                                             
                                             // if(item1.degree == 0) {
                                             //     var overlay_string = "overlay=" + (item1.left) + ":" + (item1.top);
@@ -4122,79 +3946,40 @@ io1.on('connection', function (socket1) {
                                             // var scale_string = '[0:v]scale=' + item1.width+':' + item1.height + '[scaled];';
                                             // var text123 = 'ffmpeg -i '+item.newFilePath+' -i '+item1.png+' -filter_complex '+ overlay_string +' -codec:v libx264 -codec:a copy -flags +global_header '+tempFilePath;
                                             // console.log(text123, '---------- Text Overlay --------------');
-                                           
+                                            // socket1.emit('consoleData', item1.png);
                                             gm(item1.png)
                                             .size(function (err, size) {
                                                 if(!err) {
-                                                    
-                                                    var text_code = shell.exec('ffmpeg -i '+item.newFilePath+' -i '+item1.png+' -filter_complex "'+ overlay_string +'" -map "[out]" -map 0:a -c:v libx264 -c:a copy '+tempFilePath).code;
-                                                    
+                                                    // socket1.emit('consoleData', item1.png);
+                                                    // socket1.emit('consoleData', 'ffmpeg -y -i '+item.newFilePath+' -i '+item1.png+' -filter_complex "'+ overlay_string +'" -map "[out]"-pix_fmt '+tempFilePath);
+                                                    var text_code = shell.exec('ffmpeg -y -i '+item.newFilePath+' -i '+item1.png+' -filter_complex "'+ overlay_string +'" -map "[out]"-pix_fmt '+tempFilePath).code;
                                                     if(text_code == 0) {
                                                         _.find(updated_file, function(item3, index) {
                                                             if (item3.media_id == item.id) {
                                                                 updated_file[index] = {updated_files: tempFilePath, media_id: item.id};     
-
                                                             } 
                                                         });
-                                                        
                                                         asyncFunction(item1, resolve1);
                                                     }
                                                     item.newFilePath = tempFilePath; 
                                                 } else {
-                                                    
                                                     asyncFunction(item1, resolve1);
                                                 }
                                             });
                                         } else {
-                                            
                                             asyncFunction(item1, resolve1);
                                         }
-                                        
                                     }));
                                 }, Promise.resolve());
                                
                                 text_overdone.then(() => {
-                                    totPer += stepThree;
-                                    socket1.emit('ProcessPercentage', totPer);
                                     asyncFunction(item, resolve);
                                 });
-                               
-                               //console.log(resolve, item, ' ------ NONE --------');
                             }));
                         }, Promise.resolve()); 
 
                         mediaFile.then(() => {
-                            totPer = calculatePer*3;
-                            socket1.emit('ProcessPercentage', totPer);
-                            // console.log('------ All Item Are Process ------- ');
-                            // query('SELECT updated_files, id FROM public.media_file WHERE project_id = $1 AND deleted != 1', [message.project_id], function(err, generateTs) {
-                            //     try {
-                                    
-                            //         var allTsFiles = [];
-                            //         var ts = generateTs.rows.reduce((promiseChain2, item2) => {
-                            //             return promiseChain2.then(() => new Promise((resolve2) => {
-                            //                 // console.log(item2.updated_files);
-                            //                 var newTsFilePath = './downloads/'+uuidGen.v1()+'.ts';
-                            //                 console.log('TS FILES ---', item2.updated_files);
-                            //                 var newTs = shell.exec('ffmpeg -i '+ item2.updated_files +' -c copy -bsf:v h264_mp4toannexb -f mpegts '+newTsFilePath).code;             
-                            //                 if(newTs == 0) {
-                            //                     allTsFiles.push(newTsFilePath);
-                            //                     // query('UPDATE public.media_file SET updated_ts = $1 WHERE id = $2', [newTsFilePath, item2.id], function(err, res1){});
-                            //                     asyncFunction(item2, resolve2);
-                            //                 }
-                                            
-                            //             })); 
-                            //         }, Promise.resolve());
-
-                            //         ts.then(() => {
-                            //             console.log('--- Create Ts ------', );
-                            //             concatVideo(allTsFiles);
-                                        
-                            //         });
-                            //     }catch(err) {
-                            //         console.log(err, '----- Error Ts Files -----');
-                            //     }
-                            // });
+                            console.log('------ All Item Are Process ------- ');
 
                             var allTsFiles = [];
                             var ts = updated_file.reduce((promiseChain2, tsGen) => {
@@ -4202,7 +3987,6 @@ io1.on('connection', function (socket1) {
                                     // gm(tsGen.updated_files)
                                     // .size(function (err, size) {
                                     //     if(!err) {
-                                            socket1.emit('processData', '(4/6) Generating ts files');
                                             var newTsFilePath = './downloads/'+uuidGen.v1()+'.ts';
                                             console.log('TS FILES ---', tsGen.updated_files);
                                             var newTs = shell.exec('ffmpeg -i '+ tsGen.updated_files +' -c copy -bsf:v h264_mp4toannexb -f mpegts '+newTsFilePath).code;             
@@ -4210,7 +3994,7 @@ io1.on('connection', function (socket1) {
                                                 allTsFiles.push(newTsFilePath);
                                                 asyncFunction(tsGen, resolve2);
                                             } else {
-                                                socket1.emit('videoPreviewError', 'Error: Files can\'t Conncate');
+                                                socket1.emit('videoPreviewError', 'Error: Conditions Match');
                                             }
                                     //     } else {
                                     //         asyncFunction(tsGen, resolve2);
@@ -4220,9 +4004,7 @@ io1.on('connection', function (socket1) {
                             }, Promise.resolve());
                                 
                             ts.then(() => {
-                                totPer = calculatePer*4;
-                                socket1.emit('ProcessPercentage', totPer);
-                                socket1.emit('processData', '(5/6) Merging all contents');
+                                // console.log('--- Create Ts ------', allTsFiles);
                                 concatVideo(allTsFiles); 
                             });
                         });
@@ -4232,9 +4014,9 @@ io1.on('connection', function (socket1) {
         })
     }
 
+
+
     function cropVideo(message, callback) {
-        socket1.emit('processData', 'Please Wait');
-        socket1.emit('ProcessPercentage', 0);
 
         var cropStringGenerator = function (width, height) {
             var crop_scale_string = '-vf scale=' + (parseInt(width / 2) * 2) + ':-2,crop=';
@@ -4274,78 +4056,11 @@ io1.on('connection', function (socket1) {
                 crop_scale_string += ':y=' + padY;
             }
             crop_scale_string += ':color=black,setsar=1:1';
-            socket1.emit('ProcessPercentage', 10);
+            
             return crop_scale_string;
         };
 
-        /* var crop_string_argument = function(videoResolution, frameW, frameH) {
-            // var resolution = videoResolution.split(" x ");
-            var videoW = videoResolution.width;
-            var videoH = videoResolution.height;
-            var crop_arg = {};
-            crop_arg.frameH = frameH;
-            crop_arg.frameW = frameW;
-            crop_arg.videoH = videoH;
-            crop_arg.videoW = videoW;
-            var videoAspectRatio = videoW/videoH;
-            var frameAspectRatio = frameW/frameH;
-
-            if(Math.round(videoAspectRatio, 2) == Math.round(frameAspectRatio, 2)) {
-                crop_arg.padX = 0;
-                crop_arg.padY = 0;
-                crop_arg.scaleH = frameH;
-                crop_arg.scaleW = frameW; 
-                crop_arg.videoH = videoH;
-                crop_arg.videoW = videoW;
-            } else {
-                var scaledHeight = frameH;
-                var scaledWidth = frameW;
-                var scaleFactor = 1;
-
-                if(videoH > frameH) {
-                    if(videoW > frameW) {
-                        scaleFactor = frameW/videoW;
-                        scaledHeight = scaleFactor*videoH;
-                        
-                        if(scaledHeight > frameH) {
-                            scaleFactor = frameH/videoH;
-                            crop_arg.scaleW = Math.ceil(videoW*scaleFactor); 
-                            crop_arg.scaleH = frameH;
-                            crop_arg.padX = Math.floor((frameW-crop_arg.scaleW)/2);
-                            crop_arg.padY = 0;
-                        } else {
-                            crop_arg.scaleW = frameW; 
-                            crop_arg.scaleH = Math.ceil(videoH*scaleFactor);
-                            crop_arg.padX = 0;
-                            crop_arg.padY = Math.floor((frameH-crop_arg.scaleH)/2);
-                        }
-                    } else {
-                        scaleFactor = frameH/videoH;
-                        crop_arg.scaleW = Math.ceil(videoW*scaleFactor); 
-                        crop_arg.scaleH = frameH;
-                        crop_arg.padX = Math.floor((frameW-crop_arg.scaleW)/2);
-                        crop_arg.padY = 0;
-                    }
-                } else {
-                    if(videoW > frameW) {
-                        scaleFactor = frameW/videoW;
-                        crop_arg.scaleW = frameW; 
-                        crop_arg.scaleH = Math.ceil(videoH*scaleFactor);
-                        crop_arg.padX = 0;
-                        crop_arg.padY = Math.floor((frameH-crop_arg.scaleH)/2);
-                    } else {
-                        crop_arg.scaleW = videoW; 
-                        crop_arg.scaleH = videoH;
-                        crop_arg.padX = Math.floor((frameW-crop_arg.scaleW)/2);
-                        crop_arg.padY = Math.floor((frameH-crop_arg.scaleH)/2);
-                    }
-                }
-            }
-            
-            return crop_arg;
-        }; */
-
-        var uploadConcat = function (preview, json, callback) {
+        var uploadConcat = function (preview, json) {
             blobService.createBlockBlobFromLocalFile(
                 'stage',
                 preview,
@@ -4354,23 +4069,19 @@ io1.on('connection', function (socket1) {
                     if (error) {
                         successFalseCb(err, callback);
                     } else {
-                        socket1.emit('ProcessPercentage', 100);
                         var uploadedPath = "https://" + config.azure_config.AZURE_STORAGE_ACCOUNT + ".blob.core.windows.net/stage/" + preview;
                         console.log("FILE UPLOADED", uploadedPath);
                         if(message.crop_ratio == '916') {
                             query('UPDATE public.media_file SET crop_data = $1, ratio916 = $3 WHERE id = $2', [json, message.media_spec.id, uploadedPath], function(err, res){
                                 socket1.emit('videoCroped', {newPath: uploadedPath, ratio: message.crop_ratio});
-                                successCb(callback);
                             });
                         } else if(message.crop_ratio == '11') {
                             query('UPDATE public.media_file SET crop_data = $1, ratio11 = $3 WHERE id = $2', [json, message.media_spec.id, uploadedPath], function(err, res){
                                 socket1.emit('videoCroped', {newPath: uploadedPath, ratio: message.crop_ratio});
-                                successCb(callback);
                             });
                         } else {
                             query('UPDATE public.media_file SET crop_data = $1, ratio169 = $3 WHERE id = $2', [json, message.media_spec.id, uploadedPath], function(err, res){
                                 socket1.emit('videoCroped', {newPath: uploadedPath, ratio: message.crop_ratio});
-                                successCb(callback);
                             });
                         }
                     }
@@ -4384,51 +4095,64 @@ io1.on('connection', function (socket1) {
         var guid = uuidGen.v4();
         var newFileName = '';
         var obj = {};
-
-        switch(message.crop_ratio) {
-            case '169': 
-                            
-                        newFileName = '169' + guid+'.mp4';
-                        newFilePath = dirPath + newFileName;                        
-                        
-                        message.crop_ratio = '169';
-                        break;
-            case '11':  
-                        newFileName = '11' + guid+'.mp4';
-                        newFilePath = dirPath + newFileName;
-                        
-                        message.crop_ratio = '11';
-                        break;
-            case '916': 
-                        newFileName = '916' + guid+'.mp4';
-                        newFilePath = dirPath + newFileName;                        
-                        
-                        message.crop_ratio = '916';
-                        break;
+        if(message.crop_ratio == '916') {
+            newFileName = '916' + guid+'.mp4';
+            newFilePath = dirPath + newFileName;            
+        } else if(message.crop_ratio == '11') {
+            newFileName = '11' + guid+'.mp4';
+            newFilePath = dirPath + newFileName;
+        } else {
+            newFileName = '169' + guid+'.mp4';
+            newFilePath = dirPath + newFileName;
         }
-                                          
+        
         query("SELECT path, crop_data::json FROM public.media_file WHERE id = $1", [message.media_spec.id], function (err, result) {
             
             obj = result.rows[0].crop_data;
-            socket1.emit('ProcessPercentage', 20);
-            switch(message.crop_ratio) {
-                case '916': obj.ratio1 = crop_scale_string;
-                            break;
-                case '11': obj.ratio2 = crop_scale_string;
-                            break;
-                case '169': obj.ratio3 = crop_scale_string;
-                            break;
+            if(message.crop_ratio == '916') {
+                obj.ratio1 = crop_scale_string;
+            } else if(message.crop_ratio == '11') {
+                obj.ratio2 = crop_scale_string;
+            } else {
+                obj.ratio3 = crop_scale_string;
             }
-            
             var pathFile = result.rows[0].path.replace('https://' + config.azure_config.AZURE_STORAGE_ACCOUNT + '.blob.core.windows.net/stage/', './uploads/');
             getDuration(result.rows[0].path).then(duration => {
-                socket1.emit('ProcessPercentage', 30);
+                console.log(duration);
                 var code = shell.exec('ffmpeg -i '+ pathFile +' -ss 0 -t '+ duration +' '+crop_scale_string+ ' -codec:v libx264 -codec:a libmp3lame ' + newFilePath).code;
                 if(code == 0) {   
-                    socket1.emit('ProcessPercentage', 65);
                     uploadConcat(newFileName, obj);
                 }
             });
+        
+            /* var obj = {};
+            obj = result.rows[0].crop_data;
+            // console.log(obj.ratio1);
+            if(message.crop_ratio == '916') {
+
+                obj.ratio1 = crop_scale_string;
+                query("UPDATE public.media_file SET crop_data = $1 WHERE id = $2", [obj, message.media_spec.id], function (err, result) {
+                    console.log(obj);
+                    socket1.emit('videoCroped', result);
+                    successCb(callback, { result: result });
+                });  
+            } else if(message.crop_ratio == '11') {
+                obj.ratio2 = crop_scale_string;  
+                query("UPDATE public.media_file SET crop_data = $1 WHERE id = $2", [obj, message.media_spec.id], function (err, result) {
+                    console.log(obj);
+                    socket1.emit('videoCroped', result);
+                    successCb(callback, { result: result });
+                });
+            } else {
+                
+                obj.ratio3 = crop_scale_string;
+                console.log(obj.ratio3);  
+                query("UPDATE public.media_file SET crop_data = $1 WHERE id = $2", [obj, message.media_spec.id], function (err, result) {
+                    console.log(obj, '2343242323423423242');
+                    socket1.emit('videoCroped', result);
+                    successCb(callback, { result: result });
+                });
+            } */
         });
     }
 
@@ -4858,7 +4582,10 @@ io1.on('connection', function (socket1) {
                     socket1.emit('admin_create_user_res', result);
                 })
             })
+
         })
+
+
     })
 
 
@@ -4933,28 +4660,12 @@ io1.on('connection', function (socket1) {
                                 return;
                             }
                             else {
-                                query('SELECT up.id FROM public.user u INNER JOIN public.user_payment_methods up ON u.id=up.user_id WHERE team_id = $1 ORDER BY id LIMIT 1', [teamId], function(err, resultPayment) {
-                                    if(err) {
-                                        result = {
-                                            success: false,
-                                            msg: err.body
-                                        };
-                                        socket1.emit('update_team_plan_response', result);
-                                        return;
-                                    } else {
-                                        if(plan_selected == 5) {
-                                            updateUserPlan(teamId, plan_selected, result);
-                                        } else {
-                                            console.log(resultPayment.rows.length, 'Sample');
-                                            if (resultPayment.rows.length > 0) {
-                                                updateUserPlan(teamId, plan_selected, result);
-                                            } else {
-                                                socket1.emit('payment_method_not_add', { success: true, msg: 'User not add any payment method.' });
-                                            }
-                                        }
-                                        
-                                    }
-                                });
+                                console.log('send update_team_plan response: ' + JSON.stringify(result))
+                                result.success = true;
+                                result.team_id = teamId;
+                                result.plan_selected = plan_selected;
+                                socket1.emit('update_team_plan_response', result);
+                                return;
                             }
                         });
                     }
@@ -4970,78 +4681,6 @@ io1.on('connection', function (socket1) {
         })
     });
 
-
-    var updateUserPlan = function(teamId, plan_selected, result) {
-        query('SELECT id FROM public.user WHERE team_id = $1 ORDER BY id LIMIT 1', [teamId], function (err, resultUser) {
-            if (err) {
-                successFalseCb(err, callback);
-            } else {
-                var row = resultUser.rows[0];
-                
-                query('select * from public.user_subscriptions where status=1 AND user_id=$1', [row.id], function (err, resultSub) {
-                    if (err) {
-                        successFalseCb(err, callback);
-                    } else {
-                        var planName = '';
-                        if (plan_selected == 2)
-                            planName = "pro";
-                        else if (plan_selected == 3)
-                            planName = "plus";
-                        else if (plan_selected == 4)
-                            planName = "enterprise";
-                        else
-                            planName = "free";
-
-                        stripe.subscriptions.retrieve(
-                            resultSub.rows[0].stripe_subscription_id,
-                            function (err, subscription) {
-                                console.log(subscription);
-                                var item_id = subscription.items.data[0].id;
-                                var stripeCustomerId = subscription.customer;
-                                stripe.subscriptions.update(resultSub.rows[0].stripe_subscription_id, {
-                                    items: [{
-                                        id: item_id,
-                                        plan: planName,
-                                    }],
-                                }, function (err, subscription) {
-                                    console.log(subscription);
-                                    result.success = true;
-                                    result.team_id = teamId;
-                                    result.plan_selected = plan_selected;
-                                    // console.log(result);
-                                    var user_subscription_id = resultSub.rows[0].id;
-                                    // console.log(resultSub.rows[0]);
-                                    query('UPDATE public.user_subscriptions SET status = 0 WHERE id = $1', [user_subscription_id], function (err, updateSub) {
-                                        if (err) {
-                                            successFalseCb(err, callback);
-                                        } else {
-                                            var selected_plan = plan_selected == 5 ? 1 : plan_selected;
-                                            query('SELECT * FROM public.subscription_plans WHERE id = $1', [selected_plan], function (err, fetchPlan) {
-                                                if (err) {
-                                                    successFalseCb(err, callback);
-                                                } else {
-                                                    var admin_update = plan_selected == 5 ? 1 : 0;
-                                                    fetchPlan.rows[0].number_of_days_free_trial = fetchPlan.rows[0].number_of_days_free_trial == '' || fetchPlan.rows[0].number_of_days_free_trial == null ? 0 : parseInt(fetchPlan.rows[0].number_of_days_free_trial);
-                                                    query('INSERT INTO public.user_subscriptions (user_id, plan_id, plan_price, number_of_projects, time_limit_per_video_in_seconds, number_of_days_free_trial, number_of_user, status, plan_name, admin_update, stripe_subscription_id, stripe_customer_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)', [resultSub.rows[0].user_id, parseInt(selected_plan), parseFloat(fetchPlan.rows[0].plan_price), parseInt(fetchPlan.rows[0].number_of_projects), parseInt(fetchPlan.rows[0].time_limit_per_video_in_seconds), parseInt(fetchPlan.rows[0].number_of_days_free_trial), parseInt(fetchPlan.rows[0].number_of_user), 1, fetchPlan.rows[0].plan_name, admin_update, resultSub.rows[0].stripe_subscription_id, resultSub.rows[0].stripe_customer_id], function (err, resultInsert) {
-                                                        if (err) {
-                                                            successFalseCb(err, callback);
-                                                        } else {
-                                                            socket1.emit('update_team_plan_response', result);
-                                                            return;
-                                                        }
-                                                    });
-                                                }
-                                            });
-
-                                        }
-                                    });
-                                });
-                            });
-                    }
-                });
-            }
-        });
-    }
 
     //END SERVICE CONNECTION STATE
 
@@ -5986,440 +5625,6 @@ io1.on('connection', function (socket1) {
             return false;
         return !!path.match(/.+(\.mp4|\.avi|\.mpeg|\.flv|\.mov)$/);
     }
-
-    // Get all plans
-    authRequiredCall(socket1, 'get_subscription_plans', function (userInfo, message) {
-        getSubscriptionPlans(userInfo.id, function (err, result) {
-            socket1.emit('get_subscription_plans_response', result);
-        });
-    });
-
-    function getSubscriptionPlans(userId, callback) {
-        try {
-            query('select DISTINCT(SubsPlans.id ), SubsPlans.*, UserSubs.status, UserSubs.plan_id AS user_plan_id from public.subscription_plans AS SubsPlans LEFT OUTER JOIN public.user_subscriptions AS UserSubs ON SubsPlans.id=UserSubs.plan_id AND UserSubs.user_id=$1 AND UserSubs.status=1 order by SubsPlans.id ASC', [userId], function (err, result) {
-                if (err) {
-                    successFalseCb(err, callback);
-                    return;
-                }
-                var subscription_plans = result.rows;
-                // console.log(subscription_plans);
-                successCb(callback, { subscription_plans: subscription_plans });
-            });
-        } catch (err) {
-            // console.log('error in method getSubscriptionPlans: ' + err);
-            successFalseCb(err, callback);
-        }
-    }
-
-    
-    //Get get user subscription plan
-    authRequiredCall(socket1, 'get_user_subscription_plan', function (userInfo, message) {
-        getUserSubscriptionPlan(userInfo.id, function (err, result) {
-            socket1.emit('get_user_subscription_plan_response', result);
-        });
-    });
-
-    authRequiredCall(socket1, 'get_user_subscription_plan1', function (userInfo, message) {
-        getUserSubscriptionPlan(userInfo.id, function (err, result) {
-            socket1.emit('get_user_subscription_plan_response1', result);
-        });
-    });
-
-    function getUserSubscriptionPlan(userId, callback) {
-        try {
-            query('select * from public.user_subscriptions where status=1 AND user_id=$1', [userId], function (err, result) {
-                // console.log(result);
-                if (err) {
-                    successFalseCb(err, callback);
-                    return;
-                } else if (!result.rowCount) {
-                    successFalseCb('User Plan does not exists', callback);
-                } else {
-                    var user_subscription_plan = result.rows[0];
-                    //console.log(user_subscription_plan);
-                    successCb(callback, {user_subscription_plan: user_subscription_plan});
-                }
-                
-            });
-        } catch (err) {
-            //console.log('error in method getSubscriptionPlan: ' + err);
-            successFalseCb(err, callback);
-        }
-    }
-
-    //Check user already used free plan
-    authRequiredCall(socket1, 'check_user_used_free_plan', function (userInfo, message) {
-        checkUserUsedFreePlan(userInfo.id, function (err, result) {
-            socket1.emit('check_user_used_free_plan_response', result);
-        });
-    });
-
-    function checkUserUsedFreePlan(userId, callback) {
-        try {
-            query('SELECT sum( CASE WHEN end_date!=NULL THEN end_date::DATE ELSE NOW()::DATE END - purchase_date::DATE ) AS FREE_PLAN_USED_DAYS from public.user_subscriptions where plan_id=1 AND user_id=$1', [userId], function (err, result) {
-                console.log(result);
-                if (err) {
-                    successFalseCb(err, callback);
-                    return;
-                } else if (!result.rowCount) {
-                    successFalseCb('User Plan does not exists', callback);
-                } else {
-                    var FREE_PLAN_DATA = result.rows[0];                    
-                    successCb(callback, {FREE_PLAN_DATA});
-                }
-                
-            });
-        } catch (err) {
-            //console.log('error in method getSubscriptionPlan: ' + err);
-            successFalseCb(err, callback);
-        }
-    }
-
-    // Stripe Payment
-    function doStripePayment(userInfo, formData, callback){
-        console.log(formData);
-        var planName = '';
-        if(formData.plan_id == 2)
-            planName = "pro";
-        else if(formData.plan_id == 3)
-            planName = "plus";
-        else if(formData.plan_id == 4)
-            planName = "enterprise";
-        else        
-            planName = "free";
-
-        // Create a new customer and then a new charge for that customer:
-        stripe.customers.create({ 
-            card : formData.stripe_token,
-            email : userInfo.email,            
-        }).then(function(customer){            
-            var stripeCustomerId = customer.id;
-            console.log('Success! Customer with Stripe Customer ID ' + stripeCustomerId + ' just signed up!');
-            stripe.subscriptions.create({
-              customer: stripeCustomerId,
-              items: [
-                {
-                      plan: planName,
-                },
-              ]
-            }, function(err, subscription) {
-                console.log('Success! Customer with Subscription ID ', subscription , ' just signed up!');
-                var subscriptionId = subscription.id;
-                
-                updateUserSubscriptionPlanStatus(userInfo, formData, function(err, result){    
-                    getSubscriptionPlan(formData, function(err, plandata){
-                        console.log(plandata);
-                        var userSubscriptionPlan = {};
-                        plandata = plandata.subscription_plan;     
-                        plandata.number_of_days_free_trial = plandata.number_of_days_free_trial != '' ? plandata.number_of_days_free_trial : 0;                   
-                        query('INSERT INTO public.user_subscriptions(user_id, plan_id, plan_price, number_of_projects, time_limit_per_video_in_seconds, number_of_days_free_trial, number_of_user, status, plan_name, stripe_subscription_id, stripe_customer_id)' +
-                            ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id, stripe_subscription_id;', [userInfo.id, parseInt(plandata.id), plandata.plan_price, plandata.number_of_projects, plandata.time_limit_per_video_in_seconds, plandata.number_of_days_free_trial, plandata.number_of_user, 1, plandata.plan_name, subscriptionId, stripeCustomerId], function (err, result) {
-                                if (err) {
-                                    successFalseCb(err, callback);
-                                    return;
-                                }
-                                // successCb(callback);
-                                userSubscriptionPlan = result.rows[0];
-                                addPaymentMethod(userInfo, formData, customer, userSubscriptionPlan, callback);
-                            });
-                    
-                    });
-                    // End Get SubscriptionPlans   
-                });                          
-            });
-            
-        });
-
-    }
-
-    authRequiredCall(socket1, 'stripe_payment', function (userInfo, formData) {        
-        doStripePayment(userInfo, formData, function (err, result) {
-            socket1.emit('set_stripe_payment_response', result);
-        });
-    });
-
-    // add Payment Method into local database 
-    function addPaymentMethod(userInfo, formData, stripeCustomer, userSubscriptionPlan, callback){
-        // console.log(userSubscriptionPlan);
-        stripe.customers.listCards(stripeCustomer.id, function (err, cards) {
-            if(cards.data.length > 0) {
-                //Update User Payment Method
-                query('INSERT INTO public.user_payment_methods(user_id, creditcard_number, stripe_customer_id, card_type, stripe_card_id)' +
-                    ' VALUES ($1, $2, $3, $4, $5) RETURNING id, user_id, creditcard_number, stripe_customer_id, card_type;', [userInfo.id, formData.card_number.replace(/.(?=.{4})/g, 'X'), stripeCustomer.id, stripeCustomer.sources.data[0].brand, cards.data[0].id], function (err, result) {
-                    if (err) {
-                        successFalseCb(err, callback);
-                        return;
-                    } else {
-                        // console.log(result);
-                        var payment_method = result.rows[0];
-                        // socket1.emit('payment_method', {payment_method: payment_method});
-                        successCb(callback, {payment_method: payment_method, userSubscriptionPlan: userSubscriptionPlan});
-                    }
-                });
-            }
-        });
-        
-    }
-
-    //Update subscription plan
-    function updateSubscriptionPlan(userInfo, formData, callback){        
-        console.log(formData);
-        var planName = '';
-        if(formData.plan_id == 2)
-            planName = "pro";
-        else if(formData.plan_id == 3)
-            planName = "plus";
-        else if(formData.plan_id == 4)
-            planName = "enterprise";
-        else        
-            planName = "free";
-
-        // Upgrading Plan
-        stripe.subscriptions.retrieve(
-          formData.stripe_subscription_id,//formData.stripe_subscription_id,
-          function(err, subscription) {
-              console.log(subscription);
-            var item_id = subscription.items.data[0].id;
-            var stripeCustomerId = subscription.customer;
-            stripe.subscriptions.update(formData.stripe_subscription_id, {
-              items: [{
-                id: item_id,
-                plan: planName,
-              }],
-            }, function(err, subscription) {
-                    console.log(subscription);
-                    console.log('Success! Customer with Subscription ID ', subscription , ' just updated plan!');
-                    var subscriptionId = subscription.id;
-                    updateUserSubscriptionPlanStatus(userInfo, formData, function(err, plandata){
-                        getSubscriptionPlan(formData, function(err, plandata){
-                            plandata = plandata.subscription_plan;   
-                            
-                            plandata.number_of_days_free_trial = plandata.number_of_days_free_trial != '' ? plandata.number_of_days_free_trial : 0; 
-                            query('INSERT INTO public.user_subscriptions(user_id, plan_id, plan_price, number_of_projects, time_limit_per_video_in_seconds, number_of_days_free_trial, number_of_user, status, plan_name, stripe_subscription_id, stripe_customer_id)' +
-                                ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);', [userInfo.id, parseInt(plandata.id), plandata.plan_price, plandata.number_of_projects, plandata.time_limit_per_video_in_seconds, plandata.number_of_days_free_trial, plandata.number_of_user, '1', plandata.plan_name, subscriptionId, stripeCustomerId], function (err, result) {
-                                        if (err) {
-                                            successFalseCb(err, callback);
-                                            return;
-                                        }
-                                        successCb(callback);
-                                    });
-                        });
-                        // End Get SubscriptionPlans   
-                    });
-            });
-          }
-        );      
-    }
-
-    authRequiredCall(socket1, 'update_subscription_plan', function (userInfo, formData) {
-        updateSubscriptionPlan(userInfo, formData, function (err, result) {
-            socket1.emit('update_subscription_plan_response', result);
-        });
-    });
-
-    //Update User subscription plan status
-    function updateUserSubscriptionPlanStatus(userInfo, formData, callback){
-        console.log('update plan status', userInfo,formData);
-        query('UPDATE public.user_subscriptions SET status = $1, end_date=current_timestamp WHERE user_id =$2;', [0, userInfo.id], function (err, result) {
-                if (err) {
-                    successFalseCb(err, callback);
-                    return;
-                } else {
-                    successCb(callback);
-                }
-        });        
-    }
-
-    // Get subscription Plan
-    function getSubscriptionPlan(formData, callback) {
-        //console.log(formData);
-        try {
-            query('select * from public.subscription_plans where id=$1', [formData.plan_id], function (err, result) {
-                if (err) {
-                    successFalseCb(err, callback);
-                    return;
-                }
-                var subscription_plan = result.rows[0];
-                //console.log(subscription_plan);
-                successCb(callback, {subscription_plan: subscription_plan});
-            });
-        } catch (err) {
-            //console.log('error in method getSubscriptionPlan: ' + err);
-            successFalseCb(err, callback);
-        }
-    }
-
-    // Get getPaymentMethod
-    function getPaymentMethod(userInfo, callback) {
-        //console.log(formData);
-        try {
-            query('select * from public.user_payment_methods where user_id=$1', [userInfo.id], function (err, result) {
-                if (err) {
-                    successFalseCb(err, callback);
-                    return;
-                }
-                var payment_method = result.rows[0];
-                console.log(payment_method);
-                successCb(callback, {payment_method: payment_method});
-            });
-        } catch (err) {            
-            successFalseCb(err, callback);
-        }
-    }
-    // Get payment Method
-    authRequiredCall(socket1, 'get_payment_method', function (userInfo) {        
-        getPaymentMethod(userInfo, function (err, result) {
-            socket1.emit('get_payment_method_response', result);
-        });
-    });
-
-    function updatePaymentMethod(userInfo, formData, callback){
-        
-        query("SELECT * FROM public.user_payment_methods WHERE user_id=$1 ORDER BY id LIMIT 1", [userInfo.id], function(err, result){
-            if(err) {
-
-            } else {
-                if(result.rows.length > 0) {
-                    console.log(result.rows[0].stripe_customer_id);
-                    stripe.customers.createSource(
-                        formData.stripe_customer_id,
-                        { source: formData.stripe_token }, 
-                        function(err, card) {
-                            // console.log(formData.stripe_customer_id, result.rows[0].stripe_card_id, result.rows[0].stripe_card_id, 'SampleData');
-                            stripe.customers.deleteCard(
-                                result.rows[0].stripe_customer_id,
-                                result.rows[0].stripe_card_id.trim(),
-                                function (err, confirmation) {
-                                    console.log(confirmation);
-                                    query('UPDATE public.user_payment_methods SET creditcard_number=$1, card_type=$2, stripe_card_id=$3 WHERE user_id=$4;', [formData.card_number.replace(/.(?=.{4})/g, 'X'), card.brand, card.id, userInfo.id], function (err, result) {
-                                        if (err) {
-                                            successFalseCb(err, callback);
-                                            return;
-                                        }
-                                        socket1.emit('payment_method_update', { card_number: formData.card_number.replace(/.(?=.{4})/g, 'X'), type: card.brand});
-                                        getPaymentMethod(userInfo, callback);
-                                    }); 
-                                }
-                            );
-                            
-                            // var cardId = card.id;
-                            // stripe.customers.update(formData.stripe_customer_id, {
-                            // default_source: cardId
-                            // }, function(err, customer) {
-
-                                                  
-                            // });  
-                    }); 
-                }
-            }
-        });
-          
-        // stripe.customers.createSource(
-        //   formData.stripe_customer_id,
-        //   { source: formData.stripe_token }, 
-        //   function(err, card) {
-        //     console.log(card);    
-        //     var cardId = card.id;
-        //     stripe.customers.update(formData.stripe_customer_id, {
-        //       default_source: cardId
-        //     }, function(err, customer) {
-                          
-        //         query('UPDATE public.user_payment_methods SET creditcard_number=$1, card_type=$2 WHERE user_id=$3;', [formData.card_number.replace(/.(?=.{4})/g, 'X'), customer.sources.data[0].brand, userInfo.id ], function (err, result) {
-        //                     if (err) {
-        //                         successFalseCb(err, callback);
-        //                         return;
-        //                     }
-        //                     getPaymentMethod(userInfo, callback);
-        //                 });                   
-        //     });  
-        // }); 
-    }
-    //update stripe payment method
-    authRequiredCall(socket1, 'update_stripe_payment_method', function (userInfo, formData) {        
-        updatePaymentMethod(userInfo, formData, function (err, result) {
-            socket1.emit('update_stripe_payment_method_response', result);
-        });
-    });
-
-    // Update plan data from admin
-    function adminUpdatePlanData(userInfo, formData, callback){
-        // Update payment method in database  
-        
-        var field_name = formData.field_name;         
-    
-        query('UPDATE public.subscription_plans SET '+field_name+' = $1 WHERE id=$2;', [formData.field_value, formData.id ], function (err, result) {
-            if (err) {
-                successFalseCb(err, callback);
-                return;
-            }else{
-                if(field_name == 'plan_price'){
-                    
-                    var amount = formData.field_value.replace('.', '');
-                    amount = parseInt(amount);
-        
-                    if(formData.id == 2)
-                        planName = "pro";
-                    else if(formData.id == 3)
-                        planName = "plus";
-                    else if(formData.id == 4)
-                        planName = "enterprise";
-                    else        
-                        planName = "free";
-
-                    stripe.plans.del(
-                        planName,
-                        function (err, confirmation) {
-                            stripe.plans.create({
-                                amount: amount,
-                                interval: "month",
-                                name: planName,
-                                currency: "usd",
-                                id: planName.toLowerCase()
-                            }, function (err, plan) {
-                                query("SELECT * FROM public.user_subscriptions WHERE status = 1 AND plan_id = $1", [formData.id], function(err, userSubscription) {
-                                    if(err) {
-
-                                    } else {
-                                        userSubscription.rows.forEach(function(user) {
-                                            stripe.subscriptions.retrieve(
-                                                user.stripe_subscription_id,
-                                                function (err, subscription) {
-                                                    console.log(subscription);
-                                                    var item_id = subscription.items.data[0].id;
-                                                    stripe.subscriptions.update(
-                                                        user.stripe_subscription_id, {
-                                                        items: [{
-                                                            id: item_id,
-                                                            plan: planName,
-                                                        }],
-                                                    }, function (err, subscription) {
-                                                        console.log(err);
-                                                        console.log(subscription);
-                                                        console.log(user);        
-                                                    });
-                                                });
-                                            }, this);
-                                    }
-                                });
-                                getSubscriptionPlans(userInfo.id, callback)
-                            });
-                        }
-                    );
-                }else{
-                    getSubscriptionPlans(userInfo.id, callback)
-                }
-
-                // getSubscriptionPlans(userInfo.id, callback)
-            }                          
-        });                 
-    }
-    //update stripe payment method
-    authRequiredCall(socket1, 'admin_update_plan_data', function (userInfo, formData) {
-        adminUpdatePlanData(userInfo, formData, function (err, result) {
-            socket1.emit('get_subscription_plans_response', result);
-        });
-    });
-
 });
 
 //UPDATE public.user set timezone = 'test' where id = 30;

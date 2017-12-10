@@ -1,6 +1,5 @@
 var pg = require('pg');
 var config = require('./config.js');
-var blacklist = require("./blacklist.js");
 var functions = require('./customFunction.js');
 var jwt = require('jsonwebtoken');
 var nodemailer = require('nodemailer');
@@ -41,12 +40,57 @@ var shell = require('shelljs');
 var xoauth2 = require('xoauth2');
 // var Jimp = require("jimp");
 
-var stripe = require('stripe')(config.stripe_key.test);
-// sk_test_1Da0KIiZLwsBW2wCkmrCvmmn
-//sk_test_Vo1K1BcweuhFppRakThUAVpC
+var stripe = require('stripe')('sk_test_1Da0KIiZLwsBW2wCkmrCvmmn');
+
+// gm('./downloads/c395cb70-9df2-11e7-844d-9fd5410e68d3.png')
+// .rotate('green', 45)
+// .resize(100, 100)
+// .flatten()
+// .write('./out.png', function (err) {
+//   if (!err) console.log('crazytown has arrived');
+// })
+
+// gm('./62f86aa0-9881-11e7-b0a0-b513e28aa47b.jpeg')
+// .resize(800, 800)
+// .crop(711, 400, 45.5, 200)
+// .write('./'+uuidGen.v1()+'.jpg', function (err) {
+//   if (!err) console.log('crazytown has arrived');
+//   else console.log(err);
+// });
+
+// gm('./d4ad7e40-988d-11e7-837d-5f213f41ce90.jpeg')
+// // .resize(800, 800)
+// .crop(711, 400, 894.5, 300)
+// .write('./'+uuidGen.v1()+'.jpg', function (err) {
+//   if (!err) console.log('crazytown has arrived');
+//   else console.log(err);
+// });
+
+// gm('./d4ad7e40-988d-11e7-837d-5f213f41ce90.jpeg')
+// // .resize(800, 800)
+// .crop(400, 400, 1050, 300)
+// .write('./'+uuidGen.v1()+'.jpg', function (err) {
+//   if (!err) console.log('crazytown has arrived');
+//   else console.log(err);
+// });
+
+// gm('./d4ad7e40-988d-11e7-837d-5f213f41ce90.jpeg')
+// // .resize(800, 800)
+// .crop(224, 400, 1138, 300)
+// .write('./'+uuidGen.v1()+'.jpg', function (err) {
+//   if (!err) console.log('crazytown has arrived');
+//   else console.log(err);
+// });
+
+// gm('./downloads/8e049ce0-a034-11e7-b41f-edf8d7178af5.png')    
+// .size(function (err, size) {
+
+//     console.log(size);
+// });
 
 // shell.exec('ffmpeg -loop 1 -i ./downloads/4f171cb0-9152-11e7-b63a-dd28e8e2d221.jpg -c:v libx264 -t 5 -pix_fmt yuv420p -vf scale=320:240 ./downloads/out12346.mp4; ffmpeg -loop 1 -i ./downloads/5166d910-9152-11e7-b63a-dd28e8e2d221.jpg -c:v libx264 -t 5 -pix_fmt yuv420p -vf scale=320:240 ./downloads/out12345.mp4;');
 
+// var version = shell.exec('node --version', {silent:true}).stdout;
 
 // console.log(cam, 'Done');
 // var Snapchat = require('snapchat');
@@ -384,7 +428,7 @@ io1.on('connection', function (socket1) {
     }
 
     function successCb(callback, additionalParams, separateParams) {
-        // console.log('Test');
+        console.log('Test');
         var result = {
             'success': true
         }
@@ -1169,7 +1213,7 @@ io1.on('connection', function (socket1) {
                     return;
                 }
                 var user = result.rows[0];
-                console.log(JSON.stringify(user));
+                //console.log(JSON.stringify(user));
                 if (callback != null) {
                     callback(null, user);
                 }
@@ -1483,6 +1527,8 @@ io1.on('connection', function (socket1) {
 
     function share_post_twitter(client, tweetParams, item) {
 
+        console.log('share_twitter_2', tweetParams);
+
         client.post('statuses/update', tweetParams, function (error, tweet, response) {
             if (error) {
                 console.log("Twitter error! :\n");
@@ -1510,6 +1556,8 @@ io1.on('connection', function (socket1) {
         });
     }
 
+
+
     function share_twitter(item) {
         console.log('share_twitter_1');
 
@@ -1531,7 +1579,7 @@ io1.on('connection', function (socket1) {
             // We need to download the image to our "downloads" directory and upload it to Twitter
             var dir = './downloads';
             var pathArr = item.project_image ? item.project_image.split('/') : [];
-            var pathImg = './downloads/' + pathArr[pathArr.length - 1];
+            var pathImg = 'downloads/' + pathArr[pathArr.length - 1];
 
             if (!fs.existsSync(dir)) {
                 fs.mkdirSync(dir);
@@ -1560,11 +1608,13 @@ io1.on('connection', function (socket1) {
                 });
 
         } else {
+
             var tweetParams = {
                 status: item.description
             };
             share_post_twitter(client, tweetParams, item);
         }
+
     }
 
     function get_pinterest_boards(item, callback) {
@@ -1902,57 +1952,59 @@ io1.on('connection', function (socket1) {
                     });
                 }
                 else if (mimeType.includes("image/")) {
-                    var imageCropGreater = function(newFilename, width, height) {
-                        var guidName = uuidGen.v1();
-                        var pathFile169 = './downloads/169'+newFilename;
-                        var ratio169w = width - ((width/2) + 355.5);
-                        var ratio169h = ((height/2) - 200);
-                        gm('./uploads/' + filename)
-                        .crop(712, 400, ratio169w, ratio169h)
-                        .write(pathFile169, function (err) {
-                            if (!err) {
-                                putMediaToAzure('169'+newFilename, pathFile169, function(call, res){});
-                            }
-                            else {
-                                console.log(err);
-                            } 
-                        });
+                                var imageCropGreater = function(newFilename, width, height) {
+                                    var guidName = uuidGen.v1();
+                                    var pathFile169 = './downloads/169'+newFilename;
+                                    var ratio169w = width - ((width/2) + 355.5);
+                                    var ratio169h = ((height/2) - 200);
+                                    gm('./uploads/' + filename)
+                                    .crop(712, 400, ratio169w, ratio169h)
+                                    .write(pathFile169, function (err) {
+                                        if (!err) {
+                                            putMediaToAzure('169'+newFilename, pathFile169, function(call, res){});
+                                        }
+                                        else {
+                                            console.log(err);
+                                        } 
+                                        // series_callback();
+                                    });
 
-                        var pathFile11 = './downloads/11'+newFilename;
-                        var ratio11w = width - ((width/2) + 200);
-                        var ratio11h = ((height/2) - 200);
-                        gm('./uploads/' + filename)
-                        .crop(400, 400, ratio11w, ratio11h)
-                        .write(pathFile11, function (err) {
-                            if (!err) {
-                                putMediaToAzure('11'+newFilename, pathFile11, function(call, res){});
-                            }
-                            else {
-                                console.log(err);
-                            } 
-                        });
+                                    var pathFile11 = './downloads/11'+newFilename;
+                                    var ratio11w = width - ((width/2) + 200);
+                                    var ratio11h = ((height/2) - 200);
+                                    gm('./uploads/' + filename)
+                                    .crop(400, 400, ratio11w, ratio11h)
+                                    .write(pathFile11, function (err) {
+                                        if (!err) {
+                                            putMediaToAzure('11'+newFilename, pathFile11, function(call, res){});
+                                        }
+                                        else {
+                                            console.log(err);
+                                        } 
+                                        // series_callback();
+                                    });
 
-                        var pathFile916 = './downloads/916'+newFilename;
-                        var ratio916w = width - ((width/2) + 112);
-                        var ratio916h = ((height/2) - 200);
-                        gm('./uploads/' + filename)
-                        .crop(224, 400, ratio916w, ratio916h)
-                        .write(pathFile916, function (err) {
-                            if (!err) {
-                                putMediaToAzure('916'+newFilename, pathFile916, function(call, res){});
-                            }
-                            else {
-                                console.log(err);
-                            } 
-                        });
-                    }
-
+                                    var pathFile916 = './downloads/916'+newFilename;
+                                    var ratio916w = width - ((width/2) + 112);
+                                    var ratio916h = ((height/2) - 200);
+                                    gm('./uploads/' + filename)
+                                    .crop(224, 400, ratio916w, ratio916h)
+                                    .write(pathFile916, function (err) {
+                                        if (!err) {
+                                            putMediaToAzure('916'+newFilename, pathFile916, function(call, res){});
+                                        }
+                                        else {
+                                            console.log(err);
+                                        } 
+                                        // series_callback();
+                                    });
+                                }
                     gm('./uploads/' + filename)
                         .size(function (err, size) {
                             if (!err) {
                                 resolution = size.width + ' x ' + size.height;
                                 console.log(resolution,'-- Resolution --', size.width%2);
-                                // if((size.width%2) != 1 && ((size.height%2) != 1)) {
+                                if((size.width%2) != 1 && ((size.height%2) != 1)) {
                                      imageCropGreater(newFilename, size.width, size.height);
                                     /* if(size.width < 712) {
                                         if(size.height > 400) {
@@ -1981,7 +2033,7 @@ io1.on('connection', function (socket1) {
                                         }
                                     } */
                                     
-                                /* } else {
+                                } else {
                                     var width = size.width;
                                     var height = size.height;
                                     if((size.width%2) == 1) {   
@@ -2037,7 +2089,7 @@ io1.on('connection', function (socket1) {
                                         } 
                                         // series_callback();
                                     });
-                                } */
+                                }
                             }
                             series_callback();
                         });
@@ -2256,11 +2308,11 @@ io1.on('connection', function (socket1) {
         }, 5000);
     }
     function saveMediaFile(project_id, file_path, callback) {
-        console.log(file_path);
         download(file_path, './uploads/')
             .on('close', function () {
                 // console.log('One file has been downloaded.');
                 var filename = path.basename(file_path);
+
                 putMediaToS3bucketAndSaveToDB({ project_id: project_id }, filename, callback);
             });
     }
@@ -2431,7 +2483,7 @@ io1.on('connection', function (socket1) {
     function getUserInfoById(id, callback) {
         console.log('call method getUserInfoById: id = ' + id);
         try {
-            query('select u.*, US.plan_id, US.plan_price, US.purchase_date, US.number_of_projects, US.time_limit_per_video_in_seconds, US.number_of_days_free_trial, US.admin_update, US.number_of_user, US.plan_name, t.name as company, snapchat, facebook, twitter, instagram, pinterest from (select * from public.user u where u.id = $1) as u left join public.team t on u.team_id = t.id LEFT JOIN public.user_subscriptions AS US ON u.id=US.user_id AND US.status=1', [id], function (err, result) {
+            query('select u.*, US.plan_id, US.plan_price, US.purchase_date, US.number_of_projects, US.time_limit_per_video_in_seconds, US.number_of_days_free_trial, US.number_of_user, US.plan_name, t.name as company, snapchat, facebook, twitter, instagram, pinterest from (select * from public.user u where u.id = $1) as u left join public.team t on u.team_id = t.id LEFT JOIN public.user_subscriptions AS US ON u.id=US.user_id AND US.status=1', [id], function (err, result) {
                 if (err) {
                     successFalseCb(err, callback);
                     return;
@@ -2527,7 +2579,7 @@ io1.on('connection', function (socket1) {
         console.log('Call method getTeams');
 
         try {
-            var queryString = 'SELECT t.id AS id, t.name AS name, t.monthly_plan AS monthly_plan, t.snapchat AS snapchat, t.facebook AS facebook, t.twitter AS twitter, t.instagram AS instagram, t.pinterest AS pinterest, u.name AS member_name, u.photo AS member_photo, u.email AS member_email, u.team_id AS member_team_id, u.created_at AS member_created_at, u.last_login_date AS member_last_seen, u.is_enabled AS member_is_enabled, u.id AS member_id, us.plan_id FROM public.team t LEFT JOIN public.user u ON t.id = u.team_id LEFT JOIN public.user_subscriptions us ON u.id = us.user_id WHERE us.status = 1';
+            var queryString = 'SELECT t.id AS id, t.name AS name, t.monthly_plan AS monthly_plan, t.snapchat AS snapchat, t.facebook AS facebook, t.twitter AS twitter, t.instagram AS instagram, t.pinterest AS pinterest, u.name AS member_name, u.photo AS member_photo, u.email AS member_email, u.team_id AS member_team_id, u.created_at AS member_created_at, u.last_login_date AS member_last_seen, u.is_enabled AS member_is_enabled, u.id AS member_id FROM public.team t LEFT JOIN public.user u ON t.id = u.team_id';
             query(queryString, [], function (err, result) {
                 if (err) {
                     successFalseCb(err, callback);
@@ -2702,7 +2754,7 @@ io1.on('connection', function (socket1) {
 
     function projectInfo(project_id, callback) {
         try {
-            query('SELECT id, path, resolution, crop_data, crop_ratio, duration, representative, ratio169, ratio11, ratio916, aspect_ratio FROM public.media_file WHERE project_id = $1 AND deleted != 1 ORDER BY order_in_project', [project_id], function (err, result) {
+            query('SELECT id, path, resolution, crop_data, crop_ratio, duration, representative, ratio169, ratio11, ratio916 FROM public.media_file WHERE project_id = $1 AND deleted != 1 ORDER BY order_in_project', [project_id], function (err, result) {
                 if (err) {
                     successFalseCb(err, callback);
                 } else {
@@ -2730,8 +2782,7 @@ io1.on('connection', function (socket1) {
                                 'durationVideo': duration.duration,
                                 'ratio169': row.ratio169,
                                 'ratio11': row.ratio11,
-                                'ratio916': row.ratio916,
-                                'crop_ratio': row.aspect_ratio
+                                'ratio916': row.ratio916
                             };
                         } else {
                             var media = {
@@ -2744,8 +2795,7 @@ io1.on('connection', function (socket1) {
                                 'durationImage': Number(row.duration),
                                 'ratio169': row.ratio169,
                                 'ratio11': row.ratio11,
-                                'ratio916': row.ratio916,
-                                'crop_ratio': row.aspect_ratio
+                                'ratio916': row.ratio916
                             };
                         }
                         mediaFile.push(media);
@@ -2934,35 +2984,6 @@ io1.on('connection', function (socket1) {
 
     //signup method
 
-    socket1.on('emailValidate', function(message) {
-        var domain = message.email.replace(/.*@/, "");
-        var matchEmail = '';
-
-        function asyncFunction(item, cb) {
-            setTimeout(() => {
-                cb();
-            }, 0);
-        }
-
-        var blacklistEmail = blacklist.blacklist_email.reduce((promiseChain, item) => {
-            return promiseChain.then(() => new Promise((resolve) => {
-                var domain = message.email.replace(/.*@/, "");
-                if(item == domain) {
-                    matchEmail = domain;
-                }
-                asyncFunction(item, resolve);
-            }));
-        }, Promise.resolve());
-        
-        blacklistEmail.then(() => {
-            if(matchEmail != '') {
-                socket1.emit('emailValidationResponse', {success: false, msg: 'This type of email is not allowed, Please use another email.'})
-            } else {
-                socket1.emit('emailValidationResponse', { success: true, msg: '' })
-            }
-        });      
-    });
-
     socket1.on('signup', function (message) {
         console.log('received singup message: ' + JSON.stringify(message));
         checkIfNotEmptyMessage(socket1, message, 'signup_response', function () {
@@ -3003,7 +3024,7 @@ io1.on('connection', function (socket1) {
                 getSubscriptionPlan({plan_id:1}, function(err, plandata){
                     plandata = plandata.subscription_plan;                        
                     query('INSERT INTO public.user_subscriptions(user_id, plan_id, plan_price, number_of_projects, time_limit_per_video_in_seconds, number_of_days_free_trial, number_of_user, status, plan_name, stripe_subscription_id, stripe_customer_id)' +
-                        ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);', [userId, parseInt(plandata.id), plandata.plan_price, plandata.number_of_projects, plandata.time_limit_per_video_in_seconds, plandata.number_of_days_free_trial, plandata.number_of_user, '1', plandata.plan_name, '0', '0'], function (err, result) {
+                        ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);', [userId, plandata.id, plandata.plan_price, plandata.number_of_projects, plandata.time_limit_per_video_in_seconds, plandata.number_of_days_free_trial, plandata.number_of_user, '1', plandata.plan_name, '0', '0'], function (err, result) {
                                 createEmailConfirmationEntry(userId, uuid, function (err1, result1) {
                                     if (result1 && result1.success) {
                                         var link = frontPath + uuid;
@@ -3048,28 +3069,9 @@ io1.on('connection', function (socket1) {
                                 return;
                             }
                             else {
-                                query("SELECT * FROM public.user_subscriptions WHERE user_id = $1 AND status = 1 ORDER BY id LIMIT 1", [deletedUserId], function(err, resultDeleted){
-                                    if(err) {
-
-                                    } else {
-                                        if (resultDeleted.rows.length > 0) {
-                                            query("UPDATE public.user_subscriptions SET status = 0 WHERE user_id = $1", [deletedUserId], function (err, resultUpdate) { });
-                                            var subscriptionId = resultDeleted.rows[0].stripe_subscription_id;
-                                            if (subscriptionId) {
-                                                stripe.subscriptions.del(
-                                                    subscriptionId,
-                                                    function (err, confirmation) {
-                                                        if (typeof confirmation == 'undefined' && confirmation.status == 'canceled') {
-                                                            result.success = true;
-                                                            socket1.emit('delete_user_response', result);
-                                                            return;
-                                                        }
-                                                    }
-                                                );
-                                            }
-                                        }
-                                    }
-                                });
+                                result.success = true;
+                                socket1.emit('delete_user_response', result);
+                                return;
                             }
                         });
                     }
@@ -3146,7 +3148,7 @@ io1.on('connection', function (socket1) {
 
     authRequiredCall(socket1, 'get_current_user', function (userInfo, message) {
         getUserInfoById(userInfo.id, function (err, result) {
-            if (err) {
+            if (!result.id) {
                 userInfo = {
                     success: false
                 };
@@ -3318,10 +3320,8 @@ io1.on('connection', function (socket1) {
     });
 
     authRequiredCall(socket1, 'media_file_add', function (userInfo, message) {
-        console.log(userInfo);
-        console.log(message);
         saveMediaFile(message.project_id, message.path, function (err, result) {
-            console.log('send media_file_add response: ' + JSON.stringify(result))
+            // console.log('send media_file_add response: ' + JSON.stringify(result))
             result.guid = message.guid;
             socket1.emit('media_added', result);
         });
@@ -3352,7 +3352,7 @@ io1.on('connection', function (socket1) {
     });
 
     authRequiredCall(socket1, 'get_teams', function (userInfo, message) {
-        // console.log(userInfo);
+        console.log(userInfo);
         getTeams(function (err, result) {
             socket1.emit('get_teams_response', result);
         });
@@ -3639,12 +3639,7 @@ io1.on('connection', function (socket1) {
 
 
     function videoPreview(message, callback) {
-        socket1.emit('processData', '(1/6) Initializing process');
-        socket1.emit('ProcessPercentage', 0);
-        let processStep = 6;
-        let percentTotal = 100;
-        let calculatePer = 100/6;
-        let totPer = 0, totPer1 = 0, countResolve = 0;
+        
         let inputFiles = [];
         var aspect_ratio = 16 / 9;
 
@@ -3720,7 +3715,6 @@ io1.on('connection', function (socket1) {
                 successFalseCb(err, callback);
             }
             else {
-                socket1.emit('processData1', result.rowCount);
                 var uploadConcat = function (preview) {
                     blobService.createBlockBlobFromLocalFile(
                         'stage',
@@ -3730,14 +3724,10 @@ io1.on('connection', function (socket1) {
                             if (error) {
                                 successFalseCb(err, callback);
                             } else {
-                                totPer = calculatePer*6;
-                                socket1.emit('ProcessPercentage', totPer);
                                 var uploadedPath = "https://" + config.azure_config.AZURE_STORAGE_ACCOUNT + ".blob.core.windows.net/stage/" + preview;
                                 console.log("FILE UPLOADED", uploadedPath);
                                 query("UPDATE public.project SET result_video = $1 WHERE id = $2", [uploadedPath, message.project_id], function (err, response) {                                    
-                                    setTimeout(() => {
-                                        socket1.emit('preview_download', uploadedPath);
-                                    }, 1000);
+                                    socket1.emit('preview_download', uploadedPath);
                                 });
                             }
                         }
@@ -3747,19 +3737,11 @@ io1.on('connection', function (socket1) {
                 var concatVideo = function (data) {                    
                     let inputNamesFormatted = "concat:" + data.join('|');
                     if (data.length > 0) {
-                        var finalfile = uuidGen.v1();
-                        var resolutionFile = uuidGen.v1() + '.mp4';                
+                        var finalfile = uuidGen.v1();                        
                         shell.exec('ffmpeg -i "'+inputNamesFormatted+'" -c copy -bsf:v h264_mp4toannexb -acodec copy  ./downloads/'+finalfile+'.mp4', function(code, stdout, stderr) {                            
                             successCb(function(err, res) {
-                                if(code == 0) {
-                                    shell.exec('ffmpeg -i ./downloads/'+finalfile+'.mp4 -vf scale=-2:720 ./downloads/'+ resolutionFile, function(code, stdout, stderr) {
-                                        if(code==0) {
-                                            totPer = calculatePer*5;
-                                            socket1.emit('ProcessPercentage', totPer);
-                                            socket1.emit('processData', '(6/6) Preparing final video');
-                                            uploadConcat(resolutionFile);
-                                        }
-                                    });                                  
+                                if(code == 0) {                                    
+                                    uploadConcat(finalfile+'.mp4');
                                 }                               
                             });
                         });
@@ -3771,7 +3753,7 @@ io1.on('connection', function (socket1) {
                         cb();
                     }, 700);
                 }
-                
+
                 var text_overlayPng = [];
                 var updated_file = [];
                 var videoFiles = [];
@@ -3779,10 +3761,9 @@ io1.on('connection', function (socket1) {
                 let text_overlay = result.rows.reduce((promiseChain, item) => {
                     return promiseChain.then(() => new Promise((resolve) => {
                         query('SELECT content, base64, o_width, o_height, o_left, o_top, o_degree, overlay_type FROM public.text_overlay WHERE media_id = $1', [item.id], function(err, result_text) {
-                            var stepOne = result_text.rowCount > 0 ? Number(result_text.rowCount*result.rowCount) : result.rowCount;
+                            
                             let allOverlay = result_text.rows.reduce((promiseChain1, item1) => {
                                 return promiseChain1.then(() => new Promise((resolve1) => {
-                                    
                                     var guidPng = uuidGen.v1();
                                     var overlayData = item1.base64 ? item1.base64 : '';
                                     overlayData = overlayData.replace(/^data:image\/png;base64,/, '');
@@ -3800,22 +3781,15 @@ io1.on('connection', function (socket1) {
                                                 .write('./downloads/'+guidPng+'.png', function (err) {
                                                     if(!err){
                                                         text_overlayPng.push({png:'./downloads/'+guidPng+'.png', left:item1.o_left, degree:item1.o_degree, top:item1.o_top, width:item1.o_width, height:item1.o_height, media_id: item.id});
-                                                        totPer += calculatePer / stepOne;
-                                                        // socket1.emit('processData1', 'pro '+'-'+stepOne+'--'+totPer);
-                                                        socket1.emit('ProcessPercentage', totPer); 
+                                        
                                                         asyncFunction(item1, resolve1);
                                                     }else{
-                                                        totPer += calculatePer / stepOne;
-                                                        // socket1.emit('processData1', 'else 1 '+'-'+stepOne+'--'+totPer);
-                                                        socket1.emit('ProcessPercentage', totPer);
+                                                        
                                                         asyncFunction(item1, resolve1);
                                                     }
                                                 });
                                             } else {
                                                 text_overlayPng.push({png:'./downloads/'+guidPng+'.png', left:item1.o_left, degree:item1.o_degree, top:item1.o_top, width:item1.o_width, height:item1.o_height, media_id: item.id});
-                                                totPer += calculatePer / stepOne;
-                                                // socket1.emit('processData1', 'else 2 '+'-'+stepOne+'--'+totPer);
-                                                socket1.emit('ProcessPercentage', totPer);
                                                 asyncFunction(text_overlayPng, resolve1);
                                             }
                                            
@@ -3825,9 +3799,6 @@ io1.on('connection', function (socket1) {
                             }, Promise.resolve());
                             
                             allOverlay.then(() => {
-                                // countResolve++;
-                                // totPer1 += calculatePer * (countResolve/result.rowCount);
-                                // socket1.emit('ProcessPercentage', totPer1);
                                 asyncFunction(item, resolve);
                             });
                         });
@@ -3836,13 +3807,8 @@ io1.on('connection', function (socket1) {
                 }, Promise.resolve());
 
                 text_overlay.then(() => {
-                    totPer = calculatePer;
-                    socket1.emit('ProcessPercentage', totPer);
-                    
                     let mp4 = result.rows.reduce((promiseChain, item) => {
                         return promiseChain.then(() => new Promise((resolve) => {
-                            var stepTwo = calculatePer / Number(result.rowCount);
-                            socket1.emit('processData', '(2/6) Processing input media');
                             var crop_string = '';
                             var guid = uuidGen.v1();
                             var newFilePath = './downloads/' + guid + '.mp4';                            
@@ -3857,7 +3823,7 @@ io1.on('connection', function (socket1) {
                             // }
                             
                             if(mimeType.includes('image/')) {
-                                
+                                // console.log(item.ratio11);
                                 if(message.ratio == '916') {
                                     item.ratio = '916';
                                     item.ratioPath = item.ratio916.replace("https://"+config.azure_config.AZURE_STORAGE_ACCOUNT+'.blob.core.windows.net/stage', './downloads');
@@ -3873,14 +3839,11 @@ io1.on('connection', function (socket1) {
                                 item.duration = item.duration > 0 ? item.duration : 10;
                                 // -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=44100
                                 // ffmpeg -ar 48000 -t 60 -f s16le -acodec pcm_s16le -ac 2 -i /dev/zero -acodec libmp3lame -aq 4 output.mp3
-                                var code = shell.exec('ffmpeg -loop 1 -i '+ item.ratioPath +' -i ./output.mp3  -c:v libx264 -t '+ item.duration +' -c:a libmp3lame -ab 320k -pix_fmt yuv420p ' + newFilePath).code;
-                                
+                                var code = shell.exec('ffmpeg -loop 1 -i '+ item.ratioPath +' -i ./output.mp3  -c:v libx264 -t '+ item.duration +' -c:a libmp3lame -ab 160k -pix_fmt yuv420p ' + newFilePath).code;
                                 if(code == 0) {
                                     updated_file.push({media_id: item.id, updated_files: newFilePath});
                                     query('UPDATE public.media_file SET updated_files = $1 WHERE id = $2', [newFilePath, item.id], function(err, res){ });
                                     item.newFilePath = newFilePath;
-                                    totPer += stepTwo;
-                                    socket1.emit('ProcessPercentage', totPer);
                                     mediaFiles.push(item);
                                     asyncFunction(item, resolve);
                                 } else {
@@ -3888,7 +3851,7 @@ io1.on('connection', function (socket1) {
                                     console.log('------ Log MainTain Image -------------');
                                 }
                             } else {  
-                                // socket1.emit('processData', 'Processing input video...');
+                                
                                 item.crop_data = JSON.parse(item.crop_data);
                                 
                                 // if(message.ratio == '916') {
@@ -3905,14 +3868,10 @@ io1.on('connection', function (socket1) {
                                     var durationVideo = (durationData.duration - (durationData.seekTime));
                                     // console.log(durationData, 'TestTestTestTestTestTestTestTestTestTest')
                                     var code = shell.exec('ffmpeg -i '+ item.path +' -ss '+ durationData.seekTime +' -t '+ durationVideo +' '+item.crop_string+ ' -codec:v libx264 -codec:a libmp3lame ' + newFilePath).code;
-                                    
                                     if(code == 0) {
                                         updated_file.push({media_id: item.id, updated_files: newFilePath});
                                         query('UPDATE public.media_file SET updated_files = $1 WHERE id = $2', [newFilePath, item.id], function(err, res){ });
                                         item.newFilePath = newFilePath;
-                                        totPer += stepTwo;
-                                        socket1.emit('ProcessPercentage', totPer);
-                                        // socket1.emit('processData', 'Processing input video...');
                                         mediaFiles.push(item);
                                         asyncFunction(item, resolve);
                                     }  else {
@@ -4024,18 +3983,12 @@ io1.on('connection', function (socket1) {
 
                     
                     mp4.then(() => {
-                        
-                        totPer = calculatePer*2;
-                        socket1.emit('ProcessPercentage', totPer);
-                        socket1.emit('processData', '(3/6) Adding overlay');
                         // console.log('Process all Mp4 Media Files', mediaFiles, text_overlayPng);
                         var count = ind = 0;
-                        var stepThree = calculatePer / mediaFiles.length;
-                        socket1.emit('processData1', mediaFiles.length);
                         let mediaFile = mediaFiles.reduce((promiseChain, item) => {
                             return promiseChain.then(() => new Promise((resolve) => {
-                                
-                                var text_overdone = text_overlayPng.reduce((promiseChain1, item1) => {
+                               
+                               var text_overdone = text_overlayPng.reduce((promiseChain1, item1) => {
                                     
                                     return promiseChain1.then(() => new Promise((resolve1) => {
                                         
@@ -4128,34 +4081,26 @@ io1.on('connection', function (socket1) {
                                                 if(!err) {
                                                     
                                                     var text_code = shell.exec('ffmpeg -i '+item.newFilePath+' -i '+item1.png+' -filter_complex "'+ overlay_string +'" -map "[out]" -map 0:a -c:v libx264 -c:a copy '+tempFilePath).code;
-                                                    
                                                     if(text_code == 0) {
                                                         _.find(updated_file, function(item3, index) {
                                                             if (item3.media_id == item.id) {
                                                                 updated_file[index] = {updated_files: tempFilePath, media_id: item.id};     
-
                                                             } 
                                                         });
-                                                        
                                                         asyncFunction(item1, resolve1);
                                                     }
                                                     item.newFilePath = tempFilePath; 
                                                 } else {
-                                                    
                                                     asyncFunction(item1, resolve1);
                                                 }
                                             });
                                         } else {
-                                            
                                             asyncFunction(item1, resolve1);
                                         }
-                                        
                                     }));
                                 }, Promise.resolve());
                                
                                 text_overdone.then(() => {
-                                    totPer += stepThree;
-                                    socket1.emit('ProcessPercentage', totPer);
                                     asyncFunction(item, resolve);
                                 });
                                
@@ -4164,9 +4109,7 @@ io1.on('connection', function (socket1) {
                         }, Promise.resolve()); 
 
                         mediaFile.then(() => {
-                            totPer = calculatePer*3;
-                            socket1.emit('ProcessPercentage', totPer);
-                            // console.log('------ All Item Are Process ------- ');
+                            console.log('------ All Item Are Process ------- ');
                             // query('SELECT updated_files, id FROM public.media_file WHERE project_id = $1 AND deleted != 1', [message.project_id], function(err, generateTs) {
                             //     try {
                                     
@@ -4202,7 +4145,6 @@ io1.on('connection', function (socket1) {
                                     // gm(tsGen.updated_files)
                                     // .size(function (err, size) {
                                     //     if(!err) {
-                                            socket1.emit('processData', '(4/6) Generating ts files');
                                             var newTsFilePath = './downloads/'+uuidGen.v1()+'.ts';
                                             console.log('TS FILES ---', tsGen.updated_files);
                                             var newTs = shell.exec('ffmpeg -i '+ tsGen.updated_files +' -c copy -bsf:v h264_mp4toannexb -f mpegts '+newTsFilePath).code;             
@@ -4220,9 +4162,7 @@ io1.on('connection', function (socket1) {
                             }, Promise.resolve());
                                 
                             ts.then(() => {
-                                totPer = calculatePer*4;
-                                socket1.emit('ProcessPercentage', totPer);
-                                socket1.emit('processData', '(5/6) Merging all contents');
+                                // console.log('--- Create Ts ------', allTsFiles);
                                 concatVideo(allTsFiles); 
                             });
                         });
@@ -4233,8 +4173,6 @@ io1.on('connection', function (socket1) {
     }
 
     function cropVideo(message, callback) {
-        socket1.emit('processData', 'Please Wait');
-        socket1.emit('ProcessPercentage', 0);
 
         var cropStringGenerator = function (width, height) {
             var crop_scale_string = '-vf scale=' + (parseInt(width / 2) * 2) + ':-2,crop=';
@@ -4274,7 +4212,7 @@ io1.on('connection', function (socket1) {
                 crop_scale_string += ':y=' + padY;
             }
             crop_scale_string += ':color=black,setsar=1:1';
-            socket1.emit('ProcessPercentage', 10);
+            
             return crop_scale_string;
         };
 
@@ -4354,7 +4292,6 @@ io1.on('connection', function (socket1) {
                     if (error) {
                         successFalseCb(err, callback);
                     } else {
-                        socket1.emit('ProcessPercentage', 100);
                         var uploadedPath = "https://" + config.azure_config.AZURE_STORAGE_ACCOUNT + ".blob.core.windows.net/stage/" + preview;
                         console.log("FILE UPLOADED", uploadedPath);
                         if(message.crop_ratio == '916') {
@@ -4410,7 +4347,7 @@ io1.on('connection', function (socket1) {
         query("SELECT path, crop_data::json FROM public.media_file WHERE id = $1", [message.media_spec.id], function (err, result) {
             
             obj = result.rows[0].crop_data;
-            socket1.emit('ProcessPercentage', 20);
+
             switch(message.crop_ratio) {
                 case '916': obj.ratio1 = crop_scale_string;
                             break;
@@ -4422,10 +4359,9 @@ io1.on('connection', function (socket1) {
             
             var pathFile = result.rows[0].path.replace('https://' + config.azure_config.AZURE_STORAGE_ACCOUNT + '.blob.core.windows.net/stage/', './uploads/');
             getDuration(result.rows[0].path).then(duration => {
-                socket1.emit('ProcessPercentage', 30);
+                
                 var code = shell.exec('ffmpeg -i '+ pathFile +' -ss 0 -t '+ duration +' '+crop_scale_string+ ' -codec:v libx264 -codec:a libmp3lame ' + newFilePath).code;
                 if(code == 0) {   
-                    socket1.emit('ProcessPercentage', 65);
                     uploadConcat(newFileName, obj);
                 }
             });
@@ -4933,28 +4869,12 @@ io1.on('connection', function (socket1) {
                                 return;
                             }
                             else {
-                                query('SELECT up.id FROM public.user u INNER JOIN public.user_payment_methods up ON u.id=up.user_id WHERE team_id = $1 ORDER BY id LIMIT 1', [teamId], function(err, resultPayment) {
-                                    if(err) {
-                                        result = {
-                                            success: false,
-                                            msg: err.body
-                                        };
-                                        socket1.emit('update_team_plan_response', result);
-                                        return;
-                                    } else {
-                                        if(plan_selected == 5) {
-                                            updateUserPlan(teamId, plan_selected, result);
-                                        } else {
-                                            console.log(resultPayment.rows.length, 'Sample');
-                                            if (resultPayment.rows.length > 0) {
-                                                updateUserPlan(teamId, plan_selected, result);
-                                            } else {
-                                                socket1.emit('payment_method_not_add', { success: true, msg: 'User not add any payment method.' });
-                                            }
-                                        }
-                                        
-                                    }
-                                });
+                                console.log('send update_team_plan response: ' + JSON.stringify(result))
+                                result.success = true;
+                                result.team_id = teamId;
+                                result.plan_selected = plan_selected;
+                                socket1.emit('update_team_plan_response', result);
+                                return;
                             }
                         });
                     }
@@ -4970,78 +4890,6 @@ io1.on('connection', function (socket1) {
         })
     });
 
-
-    var updateUserPlan = function(teamId, plan_selected, result) {
-        query('SELECT id FROM public.user WHERE team_id = $1 ORDER BY id LIMIT 1', [teamId], function (err, resultUser) {
-            if (err) {
-                successFalseCb(err, callback);
-            } else {
-                var row = resultUser.rows[0];
-                
-                query('select * from public.user_subscriptions where status=1 AND user_id=$1', [row.id], function (err, resultSub) {
-                    if (err) {
-                        successFalseCb(err, callback);
-                    } else {
-                        var planName = '';
-                        if (plan_selected == 2)
-                            planName = "pro";
-                        else if (plan_selected == 3)
-                            planName = "plus";
-                        else if (plan_selected == 4)
-                            planName = "enterprise";
-                        else
-                            planName = "free";
-
-                        stripe.subscriptions.retrieve(
-                            resultSub.rows[0].stripe_subscription_id,
-                            function (err, subscription) {
-                                console.log(subscription);
-                                var item_id = subscription.items.data[0].id;
-                                var stripeCustomerId = subscription.customer;
-                                stripe.subscriptions.update(resultSub.rows[0].stripe_subscription_id, {
-                                    items: [{
-                                        id: item_id,
-                                        plan: planName,
-                                    }],
-                                }, function (err, subscription) {
-                                    console.log(subscription);
-                                    result.success = true;
-                                    result.team_id = teamId;
-                                    result.plan_selected = plan_selected;
-                                    // console.log(result);
-                                    var user_subscription_id = resultSub.rows[0].id;
-                                    // console.log(resultSub.rows[0]);
-                                    query('UPDATE public.user_subscriptions SET status = 0 WHERE id = $1', [user_subscription_id], function (err, updateSub) {
-                                        if (err) {
-                                            successFalseCb(err, callback);
-                                        } else {
-                                            var selected_plan = plan_selected == 5 ? 1 : plan_selected;
-                                            query('SELECT * FROM public.subscription_plans WHERE id = $1', [selected_plan], function (err, fetchPlan) {
-                                                if (err) {
-                                                    successFalseCb(err, callback);
-                                                } else {
-                                                    var admin_update = plan_selected == 5 ? 1 : 0;
-                                                    fetchPlan.rows[0].number_of_days_free_trial = fetchPlan.rows[0].number_of_days_free_trial == '' || fetchPlan.rows[0].number_of_days_free_trial == null ? 0 : parseInt(fetchPlan.rows[0].number_of_days_free_trial);
-                                                    query('INSERT INTO public.user_subscriptions (user_id, plan_id, plan_price, number_of_projects, time_limit_per_video_in_seconds, number_of_days_free_trial, number_of_user, status, plan_name, admin_update, stripe_subscription_id, stripe_customer_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)', [resultSub.rows[0].user_id, parseInt(selected_plan), parseFloat(fetchPlan.rows[0].plan_price), parseInt(fetchPlan.rows[0].number_of_projects), parseInt(fetchPlan.rows[0].time_limit_per_video_in_seconds), parseInt(fetchPlan.rows[0].number_of_days_free_trial), parseInt(fetchPlan.rows[0].number_of_user), 1, fetchPlan.rows[0].plan_name, admin_update, resultSub.rows[0].stripe_subscription_id, resultSub.rows[0].stripe_customer_id], function (err, resultInsert) {
-                                                        if (err) {
-                                                            successFalseCb(err, callback);
-                                                        } else {
-                                                            socket1.emit('update_team_plan_response', result);
-                                                            return;
-                                                        }
-                                                    });
-                                                }
-                                            });
-
-                                        }
-                                    });
-                                });
-                            });
-                    }
-                });
-            }
-        });
-    }
 
     //END SERVICE CONNECTION STATE
 
@@ -6078,15 +5926,14 @@ io1.on('connection', function (socket1) {
     // Stripe Payment
     function doStripePayment(userInfo, formData, callback){
         console.log(formData);
-        var planName = '';
         if(formData.plan_id == 2)
-            planName = "pro";
+            planName = "Pro";
         else if(formData.plan_id == 3)
-            planName = "plus";
+            planName = "Plus";
         else if(formData.plan_id == 4)
-            planName = "enterprise";
+            planName = "Enterprise";
         else        
-            planName = "free";
+            planName = "Free";
 
         // Create a new customer and then a new charge for that customer:
         stripe.customers.create({ 
@@ -6094,12 +5941,12 @@ io1.on('connection', function (socket1) {
             email : userInfo.email,            
         }).then(function(customer){            
             var stripeCustomerId = customer.id;
-            console.log('Success! Customer with Stripe Customer ID ' + stripeCustomerId + ' just signed up!');
+            //console.log('Success! Customer with Stripe Customer ID ' + stripeCustomerId + ' just signed up!');
             stripe.subscriptions.create({
               customer: stripeCustomerId,
               items: [
                 {
-                      plan: planName,
+                  plan : planName,
                 },
               ]
             }, function(err, subscription) {
@@ -6108,12 +5955,10 @@ io1.on('connection', function (socket1) {
                 
                 updateUserSubscriptionPlanStatus(userInfo, formData, function(err, result){    
                     getSubscriptionPlan(formData, function(err, plandata){
-                        console.log(plandata);
                         var userSubscriptionPlan = {};
-                        plandata = plandata.subscription_plan;     
-                        plandata.number_of_days_free_trial = plandata.number_of_days_free_trial != '' ? plandata.number_of_days_free_trial : 0;                   
+                        plandata = plandata.subscription_plan;                        
                         query('INSERT INTO public.user_subscriptions(user_id, plan_id, plan_price, number_of_projects, time_limit_per_video_in_seconds, number_of_days_free_trial, number_of_user, status, plan_name, stripe_subscription_id, stripe_customer_id)' +
-                            ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id, stripe_subscription_id;', [userInfo.id, parseInt(plandata.id), plandata.plan_price, plandata.number_of_projects, plandata.time_limit_per_video_in_seconds, plandata.number_of_days_free_trial, plandata.number_of_user, 1, plandata.plan_name, subscriptionId, stripeCustomerId], function (err, result) {
+                            ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id, stripe_subscription_id;', [userInfo.id, plandata.id, plandata.plan_price, plandata.number_of_projects, plandata.time_limit_per_video_in_seconds, plandata.number_of_days_free_trial, plandata.number_of_user, '1', plandata.plan_name, subscriptionId, stripeCustomerId], function (err, result) {
                                 if (err) {
                                     successFalseCb(err, callback);
                                     return;
@@ -6134,51 +5979,45 @@ io1.on('connection', function (socket1) {
 
     authRequiredCall(socket1, 'stripe_payment', function (userInfo, formData) {        
         doStripePayment(userInfo, formData, function (err, result) {
+            console.log(result, '5923');
             socket1.emit('set_stripe_payment_response', result);
         });
     });
 
     // add Payment Method into local database 
     function addPaymentMethod(userInfo, formData, stripeCustomer, userSubscriptionPlan, callback){
-        // console.log(userSubscriptionPlan);
-        stripe.customers.listCards(stripeCustomer.id, function (err, cards) {
-            if(cards.data.length > 0) {
-                //Update User Payment Method
-                query('INSERT INTO public.user_payment_methods(user_id, creditcard_number, stripe_customer_id, card_type, stripe_card_id)' +
-                    ' VALUES ($1, $2, $3, $4, $5) RETURNING id, user_id, creditcard_number, stripe_customer_id, card_type;', [userInfo.id, formData.card_number.replace(/.(?=.{4})/g, 'X'), stripeCustomer.id, stripeCustomer.sources.data[0].brand, cards.data[0].id], function (err, result) {
-                    if (err) {
-                        successFalseCb(err, callback);
-                        return;
-                    } else {
-                        // console.log(result);
-                        var payment_method = result.rows[0];
-                        // socket1.emit('payment_method', {payment_method: payment_method});
-                        successCb(callback, {payment_method: payment_method, userSubscriptionPlan: userSubscriptionPlan});
-                    }
-                });
+        console.log(userSubscriptionPlan);
+        //Update User Payment Method
+        query('INSERT INTO public.user_payment_methods(user_id, creditcard_number, stripe_customer_id, card_type)' +
+                        ' VALUES ($1, $2, $3, $4) RETURNING id, user_id, creditcard_number, stripe_customer_id, card_type;', [userInfo.id, formData.card_number.replace(/.(?=.{4})/g, 'X'), stripeCustomer.id, stripeCustomer.sources.data[0].brand], function (err, result) {
+            if (err) {
+                successFalseCb(err, callback);
+                return;
+            } else {
+                // console.log(result);
+                var payment_method = result.rows[0];
+                // socket1.emit('payment_method', {payment_method: payment_method});
+                successCb(callback, {payment_method: payment_method, userSubscriptionPlan: userSubscriptionPlan});
             }
         });
-        
     }
 
     //Update subscription plan
     function updateSubscriptionPlan(userInfo, formData, callback){        
         console.log(formData);
-        var planName = '';
         if(formData.plan_id == 2)
-            planName = "pro";
+            planName = "Pro";
         else if(formData.plan_id == 3)
-            planName = "plus";
+            planName = "Plus";
         else if(formData.plan_id == 4)
-            planName = "enterprise";
+            planName = "Enterprise";
         else        
-            planName = "free";
+            planName = "Free";
 
         // Upgrading Plan
         stripe.subscriptions.retrieve(
           formData.stripe_subscription_id,//formData.stripe_subscription_id,
           function(err, subscription) {
-              console.log(subscription);
             var item_id = subscription.items.data[0].id;
             var stripeCustomerId = subscription.customer;
             stripe.subscriptions.update(formData.stripe_subscription_id, {
@@ -6192,11 +6031,9 @@ io1.on('connection', function (socket1) {
                     var subscriptionId = subscription.id;
                     updateUserSubscriptionPlanStatus(userInfo, formData, function(err, plandata){
                         getSubscriptionPlan(formData, function(err, plandata){
-                            plandata = plandata.subscription_plan;   
-                            
-                            plandata.number_of_days_free_trial = plandata.number_of_days_free_trial != '' ? plandata.number_of_days_free_trial : 0; 
+                            plandata = plandata.subscription_plan;                        
                             query('INSERT INTO public.user_subscriptions(user_id, plan_id, plan_price, number_of_projects, time_limit_per_video_in_seconds, number_of_days_free_trial, number_of_user, status, plan_name, stripe_subscription_id, stripe_customer_id)' +
-                                ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);', [userInfo.id, parseInt(plandata.id), plandata.plan_price, plandata.number_of_projects, plandata.time_limit_per_video_in_seconds, plandata.number_of_days_free_trial, plandata.number_of_user, '1', plandata.plan_name, subscriptionId, stripeCustomerId], function (err, result) {
+                                ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);', [userInfo.id, plandata.id, plandata.plan_price, plandata.number_of_projects, plandata.time_limit_per_video_in_seconds, plandata.number_of_days_free_trial, plandata.number_of_user, '1', plandata.plan_name, subscriptionId, stripeCustomerId], function (err, result) {
                                         if (err) {
                                             successFalseCb(err, callback);
                                             return;
@@ -6275,64 +6112,24 @@ io1.on('connection', function (socket1) {
 
     function updatePaymentMethod(userInfo, formData, callback){
         
-        query("SELECT * FROM public.user_payment_methods WHERE user_id=$1 ORDER BY id LIMIT 1", [userInfo.id], function(err, result){
-            if(err) {
-
-            } else {
-                if(result.rows.length > 0) {
-                    console.log(result.rows[0].stripe_customer_id);
-                    stripe.customers.createSource(
-                        formData.stripe_customer_id,
-                        { source: formData.stripe_token }, 
-                        function(err, card) {
-                            // console.log(formData.stripe_customer_id, result.rows[0].stripe_card_id, result.rows[0].stripe_card_id, 'SampleData');
-                            stripe.customers.deleteCard(
-                                result.rows[0].stripe_customer_id,
-                                result.rows[0].stripe_card_id.trim(),
-                                function (err, confirmation) {
-                                    console.log(confirmation);
-                                    query('UPDATE public.user_payment_methods SET creditcard_number=$1, card_type=$2, stripe_card_id=$3 WHERE user_id=$4;', [formData.card_number.replace(/.(?=.{4})/g, 'X'), card.brand, card.id, userInfo.id], function (err, result) {
-                                        if (err) {
-                                            successFalseCb(err, callback);
-                                            return;
-                                        }
-                                        socket1.emit('payment_method_update', { card_number: formData.card_number.replace(/.(?=.{4})/g, 'X'), type: card.brand});
-                                        getPaymentMethod(userInfo, callback);
-                                    }); 
-                                }
-                            );
-                            
-                            // var cardId = card.id;
-                            // stripe.customers.update(formData.stripe_customer_id, {
-                            // default_source: cardId
-                            // }, function(err, customer) {
-
-                                                  
-                            // });  
-                    }); 
-                }
-            }
-        });
-          
-        // stripe.customers.createSource(
-        //   formData.stripe_customer_id,
-        //   { source: formData.stripe_token }, 
-        //   function(err, card) {
-        //     console.log(card);    
-        //     var cardId = card.id;
-        //     stripe.customers.update(formData.stripe_customer_id, {
-        //       default_source: cardId
-        //     }, function(err, customer) {
-                          
-        //         query('UPDATE public.user_payment_methods SET creditcard_number=$1, card_type=$2 WHERE user_id=$3;', [formData.card_number.replace(/.(?=.{4})/g, 'X'), customer.sources.data[0].brand, userInfo.id ], function (err, result) {
-        //                     if (err) {
-        //                         successFalseCb(err, callback);
-        //                         return;
-        //                     }
-        //                     getPaymentMethod(userInfo, callback);
-        //                 });                   
-        //     });  
-        // }); 
+        stripe.customers.createSource(
+          formData.stripe_customer_id,
+          { source: formData.stripe_token }, 
+          function(err, card) {
+            var cardId = card.id;
+            stripe.customers.update(formData.stripe_customer_id, {
+              default_source: cardId
+            }, function(err, customer) {
+                // Update payment method in database                
+                query('UPDATE public.user_payment_methods SET creditcard_number=$1, card_type=$2 WHERE user_id=$3;', [formData.card_number.replace(/.(?=.{4})/g, 'X'), customer.sources.data[0].brand, userInfo.id ], function (err, result) {
+                            if (err) {
+                                successFalseCb(err, callback);
+                                return;
+                            }
+                            getPaymentMethod(userInfo, callback);
+                        });                   
+            });  
+        });        
     }
     //update stripe payment method
     authRequiredCall(socket1, 'update_stripe_payment_method', function (userInfo, formData) {        
@@ -6344,72 +6141,35 @@ io1.on('connection', function (socket1) {
     // Update plan data from admin
     function adminUpdatePlanData(userInfo, formData, callback){
         // Update payment method in database  
-        
         var field_name = formData.field_name;         
-    
         query('UPDATE public.subscription_plans SET '+field_name+' = $1 WHERE id=$2;', [formData.field_value, formData.id ], function (err, result) {
             if (err) {
                 successFalseCb(err, callback);
                 return;
             }else{
-                if(field_name == 'plan_price'){
-                    
-                    var amount = formData.field_value.replace('.', '');
-                    amount = parseInt(amount);
-        
+                /*if(field_name == 'plan_price'){
+                  
                     if(formData.id == 2)
-                        planName = "pro";
+                        planName = "Pro";
                     else if(formData.id == 3)
-                        planName = "plus";
+                        planName = "Plus";
                     else if(formData.id == 4)
-                        planName = "enterprise";
+                        planName = "Enterprise";
                     else        
-                        planName = "free";
+                        planName = "Free";
 
-                    stripe.plans.del(
-                        planName,
-                        function (err, confirmation) {
-                            stripe.plans.create({
-                                amount: amount,
-                                interval: "month",
-                                name: planName,
-                                currency: "usd",
-                                id: planName.toLowerCase()
-                            }, function (err, plan) {
-                                query("SELECT * FROM public.user_subscriptions WHERE status = 1 AND plan_id = $1", [formData.id], function(err, userSubscription) {
-                                    if(err) {
+                    stripe.plans.update(planName, {
+                      amount: formData.field_value
+                    }, function(err, plan) {
+                      //console.log(err,plan);  
+                      getSubscriptionPlans(userInfo.id, callback)
+                    });
 
-                                    } else {
-                                        userSubscription.rows.forEach(function(user) {
-                                            stripe.subscriptions.retrieve(
-                                                user.stripe_subscription_id,
-                                                function (err, subscription) {
-                                                    console.log(subscription);
-                                                    var item_id = subscription.items.data[0].id;
-                                                    stripe.subscriptions.update(
-                                                        user.stripe_subscription_id, {
-                                                        items: [{
-                                                            id: item_id,
-                                                            plan: planName,
-                                                        }],
-                                                    }, function (err, subscription) {
-                                                        console.log(err);
-                                                        console.log(subscription);
-                                                        console.log(user);        
-                                                    });
-                                                });
-                                            }, this);
-                                    }
-                                });
-                                getSubscriptionPlans(userInfo.id, callback)
-                            });
-                        }
-                    );
                 }else{
                     getSubscriptionPlans(userInfo.id, callback)
-                }
+                }*/
 
-                // getSubscriptionPlans(userInfo.id, callback)
+                getSubscriptionPlans(userInfo.id, callback)
             }                          
         });                 
     }
